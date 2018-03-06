@@ -1,0 +1,9 @@
+{
+  "name": "att",
+  "version": "0.0.0",
+  "description": "App de preguntas en realtime",
+  "main": "app.js",
+  "repository": "https://github.com/joelerll/att.git",
+  "author": "Joel Rodriguez <joelerll@gmail.com>",
+  "license": "MIT"
+}
