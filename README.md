@@ -1,4 +1,7 @@
 <!-- https://medium.com/@meakaakka/a-beginners-guide-to-writing-a-kickass-readme-7ac01da88ab3 -->
+[![Build Status](https://travis-ci.org/joelerll/att.svg?branch=master)](https://travis-ci.org/joelerll/att)
+[![Coverage Status](https://coveralls.io/repos/github/joelerll/att/badge.svg?branch=master)](https://coveralls.io/github/joelerll/att?branch=master)
+[![codecov](https://codecov.io/gh/joelerll/att/branch/master/graph/badge.svg)](https://codecov.io/gh/joelerll/att)
 # Ask The Teacher
 
 ## Features
