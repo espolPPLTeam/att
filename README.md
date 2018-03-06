@@ -16,6 +16,46 @@
 
 ## Development
 
+#### Api
+
+```sh
+npm install
+```
+
+```sh
+npm run dev
+```
+
+#### Client estudiantes
+
+```sh
+cd client/estudiantes
+```
+
+```sh
+npm install
+```
+
+
+```sh
+npm run dev
+```
+
+#### Client profesores
+
+```sh
+cd client/profesores
+```
+
+```sh
+npm install
+```
+
+
+```sh
+npm run dev
+```
+
 ## Testing
 
 ## Deployment
