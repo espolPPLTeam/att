@@ -19,6 +19,10 @@ const client = express()
 require('./client/client.server')(client)
 app.use('/att', client)
 
+const realtime = express()
+require('./api/sockets')({ io })
+app.use('/sockets/att', realtime)
+
 app.set('port', PORT)
 
 module.exports = {
