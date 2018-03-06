@@ -60,6 +60,10 @@ npm run dev
 
 ## Deployment
 
+```sh
+npm install --production
+```
+
 ## Authors
 
 Joel Rodriguez
