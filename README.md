@@ -2,7 +2,12 @@
 # Ask The Teacher
 
 ## Features
-[ ] Recibir las preguntas de los estudiantes
+[ ] Single page
+[ ] Mobile first
+[ ] Poder realizar una preguntas por el profesor
+[ ] Habilitar una pregunta por el profesor y que los estudiantes respondan
+[ ] Recibir las preguntas de los estudiantes en tiempo real
+[ ] Recibir respuestas de los estudiantes en tiempo real
 
 ## Screenshots
 
@@ -10,11 +15,21 @@
 
 ## Prerequisites
 
-* Nodejs
+* Nodejs > 7.0.0
 
 * Mongodb
 
 ## Development
+
+#### Si se quiere correr en linux
+
+```sh
+./development # instala todas las dependencias npm
+```
+
+```sh
+npm run dev # correr solo el servidor api
+```
 
 #### Api
 
@@ -58,10 +73,14 @@ npm run dev
 
 ## Testing
 
+```sh
+npm run test
+```
+
 ## Deployment
 
 ```sh
-npm install --production
+./deploy
 ```
 
 ## Authors
