@@ -14,6 +14,7 @@
   "watch": [
     "app.js",
     "api/**",
+    "client/client.server.js",
     "server.js"
   ],
   "env": {

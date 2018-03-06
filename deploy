@@ -1,0 +1,3 @@
+#! /bin/bash
+echo "Estoy hara los builds de clientes y los npm install y verificara si existe el yarn. Anadira las variables de entorno necesarias"
+
