@@ -1,17 +1,18 @@
 <!-- https://medium.com/@meakaakka/a-beginners-guide-to-writing-a-kickass-readme-7ac01da88ab3 -->
-# Ask The Teacher App
+# Ask The Teacher
 
-# Features
+## Features
+[ ] Recibir las preguntas de los estudiantes
 
-# Screenshots
+## Screenshots
 
-# API Reference
+## API Reference
 
 ## Prerequisites
 
-Nodejs
+* Nodejs
 
-Mongodb
+* Mongodb
 
 ## Development
 
@@ -20,3 +21,7 @@ Mongodb
 ## Deployment
 
 ## Authors
+
+Joel Rodriguez
+
+Edison Mora
