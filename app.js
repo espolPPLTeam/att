@@ -7,7 +7,7 @@ const PORT = process.env.PORT || '8000'
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-db.Conectar(process.env.MONGO_URL_ATT)
+db.Conectar(process.env.MONGO_URL_ATT).then().catch((err) => console.log(err))
 
 const io = require('socket.io')(server, {'pingInterval': 60000, 'pingTimeout': 120000})
 
