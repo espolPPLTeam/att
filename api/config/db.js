@@ -27,7 +27,7 @@ let Desconectar = function() {
 
 let Limpiar = function() {
   return new Promise(function(resolve) {
-    resolve(conn.connection.dropDatabase())
+    resolve(mongoose.connection.dropDatabase())
   })
 }
 
