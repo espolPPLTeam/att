@@ -2,3 +2,4 @@ node_modules/
 *.lock
 _book/
 .nyc_output
+*.log
