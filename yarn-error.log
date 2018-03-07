@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files\Yarn\bin\yarn.js test
+  C:\Program Files\nodejs\node.exe C:\Program Files\Yarn\bin\yarn.js add shortid
 
 PATH: 
   C:\Users\User\bin;E:\git\mingw32\bin;E:\git\usr\local\bin;E:\git\usr\bin;E:\git\usr\bin;E:\git\mingw32\bin;E:\git\usr\bin;C:\Users\User\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Users\User\AppData\Local\Programs\Git\cmd;C:\Program Files\nodejs;C:\Program Files\Yarn\bin;C:\Users\User\Anaconda2;C:\Users\User\Anaconda2\Scripts;C:\Users\User\Anaconda2\Library\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\users\user\documents\jdownloader 2.0 (64-bit)\jdownloader 2.0 (32-bit)\jre\bin;C:\Users\User\AppData\Roaming\npm;C:\Users\User\AppData\Local\Yarn\bin;E:\git\usr\bin\vendor_perl;E:\git\usr\bin\core_perl
@@ -27,7 +27,7 @@ npm manifest:
       "predocs": "gitbook install ./docs",
       "docs": "gitbook build ./docs",
       "docs:s": "gitbook serve ./docs",
-      "test": "mocha api/test/*.test.js",
+      "test": "nyc mocha api/test/*.test.js",
       "coverage": "nyc report --reporter=text-lcov | coveralls",
       "coverage:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
     },
@@ -5293,16 +5293,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
 
 Trace: 
-  Error: Command failed.
-  Exit code: 1
-  Command: C:\WINDOWS\system32\cmd.exe
-  Arguments: /d /s /c mocha api/test/*.test.js
-  Directory: E:\att
-  Output:
-  
-      at ProcessTermError.MessageError (C:\Program Files\Yarn\lib\cli.js:186:110)
-      at new ProcessTermError (C:\Program Files\Yarn\lib\cli.js:226:113)
-      at ChildProcess.<anonymous> (C:\Program Files\Yarn\lib\cli.js:30281:17)
-      at ChildProcess.emit (events.js:127:13)
-      at maybeClose (internal/child_process.js:936:16)
-      at Process.ChildProcess._handle.onexit (internal/child_process.js:220:5)
+  Error: Couldn't find package "shortid" on the "npm" registry.
+      at new MessageError (C:\Program Files\Yarn\lib\cli.js:186:110)
+      at NpmResolver.<anonymous> (C:\Program Files\Yarn\lib\cli.js:51625:15)
+      at Generator.next (<anonymous>)
+      at step (C:\Program Files\Yarn\lib\cli.js:98:30)
+      at C:\Program Files\Yarn\lib\cli.js:109:13
+      at <anonymous>
+      at process._tickCallback (internal/process/next_tick.js:118:7)

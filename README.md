@@ -5,12 +5,17 @@
 # Ask The Teacher
 
 ## Features
-[ ] Single page
-[ ] Mobile first
-[ ] Poder realizar una preguntas por el profesor
-[ ] Habilitar una pregunta por el profesor y que los estudiantes respondan
-[ ] Recibir las preguntas de los estudiantes en tiempo real
-[ ] Recibir respuestas de los estudiantes en tiempo real
+- [ ] Single page
+
+- [ ] Mobile first
+
+- [ ] Poder realizar una preguntas por el profesor
+
+- [ ] Habilitar una pregunta por el profesor y que los estudiantes respondan
+
+- [ ] Recibir las preguntas de los estudiantes en tiempo real
+
+- [ ] Recibir respuestas de los estudiantes en tiempo real
 
 ## Screenshots
 
