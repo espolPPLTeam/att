@@ -46,8 +46,11 @@ const ParaleloSchema = new mongoose.Schema({
     type: String,
     'default': require('shortid').generate
   },
+  codigo: { type: String },
   nombre: { type: String },
   nombreMateria: { type: String },
+  anio: { type: String },
+  termino: { type: String, enum: ['1', '2'] },
   hablitado: {
     type: Boolean,
     'default': true
@@ -131,20 +134,59 @@ const RespuestaSchema = mongoose.Schema({
 },{timestamps: true, versionKey: false, collection: 'respuestas'})
 
 
-PreguntaEstudianteSchema.methods.crearPreguntaEstudiante = function(){
+// ESTUDIANTES
+EstudianteSchema.methods.crearEstudiante = function() {
   let self = this
   return new Promise(function(resolve) {
     resolve(self.save())
   })
 }
 
-PreguntaEstudianteSchema.statics.ObtenerPreguntaEstudiantePorId = function({ preguntaId }){
-  console.log(preguntaId)
+EstudianteSchema.statics.obtenerEstudiantePorCorreo = function({ correo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ correo }))
+  })
+}
+
+// PROFESORES
+ProfesorSchema.methods.crearProfesor = function() {
+  let self = this
+  return new Promise(function(resolve) {
+    resolve(self.save())
+  })
+}
+
+ProfesorSchema.statics.obtenerProfesorPorCorreo = function({ correo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ correo }))
+  })
+}
+
+// PREGUNTA  ESTUDIANTE
+PreguntaEstudianteSchema.statics.ObtenerPreguntaEstudiantePorId = function({ preguntaId }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.findOne({ _id: preguntaId }))
   })
 }
+
+PreguntaEstudianteSchema.statics.ObtenerPreguntasEstudiantesPorParalelo = function({ paraleloId }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.find({ paralelo: paraleloId }))
+  })
+}
+
+PreguntaEstudianteSchema.methods.crearPreguntaEstudiante = function() {
+  let self = this
+  return new Promise(function(resolve) {
+    resolve(self.save())
+  })
+}
+
+
 
 module.exports = { 
   Estudiante: mongoose.model('Estudiante', EstudianteSchema),
