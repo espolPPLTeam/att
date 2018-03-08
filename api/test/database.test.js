@@ -25,24 +25,24 @@ describe('Database', () =>  {
     mongo.Desconectar()
     done()
   })
-  it('obtenerDatosEstudiante', (done) =>  {
+  // it('obtenerDatosEstudiante', (done) =>  {
     
-  })
-  it('obtenerDatosProfesor', (done) =>  {
+  // })
+  // it('obtenerDatosProfesor', (done) =>  {
     
-  })
-  it('crearPreguntaEstudiante', (done) =>  {
+  // })
+  it('cq\+rearPreguntaEstudiante', (done) =>  {
     co(function *() {
-      yield apiModel.crearPreguntaEstudiante({ texto: 'Mi primera Pregunta', paraleloId: 'paraleloId', creador: {_id: 'aaaaa', correo: 'joelerll@gmail.com', matricula: '201305380', nombres: 'Joel Eduardo', apellidos: 'Rodriguez Llamuca'}})
-      assert.equal('a', 'a', 'Tienen que ser iguales')
-      // verificar que se creo correctamente la pregunta
+      const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ texto: 'Mi primera Pregunta', paraleloId: 'paraleloId', creador: {_id: 'aaaaa', correo: 'joelerll@gmail.com', matricula: '201305380', nombres: 'Joel Eduardo', apellidos: 'Rodriguez Llamuca'}})
+      const preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.ObtenerPreguntaEstudiantePorId({ preguntaId: preguntaCreada['_id'] })
+      assert.equal(preguntaEncontrada['texto'], preguntaCreada['texto'], 'Tienen que ser iguales')
       done()
     })
-  })
-  it('crearPreguntaProfesorYHabilitarla', (done) =>  {
+  }).timeout(20000)
+  // it('crearPreguntaProfesorYHabilitarla', (done) =>  {
     
-  })
-  it('crearRespuestaEstudiante', (done) =>  {
+  // })
+  // it('crearRespuestaEstudiante', (done) =>  {
     
-  })
+  // })
 })

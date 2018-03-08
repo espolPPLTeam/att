@@ -138,6 +138,14 @@ PreguntaEstudianteSchema.methods.crearPreguntaEstudiante = function(){
   })
 }
 
+PreguntaEstudianteSchema.statics.ObtenerPreguntaEstudiantePorId = function({ preguntaId }){
+  console.log(preguntaId)
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ _id: preguntaId }))
+  })
+}
+
 module.exports = { 
   Estudiante: mongoose.model('Estudiante', EstudianteSchema),
   PreguntaEstudiante: mongoose.model('PreguntaEstudiante', PreguntaEstudianteSchema),

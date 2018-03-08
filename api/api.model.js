@@ -11,7 +11,7 @@ module.exports = ({ mongoSchema, logger }) => {
       return new Promise(function(resolve, reject) {
         let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
         pregunta.crearPreguntaEstudiante().then(preguntaCreda => {
-            resolve(true)
+            resolve(pregunta)
           })
           .catch(err => logger.error(err))
       })
