@@ -1,27 +1,58 @@
-module.exports = ({ mongoSchema, logger }) => {
-  let PreguntaEstudiante = mongoSchema.PreguntaEstudiante
-  let Estudiante = mongoSchema.Estudiante
-  let Profesor = mongoSchema.Profesor
+module.exports = ({ db, logger }) => {
+  let PreguntaEstudiante = db.PreguntaEstudiante
+  let Estudiante = db.Estudiante
+  let Profesor = db.Profesor
+  let Paralelo = db.Paralelo
   const proto = {
-    crearParalelo({ codigo, materia, nombre, termino, anio }) {
-
+    crearParalelo({ codigo, nombre, curso, termino, anio }) {
+      return new Promise(function(resolve, reject) {
+        let paraleloCreado = new Paralelo({ codigo, nombre, curso, termino, anio })
+        paraleloCreado.crear()
+          .then(() => {
+            resolve(paraleloCreado)
+          }).catch(err => logger.error(err))
+      })
     },
-    anadirEstudianteAParalelo({ correo }) {
-
+    anadirEstudianteAParalelo({ paralelo: { curso, codigo }, estudianteCorreo }) {
+      return new Promise(function(resolve, reject) {
+        Paralelo.anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
+          .then(() => {
+            resolve(true)
+          }).catch(err => logger.error(err))
+      })
     },
-    anadirProfesorAParalelo({ correo }) {
-
+    anadirProfesorAParalelo({ paralelo: { curso, codigo }, profesorCorreo }) {
+      return new Promise(function(resolve, reject) {
+        Paralelo.anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo })
+          .then(() => {
+            resolve(true)
+          }).catch(err => logger.error(err))
+      })
     },
-    eliminarEstudiante({ correo }) {
-      // eliminarlo de paralelo tambien
+    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+      return new Promise(function(resolve, reject) {
+        Promise.all([
+          Estudiante.eliminar({ estudianteCorreo }),
+          Paralelo.eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
+          ]).then((values) => {
+            resolve(true)
+        }).catch(err => logger.error(err))
+      }).catch(err => logger.error(err))
     },
-    cambiarParaleloAEstudiante({ correo }) {
-      // sin cambiar el id
+    cambiarEstudianteDeParalelo({ paraleloNuevo: { cursoNuevo, codigoNuevo }, paraleloAntiguo: { cursoAntiguo, codigoAntiguo }, estudianteCorreo }) {
+      return new Promise(function(resolve, reject) {
+        Promise.all([
+          Paralelo.anadirEstudiante({ paralelo: { curso: cursoNuevo, codigo: codigoNuevo }, estudianteCorreo }),
+          Paralelo.eliminarEstudiante({ paralelo: { curso: cursoAntiguo, codigo: codigoAntiguo }, estudianteCorreo })
+          ]).then((values) => {
+            resolve(true)
+        }).catch(err => logger.error(err))
+      }).catch(err => logger.error(err))
     },
     crearEstudiante({ correo, matricula, nombres, apellidos }) {
       return new Promise(function(resolve, reject) {
         let estudiante = new Estudiante({ correo, matricula, nombres, apellidos })
-        estudiante.crearEstudiante()
+        estudiante.crear()
           .then(() => {
             resolve(estudiante)
           }).catch(err => logger.error(err))
@@ -30,7 +61,7 @@ module.exports = ({ mongoSchema, logger }) => {
     crearProfesor({ correo, tipo, nombres, apellidos }) {
       return new Promise(function(resolve, reject) {
         let profesor = new Profesor({ correo, tipo, nombres, apellidos })
-        profesor.crearProfesor()
+        profesor.crear()
           .then(() => {
             resolve(profesor)
           }).catch(err => logger.error(err))
@@ -40,7 +71,7 @@ module.exports = ({ mongoSchema, logger }) => {
       // FIXME: test
       // TODO: enviar datos del paralelo
       return new Promise(function(resolve, reject) {
-        Estudiante.obtenerEstudiantePorCorreo({ correo })
+        Estudiante.obtenerPorCorreo({ correo })
           .then(estudiante => {
             resolve(estudiante)
           }).catch(err => logger.error(err))
@@ -51,7 +82,7 @@ module.exports = ({ mongoSchema, logger }) => {
       // TODO: enviar los paralelos
       // TODO: como hacer cuando el profesor tenga mas de un paralelo?
       return new Promise(function(resolve, reject) {
-        Profesor.obtenerProfesorPorCorreo({ correo })
+        Profesor.obtenerPorCorreo({ correo })
           .then(estudiante => {
             resolve(estudiante)
           }).catch(err => logger.error(err))
@@ -61,7 +92,7 @@ module.exports = ({ mongoSchema, logger }) => {
       // TODO: anadir a estudiante la lista de preguntas y a las preguntas de paralelo
       return new Promise(function(resolve, reject) {
         let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
-        pregunta.crearPreguntaEstudiante()
+        pregunta.crear()
           .then(preguntaCreda => {
             resolve(pregunta)
           }).catch(err => logger.error(err))
@@ -69,18 +100,18 @@ module.exports = ({ mongoSchema, logger }) => {
     },
     obtenerPreguntasEstudiantesPorParalelo({ paraleloId }) {
       return new Promise(function(resolve, reject) {
-        PreguntaEstudiante.ObtenerPreguntasEstudiantesPorParalelo({ paraleloId })
+        PreguntaEstudiante.obtenerPorParalelo({ paraleloId })
           .then((preguntas) => {
             resolve(preguntas)
           }).catch(err => logger.error(err))
       })
     },
-    crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    // crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
 
-    },
-    crearRespuestaEstudiante({ text, preguntaId, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    // },
+    // crearRespuestaEstudiante({ text, preguntaId, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
 
-    }
+    // }
   }
   return Object.assign(Object.create(proto), {})
 }

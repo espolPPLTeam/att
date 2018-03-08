@@ -66,18 +66,24 @@ module.exports = {
   paralelos: [
     {
       "codigo" : "FISG1002",
-      "nombreMateria" : "FÍSICA II",
-      "nombre" : "2",
+      "nombre" : "FÍSICA II",
+      "curso" : "2",
+      "termino": "1",
+      "anio": "2018"
     },
     {
       "codigo" : "FISG1002",
-      "nombreMateria" : "FÍSICA II",
-      "nombre" : "1",
+      "nombre" : "FÍSICA II",
+      "curso" : "1",
+      "termino": "1",
+      "anio": "2018"
     },
     {
       "codigo" : "FISG1003",
-      "nombreMateria" : "FÍSICA III",
-      "nombre" : "3",
+      "nombre" : "FÍSICA III",
+      "curso" : "3",
+      "termino": "1",
+      "anio": "2018"
     }
   ]
 }

@@ -46,9 +46,9 @@ const ParaleloSchema = new mongoose.Schema({
     type: String,
     'default': require('shortid').generate
   },
-  codigo: { type: String },
+  codigo: { type: String }, // TODO> tiene que ser un enum
   nombre: { type: String },
-  nombreMateria: { type: String },
+  curso: { type: String },
   anio: { type: String },
   termino: { type: String, enum: ['1', '2'] },
   hablitado: {
@@ -136,14 +136,21 @@ const RespuestaSchema = mongoose.Schema({
 
 
 // ESTUDIANTES
-EstudianteSchema.methods.crearEstudiante = function() {
+EstudianteSchema.methods.crear = function() {
   let self = this
   return new Promise(function(resolve) {
     resolve(self.save())
   })
 }
 
-EstudianteSchema.statics.obtenerEstudiantePorCorreo = function({ correo }) {
+EstudianteSchema.statics.eliminar = function({ estudianteCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOneAndRemove({ correo: estudianteCorreo }))
+  })
+}
+
+EstudianteSchema.statics.obtenerPorCorreo = function({ correo }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.findOne({ correo }))
@@ -151,14 +158,14 @@ EstudianteSchema.statics.obtenerEstudiantePorCorreo = function({ correo }) {
 }
 
 // PROFESORES
-ProfesorSchema.methods.crearProfesor = function() {
+ProfesorSchema.methods.crear = function() {
   let self = this
   return new Promise(function(resolve) {
     resolve(self.save())
   })
 }
 
-ProfesorSchema.statics.obtenerProfesorPorCorreo = function({ correo }) {
+ProfesorSchema.statics.obtenerPorCorreo = function({ correo }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.findOne({ correo }))
@@ -167,32 +174,74 @@ ProfesorSchema.statics.obtenerProfesorPorCorreo = function({ correo }) {
 
 
 // PARALELOS
-ParaleloSchema.statics.obtenerParaleloEstudiante = function({ estudianteId }) {
+ParaleloSchema.methods.crear = function() {
+  let self = this
+  return new Promise(function(resolve) {
+    resolve(self.save())
+  })
+}
+
+ParaleloSchema.statics.obtenerPorId = function({ paraleloId }) {
   const self = this
   return new Promise(function(resolve) {
-    resolve(self.findOne({ _id: estudianteId }))
+    resolve(self.findOne({ _id: paraleloId }))
+  })
+}
+
+ParaleloSchema.statics.obtenerParaleloEstudiante = function({ estudianteCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ estudiantes: estudianteCorreo }))
+  })
+}
+
+ParaleloSchema.statics.obtenerParaleloProfesor = function({ profesorCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ profesores: profesorCorreo }))
+  })
+}
+
+ParaleloSchema.statics.anadirEstudiante = function({ paralelo: { curso, codigo }, estudianteCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}))
+  })
+}
+
+ParaleloSchema.statics.anadirProfesor = function({ paralelo: { curso, codigo }, profesorCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}))
+  })
+}
+
+ParaleloSchema.statics.eliminarEstudiante = function({ paralelo: { curso, codigo }, estudianteCorreo }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOneAndUpdate({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}))
   })
 }
 
 // PREGUNTA  ESTUDIANTE
-PreguntaEstudianteSchema.statics.ObtenerPreguntaEstudiantePorId = function({ preguntaId }) {
+PreguntaEstudianteSchema.methods.crear = function() {
+  let self = this
+  return new Promise(function(resolve) {
+    resolve(self.save())
+  })
+}
+
+PreguntaEstudianteSchema.statics.obtenerPorId = function({ preguntaId }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.findOne({ _id: preguntaId }))
   })
 }
 
-PreguntaEstudianteSchema.statics.ObtenerPreguntasEstudiantesPorParalelo = function({ paraleloId }) {
+PreguntaEstudianteSchema.statics.obtenerPorParalelo = function({ paraleloId }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.find({ paralelo: paraleloId }))
-  })
-}
-
-PreguntaEstudianteSchema.methods.crearPreguntaEstudiante = function() {
-  let self = this
-  return new Promise(function(resolve) {
-    resolve(self.save())
   })
 }
 
