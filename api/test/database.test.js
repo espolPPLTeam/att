@@ -1,8 +1,14 @@
 const assert = require('assert')
 const co = require('co')
+const data = require('./database.mock')
 const mongoSchema = require('../config/models')
 const mongo = require('../config/db')
 const logger = require('../config/logger')
+
+process.on('uncaughtException', function(err) {
+  logger.error('Caught exception: ' + err)
+  logger.error(err.stack)
+})
 
 async function ConectarMongo() {
   try {
@@ -41,12 +47,27 @@ describe('Database', () =>  {
       done()
     })
   })
-  // it('obtenerDatosEstudiante', (done) =>  {
-    
-  // })
-  // it('obtenerDatosProfesor', (done) =>  {
-    
-  // })
+
+  it('crear Profesor y obtener Profesor', (done) => {
+    co(function *() {
+      const profesor = data.profesores[0]
+      const profesorCreado = yield apiModel.crearProfesor(profesor)
+      const profesorEncontrado = yield apiModel.obtenerDatosProfesorPorCorreo({ correo: profesor['correo'] })
+      assert.equal(profesor['correo'], profesorEncontrado['correo'], 'Tienen que ser iguales')
+      done()
+    })
+  })
+
+  it('crear Estudiante y obtener Estudiante', (done) => {
+    co(function *() {
+      const estudiante = data.estudiantes[0]
+      const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+      const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo'] })
+      assert.equal(estudiante['correo'], estudianteEncontrado['correo'], 'Tienen que ser iguales')
+      done()
+    })
+  }).timeout(5000)
+
   it('crearPreguntaEstudiante', (done) =>  {
     co(function *() {
       const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ 

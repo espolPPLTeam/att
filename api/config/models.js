@@ -58,11 +58,12 @@ const ParaleloSchema = new mongoose.Schema({
   profesores: [{
     type: String,
     ref: 'Profesor',
-    'default': ''
+    field: 'correo' 
   }],
   estudiantes: [{
     type: String,
-    ref: 'Estudiante'
+    ref: 'Estudiante',
+    field: 'correo'
   }],
   preguntasProfesor: [{
     type: String,
@@ -161,6 +162,15 @@ ProfesorSchema.statics.obtenerProfesorPorCorreo = function({ correo }) {
   const self = this
   return new Promise(function(resolve) {
     resolve(self.findOne({ correo }))
+  })
+}
+
+
+// PARALELOS
+ParaleloSchema.statics.obtenerParaleloEstudiante = function({ estudianteId }) {
+  const self = this
+  return new Promise(function(resolve) {
+    resolve(self.findOne({ _id: estudianteId }))
   })
 }
 

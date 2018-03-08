@@ -62,7 +62,7 @@ module.exports = {
       "matricula" : "201505975",
       "correo" : "bjcobos@espol.edu.ec"
     }
-  ]
+  ],
   paralelos: [
     {
       "codigo" : "FISG1002",
