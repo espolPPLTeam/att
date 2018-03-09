@@ -90,6 +90,10 @@ const PreguntaEstudianteSchema = mongoose.Schema({
   paralelo: { 
     type: String,
     ref: 'Paralelo'
+  },
+  destacada: {
+    type: Boolean,
+    'default': false
   }
 },{timestamps: true, versionKey: false, collection: 'preguntasEstudiante'})
 
@@ -131,121 +135,144 @@ const RespuestaSchema = mongoose.Schema({
     correo: { type: String },
     nombres: { type: String },
     apellidos: { type: String }
+  },
+  destacada: {
+    type: Boolean,
+    'default': false
   }
 },{timestamps: true, versionKey: false, collection: 'respuestas'})
 
-
-// ESTUDIANTES
-EstudianteSchema.methods.crear = function() {
-  let self = this
-  return new Promise(function(resolve) {
-    resolve(self.save())
-  })
+EstudianteSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
 }
 
-EstudianteSchema.statics.eliminar = function({ estudianteCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOneAndRemove({ correo: estudianteCorreo }))
-  })
+ParaleloSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
 }
 
-EstudianteSchema.statics.obtenerPorCorreo = function({ correo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ correo }))
-  })
+ProfesorSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
 }
 
-// PROFESORES
-ProfesorSchema.methods.crear = function() {
-  let self = this
-  return new Promise(function(resolve) {
-    resolve(self.save())
-  })
+PreguntaEstudianteSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
 }
 
-ProfesorSchema.statics.obtenerPorCorreo = function({ correo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ correo }))
-  })
+EstudianteSchema.statics = {
+  eliminar({ estudianteCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOneAndRemove({ correo: estudianteCorreo }))
+    })
+  },
+  anadirPregunta({ correo, preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOneAndUpdate({ correo }, {$addToSet: {'preguntas': preguntaId }}))
+    })
+  },
+  obtenerPorCorreo({ correo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ correo }))
+    })
+  }
 }
 
-
-// PARALELOS
-ParaleloSchema.methods.crear = function() {
-  let self = this
-  return new Promise(function(resolve) {
-    resolve(self.save())
-  })
+ProfesorSchema.statics = {
+  obtenerPorCorreo({ correo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ correo }))
+    })
+  }
 }
 
-ParaleloSchema.statics.obtenerPorId = function({ paraleloId }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ _id: paraleloId }))
-  })
+ParaleloSchema.statics = {
+  obtenerPorId({ paraleloId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id: paraleloId }))
+    })
+  },
+  obtenerParaleloEstudiante({ estudianteCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ estudiantes: estudianteCorreo }))
+    })
+  },
+  obtenerParalelosProfesor({ profesorCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ profesores: profesorCorreo }))
+    })
+  },
+  anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}))
+    })
+  },
+  anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}))
+    })
+  },
+    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOneAndUpdate({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}))
+    })
+  },
+  anadirPreguntaEstudiante({ paraleloId, preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOneAndUpdate({ _id: paraleloId }, {$addToSet: {'preguntasEstudiante': preguntaId }}))
+    })
+  }
 }
 
-ParaleloSchema.statics.obtenerParaleloEstudiante = function({ estudianteCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ estudiantes: estudianteCorreo }))
-  })
+PreguntaEstudianteSchema.statics = {
+  obtenerPorId({ preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id: preguntaId }))
+    })
+  },
+  obtenerPorParalelo({ paraleloId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ paralelo: paraleloId }))
+    })
+  },
+  destacar({ preguntaId, descatadaEstado }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.update({ _id: preguntaId }, {$set: { destacada: descatadaEstado }}))
+    })
+  }
 }
-
-ParaleloSchema.statics.obtenerParaleloProfesor = function({ profesorCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ profesores: profesorCorreo }))
-  })
-}
-
-ParaleloSchema.statics.anadirEstudiante = function({ paralelo: { curso, codigo }, estudianteCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}))
-  })
-}
-
-ParaleloSchema.statics.anadirProfesor = function({ paralelo: { curso, codigo }, profesorCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}))
-  })
-}
-
-ParaleloSchema.statics.eliminarEstudiante = function({ paralelo: { curso, codigo }, estudianteCorreo }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOneAndUpdate({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}))
-  })
-}
-
-// PREGUNTA  ESTUDIANTE
-PreguntaEstudianteSchema.methods.crear = function() {
-  let self = this
-  return new Promise(function(resolve) {
-    resolve(self.save())
-  })
-}
-
-PreguntaEstudianteSchema.statics.obtenerPorId = function({ preguntaId }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.findOne({ _id: preguntaId }))
-  })
-}
-
-PreguntaEstudianteSchema.statics.obtenerPorParalelo = function({ paraleloId }) {
-  const self = this
-  return new Promise(function(resolve) {
-    resolve(self.find({ paralelo: paraleloId }))
-  })
-}
-
-
 
 module.exports = { 
   Estudiante: mongoose.model('Estudiante', EstudianteSchema),

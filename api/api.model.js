@@ -68,33 +68,62 @@ module.exports = ({ db, logger }) => {
       })
     },
     obtenerDatosEstudiantePorCorreo({ correo }) {
-      // FIXME: test
-      // TODO: enviar datos del paralelo
       return new Promise(function(resolve, reject) {
-        Estudiante.obtenerPorCorreo({ correo })
-          .then(estudiante => {
+        Promise.all([
+          Estudiante.obtenerPorCorreo({ correo }),
+          Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: correo })
+          ]).then((values) => {
+            let estudiante = null
+            if (values[0]) {
+              estudiante = values[0]
+              if ( values[1] ) {
+                estudiante['paraleloId'] = values[1]['_id'] 
+              } else {
+                estudiante['paraleloId'] = null
+              }
+            }
             resolve(estudiante)
-          }).catch(err => logger.error(err))
+        }).catch(err => logger.error(err))
       })
     },
     obtenerDatosProfesorPorCorreo({ correo }) {
-      // FIXME: test
-      // TODO: enviar los paralelos
-      // TODO: como hacer cuando el profesor tenga mas de un paralelo?
       return new Promise(function(resolve, reject) {
-        Profesor.obtenerPorCorreo({ correo })
-          .then(estudiante => {
-            resolve(estudiante)
-          }).catch(err => logger.error(err))
+        Promise.all([
+          Profesor.obtenerPorCorreo({ correo }),
+          Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo })
+          ]).then((values) => {
+            let profesor = null
+            if (values[0]) {
+              profesor = values[0]
+              if (values[1]) {
+                profesor['paralelos'] = values[1]
+              } else {
+                profesor['paralelos'] = []
+              }
+            }
+            resolve(profesor)
+        }).catch(err => logger.error(err))
       })
     },
     crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
-      // TODO: anadir a estudiante la lista de preguntas y a las preguntas de paralelo
       return new Promise(function(resolve, reject) {
         let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
         pregunta.crear()
           .then(preguntaCreda => {
-            resolve(pregunta)
+            Promise.all([
+              Estudiante.anadirPregunta({ correo, preguntaId: pregunta['_id'] }),
+              Paralelo.anadirPreguntaEstudiante({ paraleloId, preguntaId: pregunta['_id'] })
+              ]).then((values) => {
+                resolve(pregunta)
+            }).catch(err => logger.error(err))
+          }).catch(err => logger.error(err))
+      })
+    },
+    destacarPregunta({ preguntaId, descatadaEstado }) {
+      return new Promise(function(resolve, reject) {
+        PreguntaEstudiante.destacar({ preguntaId, descatadaEstado })
+          .then(() => {
+            resolve(true)
           }).catch(err => logger.error(err))
       })
     },

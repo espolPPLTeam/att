@@ -23,9 +23,9 @@
 
 ## Prerequisites
 
-* Nodejs > 7.0.0
+* Nodejs > 9.3.0
 
-* Mongodb
+* Mongodb > 3.3.0
 
 ## Development
 
