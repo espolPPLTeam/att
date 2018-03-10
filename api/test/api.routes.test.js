@@ -17,8 +17,6 @@ const mongo = require('../config/db')
 const messages = require('../config/messages')
 const db = require('../config/models')
 
-
-
 const model = modelRequire({ db, logger })
 const controller = controllerRequire({ responses, messages, model, logger, validator })
 
@@ -63,8 +61,7 @@ describe('Routes - Integration', () => {
           }, 
           profesorCorreo: profesor['correo'] })
         request(app)
-        .post('/api/att/profesor/paralelos')
-        .send({ profesorCorreo: profesor['correo'] })
+        .get('/api/att/profesor/paralelos' + profesor['correo'])
         .end(function(err, res) {
           console.log(res.body)
      //      let profesorRes = profesor
@@ -94,3 +91,6 @@ describe('Routes - Integration', () => {
     })
   })
 })
+
+
+      // .send({ profesorCorreo: profesor['correo'] })

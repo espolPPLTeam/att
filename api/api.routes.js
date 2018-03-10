@@ -1,8 +1,8 @@
 module.exports = ({ app, controller, logger }) => {
   app
-  .route('/profesor/paralelos')
-    .post((req, res) => {
-      let profesorCorreo = req.body.profesorCorreo
+  .route('/profesor/paralelos/:profesorCorreo')
+    .get((req, res) => {
+      let profesorCorreo = req.params.profesorCorreo
       controller.ObtenerParalelosProfesor({ profesorCorreo })
         .then((resp) => {
           res.json(resp)
