@@ -1,4 +1,26 @@
-# GET Profesores Obtener Datos
+{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos" %}
+
+Obtiene los datos basicos de los profesores incluido los paralelos que esta asignado
+
+### Response:
+```json
+{
+	nombres: 'joel'
+}
+```
+
+{% endapi %}
+
+{% api "Preguntas Estudiantes Hoy", method="GET", url="/api/att/profesor/paralelos" %}
+{% endapi %}
+
+{% api "Crear Pregunta", method="POST", url="/api/att/profesor/paralelos" %}
+{% endapi %}
+
+{% api "Destacar pregunta destacarPregunta", method="PUT", url="/api/att/profesor/paralelos" %}
+{% endapi %}
+
+<!-- # GET Profesores Obtener Datos
 
 __URL__ 
 
@@ -18,7 +40,7 @@ _response_
 
 # POST Crear Pregunta
 
-# PUT Destacar pregunta destacarPregunta
+# PUT Destacar pregunta destacarPregunta -->
 
 <!-- 
 _request_
@@ -28,7 +50,7 @@ _request_
 
 __BODY__ -->
 
-{% api "List App Pages", method="GET", url="https://www.magloft.com/api/portal/v1/app_pages/:app_id/page/:page" %}
+<!-- {% api "List App Pages", method="POST", url="https://www.magloft.com/api/portal/v1/app_pages/:app_id/page/:page" %}
 
 This endpoint **returns** a list of all `app pages` that belong to the magazine
 
@@ -52,4 +74,4 @@ This endpoint **returns** a list of all `app pages` that belong to the magazine
 }
 ```
 
-{% endapi %}
+{% endapi %} -->

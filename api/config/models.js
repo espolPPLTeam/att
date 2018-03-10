@@ -52,7 +52,7 @@ const ParaleloSchema = new mongoose.Schema({
   curso: { type: String },
   anio: { type: String },
   termino: { type: String, enum: ['1', '2'] },
-  hablitado: {
+  habilitado: {
     type: Boolean,
     'default': true
   },

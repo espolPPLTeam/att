@@ -93,16 +93,20 @@ module.exports = ({ db, logger }) => {
           Profesor.obtenerPorCorreo({ correo }),
           Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo })
           ]).then((values) => {
-            let profesor = null
+            let paralelos = values[1]
+            let profesorDatos = values[0]
             if (values[0]) {
-              profesor = values[0]
-              if (values[1]) {
-                profesor['paralelos'] = values[1]
-              } else {
-                profesor['paralelos'] = []
-              }
+              let profesor = (({ correo, tipo, nombres, apellidos }) => ({ correo, tipo, nombres, apellidos }))(profesorDatos)
+              const PARALELOS_FILTRADOS = paralelos.map(function(paralelo) {
+                return (({ codigo, _id, curso, nombre }) => ({ codigo, _id, curso, nombre }))(paralelo)
+              }, [])
+              profesor['paralelos'] = PARALELOS_FILTRADOS
+              resolve(profesor)
+            } else {
+              let profesor = null
+              resolve(profesor)
             }
-            resolve(profesor)
+            
         }).catch(err => logger.error(err))
       })
     },

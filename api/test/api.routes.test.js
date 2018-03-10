@@ -52,15 +52,33 @@ describe('Routes - Integration', () => {
   describe('GET Profesores Obtener Datos', () => {
     it('OK', (done) => {
       let profesor = data.profesores[0]
-      model.crearProfesor(profesor).then(() => {
+      let paralelo = data.paralelos[0]
+      co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        yield model.anadirProfesorAParalelo({ 
+          paralelo: { 
+            curso: paralelo['curso'], 
+            codigo: paralelo['codigo']
+          }, 
+          profesorCorreo: profesor['correo'] })
         request(app)
         .post('/api/att/profesor/paralelos')
         .send({ profesorCorreo: profesor['correo'] })
         .end(function(err, res) {
+          console.log(res.body)
+     //      let profesorRes = profesor
+     //      let paralelos = 
+     //      expect(profesorRes['']).to.equal(profesor['correo'])
+     //       paralelos: [ [Object] ],
+     // correo: 'mheredia@espol.edu.ec',
+     // tipo: 'titular',
+     // nombres: 'TAMARA',
+     // apellidos: 'HEREDIA' }
           // res.status.should.equal(200)
           // res.should.be.json
           // res.should.have.status(201)
-      // res.body.error.should.equal(false);
+          // res.body.error.should.equal(false);
           done()
         })
       })
