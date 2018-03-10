@@ -1,102 +1,199 @@
-// https://templecoding.com/blog/2016/02/29/how-to-stub-promises-using-sinonjs/
-// http://chaijs.com/api/bdd/
-// https://www.sitepoint.com/sinon-tutorial-javascript-testing-mocks-spies-stubs/
-// https://semaphoreci.com/community/tutorials/best-practices-for-spies-stubs-and-mocks-in-sinon-js
-// http://www.zsoltnagy.eu/stubbing-with-sinonjs/
-// http://elijahmanor.com/unit-test-like-a-secret-agent-with-sinon-js/
-// https://github.com/thlorenz/proxyquire
-// https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
-// https://gyandeeps.com/console-stubbing/
-// https://stackoverflow.com/questions/30593632/sinon-stub-not-stubbing-original-method
-// http://tostring.it/2014/06/23/advanced-logging-with-nodejs/
-// https://stackoverflow.com/questions/30625404/how-to-unit-test-console-output-with-mocha-on-nodejs
-const assert = require('assert')
 const validator = require('validator')
 const moment = require('moment')
 const sinon = require('sinon')
 const expect = require('chai').expect
 const co = require('co')
+
 const data = require('./database.mock')
-const modelReq = require('../api.model')
-const mongoSchema = require('../config/models')
 const responses = require('../config/responses')
 const logger = require('../config/logger')
+const messages = require('../config/messages')
+const modelReq = require('../api.model')
 require('mocha-sinon')
-// var sinonStubPromise = require('sinon-stub-promise')
-// sinonStubPromise(sinon)
-const model = modelReq({ db: mongoSchema, logger })
+
 process.on('uncaughtException', function(err) {
   logger.error('Caught exception: ' + err)
   logger.error(err.stack)
 })
 
-const controllerReq = require('../api.controller')
+function crearStub(tipo, metodo, response) {
+  let modelStub = {}
+  if (tipo === 'resolve') {
+    modelStub[metodo] = () => { return Promise.resolve(response) }
+    return modelStub
+  }
+  modelStub[metodo] = () => { return Promise.reject(response) }
+  return modelStub
+}
 
+// FIXME: como saber si le estoy pasando los datos correctos a los metodos
 describe('Controller', () =>  {
-  let stubedFetch
-  before(function(done) {
-  	done()
-  })
-  after(function(done) {
-  	// sinon.restore(model)
-  	done()
-  })
-  beforeEach(function(done) {
-  	this.f = sinon.stub()
-  	done()
-  })
+  const paramsController = { responses, messages, model: {}, logger, validator }
+  const controllerRequire = require('../api.controller')
+  
   describe('obtener datos profesor', () =>  {
+    const profesor = data.profesores[0]
   	beforeEach(function() {
-    	this.sinon.stub(logger, 'error')
+      this.sinon.stub(logger, 'error')
   	})
-  	const modelMock = ({}) => {
-      const proto = {
-  		obtenerDatosProfesorPorCorreo() {
-  		  return new Promise(function(resolve) {
-  		    resolve({ profesor: profesor['correo'] })
-  		  })
-  		}
-  	  }
-  	  return Object.assign(Object.create(proto), {})
-  	}
-  	const profesor = data.profesores[0]
   	it('OK', (done) => {
-  	  const controller = controllerReq({ responses, model: modelMock({}), logger, validator, moment })
-  	  co(function *() {
-  	    let response = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
-  	    assert.equal(response['estado'], true, 'La accion debe ser valida')
-  	    assert.equal(response['codigoEstado'], 200, 'http OK')
-  	    done()
-  	  }).catch((err) => console.error(err))
+      paramsController['model'] = crearStub('resolve', 'obtenerDatosProfesorPorCorreo', 'return')
+  	  const controller = controllerRequire(paramsController)
+      controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(true)
+          done()
+        }).catch((err) => console.error(err))
+    })
+    it('PROFESOR NO EXISTE', (done) => {
+      paramsController['model'] = crearStub('resolve', 'obtenerDatosProfesorPorCorreo', null)
+      const controller = controllerRequire(paramsController)
+      controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(false)
+          expect(response['datos']).to.equal(messages.PROFESOR_NO_EXISTE)
+          done()
+        }).catch((err) => console.error(err))
     })
     it('BODY ERROR', (done) => {
-      const controller = controllerReq({ responses, model: modelMock({}), logger, validator, moment })
-  	  co(function *() {
-  	    let response = yield controller.ObtenerParalelosProfesor({ profesorCorreo: 'aaaa' })
-  	    assert.equal(response['estado'], false, 'La accion debe ser valida')
-  	    assert.equal(response['codigoEstado'], 200, 'http OK')
-  	    assert.equal(response['datos'], 'El correo no es válido', 'http OK')
-  	    done()
-  	  }).catch((err) => console.error(err))
+      paramsController['model'] = crearStub('resolve', 'obtenerDatosProfesorPorCorreo', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.ObtenerParalelosProfesor({ profesorCorreo: 'aaaa' })
+        .then((response) => {
+          expect(response['estado']).to.equal(false)
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['datos']).to.equal(messages.CORREO_INVALIDO)
+          done()
+        }).catch((err) => console.error(err))
     })
     it('SERVER ERROR', (done) => {
-  	  co(function *() {
-  	  	const modelErrorMock = ({}) => {
-      	  const proto = {
-  		    obtenerDatosProfesorPorCorreo() {
-  		      return new Promise(function(resolve, reject) {
-  		        reject({ message: 'Error mensaje'})
-  		      })
-  		    }
-  	  	  }
-  	  	  return Object.assign(Object.create(proto), {})
-  		}
-  		const controller = controllerReq({ responses, model: modelErrorMock({}), logger, validator, moment })
-  	    let response = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
-  	    expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
-  	    expect( logger.error.calledOnce ).to.be.true
-  	    done()
-  	  }).catch((err) => console.error(err))
+      paramsController['model'] = crearStub('reject', 'obtenerDatosProfesorPorCorreo', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
+        .then((response) => {
+          expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
+          expect(logger.error.calledOnce).to.be.true
+          done()
+        }).catch((err) => console.error(err))
+    })
+  })
+  describe('preguntas estudiantes hoy', () =>  {
+    beforeEach(function() {
+      this.sinon.stub(logger, 'error')
+    })
+    it('OK', (done) => {
+      paramsController['model'] = crearStub('resolve', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.preguntasEstudianteHoy({ paraleloId:  'aaa'})
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(true)
+          done()
+        }).catch((err) => console.error(err))
+    })
+    it('SERVER ERROR', (done) => {
+      paramsController['model'] = crearStub('reject', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.preguntasEstudianteHoy({ paraleloId:  'aaa'})
+        .then((response) => {
+          expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
+          expect(logger.error.calledOnce).to.be.true
+          done()
+        }).catch((err) => console.error(err))
+    })
+  })
+  describe('crear pregunta estudiante', () =>  {
+    let estudiante = data.estudiantes[0]
+    beforeEach(function() {
+      this.sinon.stub(logger, 'error')
+    })
+    it('OK', (done) => {
+      paramsController['model'] = crearStub('resolve', 'crearPreguntaEstudiante', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.crearPreguntaEstudiante({ 
+        texto: 'Mi primera pregunta', 
+        paraleloId: 'aaa', 
+        creador: { 
+          _id: 'aaa', 
+          correo: estudiante['correo'], 
+          matricula: estudiante['matricula'], 
+          nombres: estudiante['nombres'], 
+          apellidos: estudiante['apellidos'] 
+        } })
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(true)
+          done()
+        }).catch((err) => console.error(err))
+    })
+    it('BODY ERROR', (done) => {
+      paramsController['model'] = crearStub('resolve', 'crearPreguntaEstudiante', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.crearPreguntaEstudiante({ 
+        texto: 'Mi primera pregunta', 
+        paraleloId: '', 
+        creador: {
+          _id: 'aaa', 
+          correo: estudiante['correo'], 
+          matricula: estudiante['matricula'], 
+          nombres: estudiante['nombres'], 
+          apellidos: estudiante['apellidos'] 
+        } })
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(false)
+          expect(response['datos']).to.equal(messages.PARALELOID_VACIO)
+          done()
+        }).catch((err) => console.error(err))
+    })
+    it('SERVER ERROR', (done) => {
+      paramsController['model'] = crearStub('reject', 'crearPreguntaEstudiante', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.crearPreguntaEstudiante({ 
+        texto: 'Mi primera pregunta', 
+        paraleloId: 'aaa', 
+        creador: { 
+          _id: 'aaa', 
+          correo: estudiante['correo'], 
+          matricula: estudiante['matricula'], 
+          nombres: estudiante['nombres'], 
+          apellidos: estudiante['apellidos'] 
+        } })
+        .then((response) => {
+          expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
+          expect(logger.error.calledOnce).to.be.true
+          done()
+        }).catch((err) => console.error(err))
+    })
+  })
+  describe('destacar pregunta', () =>  {
+    beforeEach(function() {
+      this.sinon.stub(logger, 'error')
+    })
+    it('OK', (done) => {
+      paramsController['model'] = crearStub('resolve', 'destacarPregunta', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.destacarPregunta({ preguntaId: 'aaa', destacadaEstado: true })
+        .then((response) => {
+          expect(response['codigoEstado']).to.equal(200)
+          expect(response['estado']).to.equal(true)
+          done()
+        }).catch((err) => console.error(err))
+    })
+    it('PREGUNTAID NO EXISTE', (done) => {
+      done()
+    })
+    it('SERVER ERROR', (done) => {
+      paramsController['model'] = crearStub('reject', 'destacarPregunta', 'return')
+      const controller = controllerRequire(paramsController)
+      controller.destacarPregunta({ preguntaId: 'aaa', destacadaEstado: true })
+        .then((response) => {
+          expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
+          expect(logger.error.calledOnce).to.be.true
+          done()
+        }).catch((err) => console.error(err))
     })
   })
 })

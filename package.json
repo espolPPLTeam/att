@@ -13,6 +13,7 @@
     "docs:s": "gitbook serve ./docs",
     "test": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.test.js --exit",
     "test:c": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.controller.test.js --exit",
+    "test:m": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.model.test.js --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },

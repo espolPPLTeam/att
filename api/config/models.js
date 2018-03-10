@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const shortid = require('shortid')
+const moment = require('moment')
 mongoose.Promise = global.Promise
 
 const EstudianteSchema = mongoose.Schema({
@@ -145,9 +146,7 @@ const RespuestaSchema = mongoose.Schema({
 EstudianteSchema.methods = {
   crear() {
     let self = this
-    return new Promise(function(resolve) {
-      resolve(self.save())
-    })
+    return Promise.resolve(self.save())
   }
 }
 
@@ -260,10 +259,13 @@ PreguntaEstudianteSchema.statics = {
       resolve(self.findOne({ _id: preguntaId }))
     })
   },
-  obtenerPorParalelo({ paraleloId }) {
+  // TODO: testear que acepte solo las del dia de hoy
+  obtenerPorParaleloHoy({ paraleloId }) {
+    let start = moment().startOf('day')
+    let end = moment().endOf('day')
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.find({ paralelo: paraleloId }))
+      resolve(self.find({$and: [{ paralelo: paraleloId }, {createdAt: {$gte: start, $lt: end } }]}))
     })
   },
   destacar({ preguntaId, descatadaEstado }) {

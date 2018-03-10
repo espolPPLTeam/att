@@ -1,0 +1,12 @@
+// https://templecoding.com/blog/2016/02/29/how-to-stub-promises-using-sinonjs/
+// http://chaijs.com/api/bdd/
+// https://www.sitepoint.com/sinon-tutorial-javascript-testing-mocks-spies-stubs/
+// https://semaphoreci.com/community/tutorials/best-practices-for-spies-stubs-and-mocks-in-sinon-js
+// http://www.zsoltnagy.eu/stubbing-with-sinonjs/
+// http://elijahmanor.com/unit-test-like-a-secret-agent-with-sinon-js/
+// https://github.com/thlorenz/proxyquire
+// https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8
+// https://gyandeeps.com/console-stubbing/
+// https://stackoverflow.com/questions/30593632/sinon-stub-not-stubbing-original-method
+// http://tostring.it/2014/06/23/advanced-logging-with-nodejs/
+// https://stackoverflow.com/questions/30625404/how-to-unit-test-console-output-with-mocha-on-nodejs
