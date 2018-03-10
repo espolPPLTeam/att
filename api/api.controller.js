@@ -1,8 +1,7 @@
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
     async ObtenerParalelosProfesor({ profesorCorreo }) {
-      let esCorreo = validator.isEmail(profesorCorreo)
-      if (esCorreo) {
+      if (profesorCorreo && validator.isEmail(profesorCorreo)) {
       	try {
           let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo: profesorCorreo })
           if (profesorDatos) {

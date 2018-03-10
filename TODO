@@ -10,3 +10,5 @@
 // https://stackoverflow.com/questions/30593632/sinon-stub-not-stubbing-original-method
 // http://tostring.it/2014/06/23/advanced-logging-with-nodejs/
 // https://stackoverflow.com/questions/30625404/how-to-unit-test-console-output-with-mocha-on-nodejs
+
+https://github.com/testdouble/testdouble.js

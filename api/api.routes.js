@@ -1,5 +1,6 @@
 module.exports = ({ app, controller, logger }) => {
-  app.route('/profesor/paralelos')
+  app
+  .route('/profesor/paralelos')
     .post((req, res) => {
       let profesorCorreo = req.body.profesorCorreo
       controller.ObtenerParalelosProfesor({ profesorCorreo })
@@ -13,11 +14,28 @@ module.exports = ({ app, controller, logger }) => {
           res.status(resp.codigoEstado)
         })
     })
-  app.route('/profesor/preguntasEstudianteHoy')
-  app.route('/profesor/destacarPregunta')
-  
-  // app.route('/profesor/respuestasPregunta')
-  // app.route('/profesor/crearPregunta')
-  // app.route('/profesor/preguntasProfesorHistorial')
-  // app.route('/profesor/terminarPregunta')
+
+  app
+  .route('/profesor/preguntasEstudianteHoy')
+    .get((req, res) => {
+
+    })
+
+  app
+  .route('/profesor/destacarPregunta')
+    .put((req, res) => {
+
+    })
+
+  app
+  .route('/estudiante/preguntar')
+    .post((req, res) => {
+
+    })
 }
+
+
+// app.route('/profesor/respuestasPregunta')
+// app.route('/profesor/crearPregunta')
+// app.route('/profesor/preguntasProfesorHistorial')
+// app.route('/profesor/terminarPregunta')

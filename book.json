@@ -1,5 +1,5 @@
 {
-  "root": ".",
+  "root": "./docs",
   "title": "att",
   "author": "Joel Rodriguez",
   "language": "es",
@@ -10,7 +10,8 @@
     "glossary": "GLOSSARY.md"
   },
   "plugins" : [
-
+     "copy-code-button",
+     "api"
   ],
   "pluginsConfig": {
     "fontSettings": {
