@@ -24,6 +24,8 @@ const mongo = require('../config/db')
 const messages = require('../config/messages')
 const db = require('../config/models')
 
+const generatorDocs = require('./docs.generator')
+
 const model = modelRequire({ db, logger })
 const controller = controllerRequire({ responses, messages, model, logger, validator })
 
@@ -37,6 +39,7 @@ async function ConectarMongo() {
 }
 
 describe('Routes - Integration', () => {
+  let docs = []
   before(function(done) {
     co(function *() {
       yield ConectarMongo()
@@ -46,6 +49,7 @@ describe('Routes - Integration', () => {
   })
   after(function(done) {
     mongo.Desconectar()
+    // generatorDocs.generate({ docs })
     done()
   })
   beforeEach(function(done) {
@@ -56,10 +60,21 @@ describe('Routes - Integration', () => {
   })
   describe('GET Profesores Obtener Datos', () => {
     it('OK', (done) => {
-      // let params
-      // let body
-      // let request
-      // let response
+      let doc = {
+        nombre: 'Profesores Obtener Datos',
+        metodo: 'GET',
+        url: '/api/att/profesor/paralelos/:profesorCorreo',
+        descripcion: 'Da los paralelos para que se pueda escribir en la pagina principal los paralelos',
+        params: [
+          {
+            nombre: 'profesorCorreo',
+            tipo: 'String',
+            descripcion: ' --- '
+          }
+        ],
+        response: [
+        ]
+      }
       let profesor = data.profesores[0]
       let paralelo = data.paralelos[0]
       co(function *() {
@@ -74,9 +89,12 @@ describe('Routes - Integration', () => {
         request(app)
         .get('/api/att/profesor/paralelos/' + profesor['correo'])
         .end(function(err, res) {
+          doc['response'].push(generatorDocs.toString(res.body))
+          docs.push(doc)
           expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
           expect(res.status).to.equal(200)
           done()
+          
         })
       })
     }).timeout(5000)

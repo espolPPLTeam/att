@@ -1,44 +1,44 @@
 # Api DOCS
+{% for doc in docs %}
 
-{{blockInicio}} api "{{ nombre }}", method="{{ metodo }}", url="{{ url }}" {{blockFin}}
+{{blockInicio}} api "{{ doc.nombre }}", method="{{ doc.metodo }}", url="{{ doc.url }}" {{blockFin}}
 
-{{ descripcion }}
+{{ doc.descripcion }}
 
-```json
-{{ persona }}
-```
-{% if params %}
+{% if doc.params %}
+	{% for params in doc.params %}
 ### Params:
-| Name       | Type    | Desc                                                |
-| :--------- | :------ | :-------------------------------------------------- |
-| correoProfesor | String  |                        |
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------|
+| {{params.nombre}} | {{params.tipo}}  |  {{params.descripcion}}  |
+	{% endfor %}
 {% endif %}
 
-{% if body %}
+{% if doc.body %}
+	{% for body in doc.body %}
 ### Body:
-| Name       | Type    | Desc                                                |
-| :--------- | :------ | :-------------------------------------------------- |
-| nombres | String  |                        |
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------|
+| {{body.nombre}} | {{body.tipo}}  |  {{body.descripcion}}  |
+	{% endfor %}
 {% endif %}
 
-{% if request %}
+{% if doc.request %}
 ### Request:
 
 ```json
-{
-	nombres: 'joel'
-}
+{{ doc.request }}
 ```
 {% endif %}
 
-{% if response %}
+{% if doc.response %}
 ### Response:
 
 ```json
-{
-	nombres: 'joel'
-}
+{{ doc.response }}
 ```
 {% endif %}
 
 {{blockInicio}} endapi {{blockFin}}
+
+{% endfor %}
