@@ -1,8 +1,13 @@
-{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos" %}
+{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos/:profesorCorreo %}
 
 Obtiene los datos basicos de los profesores incluido los paralelos que esta asignado
 
+### Params:
+| Name       | Type    | Desc                                                |
+| :--------- | :------ | :-------------------------------------------------- |
+| correoProfesor | String  |                        |
 ### Response:
+
 ```json
 {
 	nombres: 'joel'

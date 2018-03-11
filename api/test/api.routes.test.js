@@ -1,3 +1,8 @@
+process.on('uncaughtException', function(err) {
+  console.error('Caught exception: ' + err)
+  console.error(err.stack)
+})
+
 const app = require('../../app').app
 const request = require('supertest')
 const sinon = require('sinon')
@@ -7,7 +12,9 @@ const co = require('co')
 const moment = require('moment')
 const validator = require('validator')
 const Ajv = require('ajv')
+const ajv = new Ajv({$data: true})
 
+const schema = require('../config/schemas')
 const data = require('./database.mock')
 const controllerRequire = require('../api.controller')
 const modelRequire = require('../api.model')
@@ -49,6 +56,10 @@ describe('Routes - Integration', () => {
   })
   describe('GET Profesores Obtener Datos', () => {
     it('OK', (done) => {
+      // let params
+      // let body
+      // let request
+      // let response
       let profesor = data.profesores[0]
       let paralelo = data.paralelos[0]
       co(function *() {
@@ -61,21 +72,10 @@ describe('Routes - Integration', () => {
           }, 
           profesorCorreo: profesor['correo'] })
         request(app)
-        .get('/api/att/profesor/paralelos' + profesor['correo'])
+        .get('/api/att/profesor/paralelos/' + profesor['correo'])
         .end(function(err, res) {
-          console.log(res.body)
-     //      let profesorRes = profesor
-     //      let paralelos = 
-     //      expect(profesorRes['']).to.equal(profesor['correo'])
-     //       paralelos: [ [Object] ],
-     // correo: 'mheredia@espol.edu.ec',
-     // tipo: 'titular',
-     // nombres: 'TAMARA',
-     // apellidos: 'HEREDIA' }
-          // res.status.should.equal(200)
-          // res.should.be.json
-          // res.should.have.status(201)
-          // res.body.error.should.equal(false);
+          expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
+          expect(res.status).to.equal(200)
           done()
         })
       })
@@ -93,4 +93,4 @@ describe('Routes - Integration', () => {
 })
 
 
-      // .send({ profesorCorreo: profesor['correo'] })
+// .send({ profesorCorreo: profesor['correo'] })

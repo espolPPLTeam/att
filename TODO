@@ -12,3 +12,6 @@
 // https://stackoverflow.com/questions/30625404/how-to-unit-test-console-output-with-mocha-on-nodejs
 
 https://github.com/testdouble/testdouble.js
+https://code.tutsplus.com/tutorials/validating-data-with-json-schema-part-1--cms-25343
+https://epoberezkin.github.io/ajv/keywords.html
+https://medium.com/northcoders/creating-a-project-generator-with-node-29e13b3cd309
