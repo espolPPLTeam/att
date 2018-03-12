@@ -67,7 +67,6 @@ module.exports = ({ db, logger }) => {
           }).catch(err => logger.error(err))
       })
     },
-    // TODO: profesor y estudiante no existe
     obtenerDatosEstudiantePorCorreo({ correo }) {
       return new Promise(function(resolve, reject) {
         Promise.all([
@@ -95,6 +94,7 @@ module.exports = ({ db, logger }) => {
           ]).then((values) => {
             let paralelos = values[1]
             let profesorDatos = values[0]
+            // TODO: pasar esto filtrado a controller
             if (values[0]) {
               let profesor = (({ correo, tipo, nombres, apellidos }) => ({ correo, tipo, nombres, apellidos }))(profesorDatos)
               const PARALELOS_FILTRADOS = paralelos.map(function(paralelo) {
@@ -110,7 +110,6 @@ module.exports = ({ db, logger }) => {
         }).catch(err => logger.error(err))
       })
     },
-    // TODO: paralelo no existe
     crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
       return new Promise(function(resolve, reject) {
         let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
@@ -125,12 +124,13 @@ module.exports = ({ db, logger }) => {
           }).catch(err => logger.error(err))
       })
     },
-    // TODO: si la pregunta no existe
-    destacarPregunta({ preguntaId, descatadaEstado }) {
+    // TODO: si la pregunta no existe, test
+    // FIXME: TEST
+    destacarPregunta({ preguntaId, destacadaEstado }) {
       return new Promise(function(resolve, reject) {
-        PreguntaEstudiante.destacar({ preguntaId, descatadaEstado })
-          .then(() => {
-            resolve(true)
+        PreguntaEstudiante.destacar({ preguntaId, destacadaEstado })
+          .then((accion) => {
+            resolve(accion)
           }).catch(err => logger.error(err))
       })
     },

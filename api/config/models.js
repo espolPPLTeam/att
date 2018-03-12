@@ -268,13 +268,17 @@ PreguntaEstudianteSchema.statics = {
       resolve(self.find({$and: [{ paralelo: paraleloId }, {createdAt: {$gte: start, $lt: end } }]}))
     })
   },
-  destacar({ preguntaId, descatadaEstado }) {
+  destacar({ preguntaId, destacadaEstado }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.update({ _id: preguntaId }, {$set: { destacada: descatadaEstado }}))
+      self.update({ _id: preguntaId }, {$set: { destacada: destacadaEstado }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })  
     })
   }
 }
+
+// TODO: todos los que mande a update tienen que tener confirmacion de actualizacion
 
 module.exports = { 
   Estudiante: mongoose.model('Estudiante', EstudianteSchema),

@@ -2,8 +2,7 @@ const winston = require('winston')
 const { createLogger, format, transports } = winston
 const { combine, timestamp, label, printf } = format
 const myFormat = printf(info => {
-  return `${info.timestamp} ${info.level}: ${info.message}`;
-  return ''
+  return `${info.timestamp} ${info.level}: ${info.message}`
 });
 let transportsFiles = []
 if (process.env.NODE_ENV !== 'testing' && process.env.NODE_ENV !== 'development') {

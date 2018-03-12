@@ -29,8 +29,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
       try {
         if (paraleloId) {
-          await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
-          return responses.OK({ datos: messages.PREGUNTA_CREADA })
+          let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
+          let PREGUNTA_LIMPIADA = (({ texto, paralelo, _id, destacada, creador }) => ({ texto, paralelo, _id, destacada, creador }))(pregunta)
+          return responses.OK({ datos: PREGUNTA_LIMPIADA })
           // TODO: si paraleloId no existe
         } else {
           return responses.OK_ERROR({ mensaje: messages.PARALELOID_VACIO })
@@ -42,8 +43,12 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     },
     async destacarPregunta({ preguntaId, destacadaEstado }) {
       try {
-        await model.destacarPregunta({ preguntaId, destacadaEstado })
-        return responses.OK({ datos: messages.PREGUNTA_DESTACADA })
+        let estaDestacada = await model.destacarPregunta({ preguntaId, destacadaEstado })
+        if (estaDestacada) { // FIXME: TEST
+          return responses.OK({ datos: messages.PREGUNTA_DESTACADA })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.PREGUNTAID_NO_EXISTE })
+        }
       } catch (err) {
         logger.error(err)
         return responses.ERROR_SERVIDOR

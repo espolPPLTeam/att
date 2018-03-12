@@ -6,21 +6,17 @@
 {{ doc.descripcion }}
 
 {% if doc.params %}
-	{% for params in doc.params %}
 ### Params:
 | Name       | Type    | Desc |
-| :--------- | :------ | :-------|
-| {{params.nombre}} | {{params.tipo}}  |  {{params.descripcion}}  |
-	{% endfor %}
+| :--------- | :------ | :-------| {% for params in doc.params %}
+| {{params.nombre}} | {{params.tipo}} |  {{params.descripcion}}  | {% endfor %}
 {% endif %}
 
 {% if doc.body %}
-	{% for body in doc.body %}
 ### Body:
 | Name       | Type    | Desc |
-| :--------- | :------ | :-------|
-| {{body.nombre}} | {{body.tipo}}  |  {{body.descripcion}}  |
-	{% endfor %}
+| :--------- | :------ | :-------| {% for body in doc.body %}
+| {%if body.margen %}<{{body.margen}}> {{body.nombre}} </{{body.margen}}>{% else %} {{body.nombre}} {% endif %} | {{body.tipo}}  |  {{body.descripcion}}  | {% endfor %}
 {% endif %}
 
 {% if doc.request %}
@@ -39,6 +35,34 @@
 ```
 {% endif %}
 
+
+### ERRORS:
+{% if doc.errors %}
+	{% for error in doc.errors %}
+__{{ error.nombre }}__
+
+{{ error.descripcion }}
+
+{% if error.request %}
+_request_
+
+```js
+{{ error.request }}
+```
+{% endif %}
+
+{% if error.response %}
+_response_
+
+```js
+{{ error.response }}
+```
+{% endif %}
+
+	{% endfor %}
+{% endif %}
+
 {{blockInicio}} endapi {{blockFin}}
 
 {% endfor %}
+
