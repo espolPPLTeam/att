@@ -18,7 +18,19 @@ function toString(objeto) {
   return JSON.stringify(objeto, null, 2)
 }
 
+function OK({ docs, doc, res, req }) {
+  doc['request'] = toString(req)
+  doc['response'] = toString(res.body)
+  docs.push(doc) 
+}
+
+function ERROR({docs, doc, res, req, nombre, descripcion}) {
+  doc['errors'].push({ nombre, response: toString(res.body), request: toString(req), descripcion })
+}
+
 module.exports = {
   generateAPI,
-  toString
+  toString,
+  OK,
+  ERROR
 }

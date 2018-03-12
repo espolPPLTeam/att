@@ -20,7 +20,7 @@ module.exports = ({ app, controller, logger }) => {
     .post((req, res) => {
       let { texto, paraleloId } = req.body
       let { _id, correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
-      controller.crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
+      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
         .then((resp) => {
           res.json(resp)
           res.status(resp.codigoEstado)
@@ -36,7 +36,7 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/destacarPregunta')
     .put((req, res) => {
       let { preguntaId, destacadaEstado } = req.body
-      controller.destacarPregunta({ preguntaId, destacadaEstado })
+      controller.DestacarPregunta({ preguntaId, destacadaEstado })
         .then((resp) => {
           res.json(resp)
           res.status(resp.codigoEstado)

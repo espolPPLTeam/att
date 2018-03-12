@@ -1,3 +1,31 @@
+// TEST
+unit
+integration
+perfomance test
+e2e test
+
+// TESTING CAMBIOS
+
+Eliminar todos los test que se repitan en los anteiores?
+Ejemplo: 
+para crearParalelos no se expondra a la api, solo estara en controllador, entonces solo sera de controllador
+
+Reglas:
+- Se eliminaran los test de models que no esten en controlador
+- Solo se validara que la data sea correcta, no se filtrara ni limpiara en models
+- En controlador solo se testera lo que no este en routes ni en modelos
+
+routes
+- Verifican que envie bien el modelo
+- los status code esten correctos
+
+controllers
+- Verficca que devuelva los codigos de estados correctos
+
+models
+- las operaciones en las bases de datos con correctas
+
+
 * endpoint no encontrado api
 * endpoint error api
 * Testing error

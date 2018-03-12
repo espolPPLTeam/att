@@ -7,7 +7,7 @@ const app = require('../../app').app
 const request = require('supertest')
 const sinon = require('sinon')
 const assert = require('assert')
-const expect    = require("chai").expect
+const expect = require("chai").expect
 const co = require('co')
 const moment = require('moment')
 const validator = require('validator')
@@ -48,6 +48,9 @@ async function ConectarMongo() {
   }
 }
 
+// NOTA: Los errores SERVER_ERROR son hechos por el api.controller.test ya que todavia
+//       no encuentro la forma de como hacerlos aqui
+
 describe('Routes - Integration', () => {
   let docs = []
   before(function(done) {
@@ -81,9 +84,7 @@ describe('Routes - Integration', () => {
           descripcion: ' --- '
         }
       ],
-      response: {},
-      errors: [
-      ]
+      errors: []
     }
     it('OK', (done) => {
       let profesor = data.profesores[0]
@@ -100,8 +101,7 @@ describe('Routes - Integration', () => {
         request(app)
         .get('/api/att/profesor/paralelos/' + profesor['correo'])
         .end(function(err, res) {
-          doc['response'] = generatorDocs.toString(res.body)
-          docs.push(doc)
+          generatorDocs.OK({ docs, doc, res })
           expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
           expect(res.status).to.equal(200)
           done()
@@ -109,41 +109,34 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
     it('NO ES EMAIL', (done) => {
-        request(app)
-        .get('/api/att/profesor/paralelos/' + 'aa')
-        .end(function(err, res) {
-          doc['errors'].push({ nombre: 'NO ES EMAIL', response: generatorDocs.toString(res.body), descripcion: 'Cuando el campo _profesorCorreo_ no es válido' })
-          expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
-          expect(res.status).to.equal(200)
-          done()
-        })
+      request(app)
+      .get('/api/att/profesor/paralelos/' + 'aa')
+      .end(function(err, res) {
+        generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
+        expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
+        expect(res.status).to.equal(200)
+        done()
+      })
     }).timeout(5000)
     it('NO EXISTE', (done) => {
       let profesor = data.profesores[0]
       request(app)
       .get('/api/att/profesor/paralelos/' + profesor['correo'])
       .end(function(err, res) {
-        doc['errors'].push({ nombre: 'NO EXISTE', response: generatorDocs.toString(res.body)})
+        generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
         expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
         expect(res.status).to.equal(200)
         done()
       })
     }).timeout(5000)
-    it('SERVER ERROR', (done) => {
-      // TODO: como seria?, que medias tomaria?
-      // const controller = controllerRequire({ responses, messages, model: crearStub('reject', 'ObtenerParalelosProfesor', ''), logger, validator })
-      // doc['errors'].push({ nombre: 'SERVER ERROR', response: generatorDocs.toString({ nombre: 'Joel' })})
-      done()
-    }).timeout(5000)
   })
   describe('POST Crear Pregunta Estudiante', () => {
-    // TODO: si no se enviar el campo de creador?
+    // TODO: si no se envia el campo de creador?
     let doc = {
       nombre: 'Crear pregunta estudiante',
       metodo: 'POST',
       url: '/api/att/estudiante/preguntar',
       descripcion: 'El estudiante crea una pregunta',
-      request: {},
       body: [
         { nombre: 'texto', tipo: 'String', descripcion: ' --- ' },
         { nombre: 'paraleloId', tipo: 'String', descripcion: ' --- ' },
@@ -154,27 +147,23 @@ describe('Routes - Integration', () => {
         { nombre: ' nombres', margen: 'center', tipo: 'String', descripcion: ' --- ' },
         { nombre: ' apellidos', margen: 'center', tipo: 'String', descripcion: ' --- '},
       ],
-      response: {},
-      errors: [
-      ]
+      errors: []
     }
     it('OK', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let send = { 
+      let req = { 
         texto,
         paraleloId,
         creador: estudiante
       }
-      doc['request'] = generatorDocs.toString(send)
       request(app)
-      .post('/api/att/estudiante/preguntar')
-      .send(send)
+      .post(doc['url'])
+      .send(req)
       .end(function(err, res) {
+        generatorDocs.OK({ docs, doc, res, req })
         expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
-        doc['response'] = generatorDocs.toString(res.body)
-        docs.push(doc)
         expect(res.body.estado).to.equal(true)
         expect(res.status).to.equal(200)
         done()
@@ -182,15 +171,15 @@ describe('Routes - Integration', () => {
     }).timeout(5000)
     it('PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
-      let send = { 
+      let req = { 
         texto: 'Mi primera pregunta',
         creador: estudiante
       }
       request(app)
-      .post('/api/att/estudiante/preguntar')
-      .send(send)
+      .post(doc['url'])
+      .send(req)
       .end(function(err, res) {
-        doc['errors'].push({ nombre: 'PARALELOID ES CAMPO OBLIGATORIO', response: generatorDocs.toString(res.body), request: generatorDocs.toString(send)})
+        generatorDocs.ERROR({ nombre: 'PARALELOID ES CAMPO OBLIGATORIO', docs, doc, res, req })
         expect(res.body.datos).to.equal(messages.PARALELOID_VACIO)
         expect(res.body.estado).to.equal(false)
         expect(res.status).to.equal(200)
@@ -203,15 +192,12 @@ describe('Routes - Integration', () => {
       nombre: 'Descatar pregunta',
       metodo: 'PUT',
       url: '/api/att/profesor/destacarPregunta',
-      descripcion: 'El profesor pone como destacada una pregunta que escoja',
-      request: {},
+      descripcion: 'El profesor coloca como destacada una pregunta que escoja',
       body: [
         { nombre: 'preguntaId', tipo: 'String', descripcion: ' --- ' },
         { nombre: 'destacadaEstado', tipo: 'Boolean', descripcion: ' --- ' },
       ],
-      response: {},
-      errors: [
-      ]
+      errors: []
     }
     it('OK', (done) => {
       let estudiante = data.estudiantes[0]
@@ -229,17 +215,15 @@ describe('Routes - Integration', () => {
           nombres: estudiante['nombres'], 
           apellidos: estudiante['apellidos'] 
         }})
-        let send = { 
+        let req = { 
           preguntaId: preguntaCreada['_id'],
           destacadaEstado: true
         }
-        doc['request'] = generatorDocs.toString(send)
         request(app)
-          .put('/api/att/profesor/destacarPregunta')
-          .send(send)
+          .put(doc['url'])
+          .send(req)
           .end(function(err, res) {
-            doc['response'] = generatorDocs.toString(res.body)
-            docs.push(doc)
+            generatorDocs.OK({ docs, doc, res, req })
             expect(res.body.datos).to.equal(messages.PREGUNTA_DESTACADA)
             expect(res.body.estado).to.equal(true)
             expect(res.status).to.equal(200)
@@ -251,15 +235,15 @@ describe('Routes - Integration', () => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let send = { 
+      let req = { 
         preguntaId: 'sdasssdas',
         destacadaEstado: true
       }
       request(app)
-        .put('/api/att/profesor/destacarPregunta')
-        .send(send)
+        .put(doc['url'])
+        .send(req)
         .end(function(err, res) {
-          doc['errors'].push({ nombre: 'PREGUNTA ID NO EXISTE', response: generatorDocs.toString(res.body), request: generatorDocs.toString(send)})
+          generatorDocs.ERROR({ nombre: 'PREGUNTA ID NO EXISTE', docs, doc, res, req })
           expect(res.body.datos).to.equal(messages.PREGUNTAID_NO_EXISTE)
           expect(res.body.estado).to.equal(false)
           expect(res.status).to.equal(200)
@@ -270,6 +254,16 @@ describe('Routes - Integration', () => {
   // describe('GET Preguntas Estudiantes Hoy', () => {
   //   it('OK', (done) => {
   //     done()
+    //   it('OK', (done) => {
+    //   paramsController['model'] = crearStub('resolve', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
+    //   const controller = controllerRequire(paramsController)
+    //   controller.preguntasEstudianteHoy({ paraleloId:  'aaa'})
+    //     .then((response) => {
+    //       expect(response['codigoEstado']).to.equal(200)
+    //       expect(response['estado']).to.equal(true)
+    //       done()
+    //     }).catch((err) => console.error(err))
+    // })
   //   })
   //   it('PARALELO NO EXISTE', (done) => {
   //     done()

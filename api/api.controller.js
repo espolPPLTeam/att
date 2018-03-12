@@ -17,7 +17,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     	  return responses.OK_ERROR({ mensaje: messages.CORREO_INVALIDO })
       }
     },
-    async preguntasEstudianteHoy({ paraleloId }) {
+    async PreguntasEstudianteHoy({ paraleloId }) {
       try {
         let preguntas = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
         return responses.OK({ datos: preguntas })
@@ -26,7 +26,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    async CrearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
       try {
         if (paraleloId) {
           let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
@@ -41,7 +41,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async destacarPregunta({ preguntaId, destacadaEstado }) {
+    async DestacarPregunta({ preguntaId, destacadaEstado }) {
       try {
         let estaDestacada = await model.destacarPregunta({ preguntaId, destacadaEstado })
         if (estaDestacada) { // FIXME: TEST

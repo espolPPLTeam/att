@@ -1,25 +1,26 @@
 # Api DOCS
-{% for doc in docs %}
+{%- for doc in docs %}
+{{blockInicio}} api "{{ doc.nombre }}", method="{{ doc.metodo }}", url="{{ doc.url }}"  {{blockFin}}
 
-{{blockInicio}} api "{{ doc.nombre }}", method="{{ doc.metodo }}", url="{{ doc.url }}" {{blockFin}}
+{{- doc.descripcion }}
 
-{{ doc.descripcion }}
-
-{% if doc.params %}
+{%- if doc.params %}
 ### Params:
 | Name       | Type    | Desc |
-| :--------- | :------ | :-------| {% for params in doc.params %}
-| {{params.nombre}} | {{params.tipo}} |  {{params.descripcion}}  | {% endfor %}
+| :--------- | :------ | :-------| 
+	{%- for params in doc.params %}
+| {{params.nombre}} | {{params.tipo}} |  {{params.descripcion}}  | 
+	{% endfor %}
 {% endif %}
 
-{% if doc.body %}
+{%- if doc.body %}
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| {% for body in doc.body %}
 | {%if body.margen %}<{{body.margen}}> {{body.nombre}} </{{body.margen}}>{% else %} {{body.nombre}} {% endif %} | {{body.tipo}}  |  {{body.descripcion}}  | {% endfor %}
 {% endif %}
 
-{% if doc.request %}
+{%- if doc.request %}
 ### Request:
 
 ```json
@@ -27,7 +28,7 @@
 ```
 {% endif %}
 
-{% if doc.response %}
+{%- if doc.response %}
 ### Response:
 
 ```json
@@ -37,8 +38,8 @@
 
 
 ### ERRORS:
-{% if doc.errors %}
-	{% for error in doc.errors %}
+{%- if doc.errors %}
+	{%- for error in doc.errors %}
 __{{ error.nombre }}__
 
 {{ error.descripcion }}
@@ -51,18 +52,17 @@ _request_
 ```
 {% endif %}
 
-{% if error.response %}
+{%- if error.response %}
 _response_
 
 ```js
 {{ error.response }}
 ```
-{% endif %}
-
+	{% endif %}
 	{% endfor %}
 {% endif %}
 
-{{blockInicio}} endapi {{blockFin}}
+{{-blockInicio}} endapi {{-blockFin}}
 
 {% endfor %}
 

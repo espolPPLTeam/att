@@ -1,21 +1,10 @@
 # Api DOCS
-
-
-{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos/:profesorCorreo" %}
-
-Da los paralelos para que se pueda escribir en la pagina principal los paralelos
-
-
+{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos/:profesorCorreo"  %}Da los paralelos para que se pueda escribir en la pagina principal los paralelos
 ### Params:
 | Name       | Type    | Desc |
-| :--------- | :------ | :-------| 
+| :--------- | :------ | :-------|
 | profesorCorreo | String |   ---   | 
-
-
-
-
-
-
+	
 
 ### Response:
 
@@ -30,7 +19,7 @@ Da los paralelos para que se pueda escribir en la pagina principal los paralelos
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "SyQZ3SSmtf",
+        "_id": "SyjTksQFz",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -43,30 +32,7 @@ Da los paralelos para que se pueda escribir en la pagina principal los paralelos
 
 
 ### ERRORS:
-
-	
-__NO ES EMAIL__
-
-Cuando el campo _profesorCorreo_ no es válido
-
-
-
-
-_response_
-
-```js
-{
-  "estado": false,
-  "datos": "El correo no es válido",
-  "codigoEstado": 200
-}
-```
-
-
-	
 __NO EXISTE__
-
-
 
 
 
@@ -80,22 +46,12 @@ _response_
   "codigoEstado": 200
 }
 ```
-
-
 	
+	
+{% endapi%}
 
 
-{% endapi %}
-
-
-
-{% api "Crear pregunta estudiante", method="POST", url="/api/att/estudiante/preguntar" %}
-
-El estudiante crea una pregunta
-
-
-
-
+{% api "Crear pregunta estudiante", method="POST", url="/api/att/estudiante/preguntar"  %}El estudiante crea una pregunta
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| 
@@ -107,8 +63,6 @@ El estudiante crea una pregunta
 | <center>  matricula </center> | String  |   ---   | 
 | <center>  nombres </center> | String  |   ---   | 
 | <center>  apellidos </center> | String  |   ---   | 
-
-
 
 ### Request:
 
@@ -125,8 +79,6 @@ El estudiante crea una pregunta
 }
 ```
 
-
-
 ### Response:
 
 ```json
@@ -135,7 +87,7 @@ El estudiante crea una pregunta
   "datos": {
     "texto": "Mi primera pregunta",
     "paralelo": "aaaa",
-    "_id": "HkG2SrQtM",
+    "_id": "Syloaks7KG",
     "destacada": false,
     "creador": {
       "correo": "kenjoale@espol.edu.ec",
@@ -150,8 +102,6 @@ El estudiante crea una pregunta
 
 
 ### ERRORS:
-
-	
 __PARALELOID ES CAMPO OBLIGATORIO__
 
 
@@ -171,8 +121,6 @@ _request_
 }
 ```
 
-
-
 _response_
 
 ```js
@@ -182,40 +130,26 @@ _response_
   "codigoEstado": 200
 }
 ```
-
-
 	
+	
+{% endapi%}
 
 
-{% endapi %}
-
-
-
-{% api "Descatar pregunta", method="PUT", url="/api/att/profesor/destacarPregunta" %}
-
-El profesor pone como destacada una pregunta que escoja
-
-
-
-
+{% api "Descatar pregunta", method="PUT", url="/api/att/profesor/destacarPregunta"  %}El profesor coloca como destacada una pregunta que escoja
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| 
 |  preguntaId  | String  |   ---   | 
 |  destacadaEstado  | Boolean  |   ---   | 
 
-
-
 ### Request:
 
 ```json
 {
-  "preguntaId": "SJgMhHr7Fz",
+  "preguntaId": "B1WiayjXtG",
   "destacadaEstado": true
 }
 ```
-
-
 
 ### Response:
 
@@ -230,8 +164,6 @@ El profesor pone como destacada una pregunta que escoja
 
 
 ### ERRORS:
-
-	
 __PREGUNTA ID NO EXISTE__
 
 
@@ -246,8 +178,6 @@ _request_
 }
 ```
 
-
-
 _response_
 
 ```js
@@ -257,12 +187,9 @@ _response_
   "codigoEstado": 200
 }
 ```
-
-
 	
-
-
-{% endapi %}
+	
+{% endapi%}
 
 
 

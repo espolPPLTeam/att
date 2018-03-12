@@ -231,67 +231,6 @@ describe('Database', () =>  {
       }).catch((err) => console.error(err))
     }).timeout(5000)
   })
-
-  describe('Preguntar a profesor', () =>  {
-    it('crear Pregunta Estudiante', (done) =>  {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const estudiante = data.estudiantes[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        yield apiModel.crearEstudiante(estudiante)
-        const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ 
-          texto: 'Mi primera Pregunta', 
-          paraleloId: paraleloCreado['_id'], 
-          creador: estudiante
-        })
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudiante['correo']
-        })
-        const preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id']})
-        const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo'] })
-        assert.equal(preguntaEncontrada['texto'], preguntaCreada['texto'], 'Tienen que ser iguales')
-        assert.equal(estudianteEncontrado['preguntas'].length, 1, 'Tienen que tener una pregunta creada')
-        assert.equal(paraleloEncontrado['preguntasEstudiante'].length, 1, 'Tienen que tener una pregunta creada')
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('destacar pregunta', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const estudiante = data.estudiantes[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ 
-          texto: 'Mi primera Pregunta', 
-          paraleloId: paraleloCreado['_id'], 
-          creador: estudiante
-        })
-        let preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        assert.equal(preguntaEncontrada['destacada'], false, 'Tienen que NO estarDestacada')
-        yield apiModel.destacarPregunta({ preguntaId: preguntaCreada['_id'], destacadaEstado: true })
-        preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        assert.equal(preguntaEncontrada['destacada'], true, 'Tienen que estarDestacada')
-        yield apiModel.destacarPregunta({ preguntaId: preguntaCreada['_id'], destacadaEstado: false })
-        preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        assert.equal(preguntaEncontrada['destacada'], false, 'Tienen que NO estarDestacada')
-        done()
-      })
-    })
-    it('obtener pregunta estudiantes de paralelo', (done) => {
-      co(function *() {
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi primera Pregunta',  paraleloId: paraleloUnoId, creador: creadorEstudiantePrimero })
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi segunda Pregunta',  paraleloId: paraleloUnoId, creador: creadorEstudiantePrimero })
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi tercera Pregunta',  paraleloId: paraleloDosId, creador: creadorEstudiantePrimero })
-        const preguntas = yield apiModel.obtenerPreguntasEstudiantesPorParalelo({ paraleloId: paraleloUnoId })
-        assert.equal(preguntas.length, 2, 'Tienen que ser array de tamano 2')
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-  })
   // it('crearPreguntaProfesorYHabilitarla', (done) =>  {
     
   // })
