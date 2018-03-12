@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "Sy7tlXaQKG",
+        "_id": "H17LQotVYf",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -103,7 +103,7 @@ _response_
   "datos": {
     "texto": "Mi primera pregunta",
     "paralelo": "aaaa",
-    "_id": "SJ9xQp7KG",
+    "_id": "r1v7st4Fz",
     "destacada": false,
     "creador": {
       "correo": "kenjoale@espol.edu.ec",
@@ -162,7 +162,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "Byg5lmp7Fz",
+  "preguntaId": "BJevQjtNYf",
   "destacadaEstado": true
 }
 ```

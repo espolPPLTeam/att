@@ -56,7 +56,7 @@ module.exports = ({ app, controller, logger }) => {
 }
 
 
-// app.route('/profesor/respuestasPregunta')
-// app.route('/profesor/crearPregunta')
+// app.route('/profesor/respuestasPregunta/:preguntaId')
 // app.route('/profesor/preguntasProfesorHistorial')
+// app.route('/profesor/preguntar')
 // app.route('/profesor/terminarPregunta')

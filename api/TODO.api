@@ -1,3 +1,8 @@
+[ ] api.models mejorar con errores de pedidos y ver cuales mejorar
+[ ] docs socketio template
+[ ] webService espol generador npm
+[ ] ruta /profesor/preguntasEstudianteHoy/:paraleloId
+
 // TEST
 unit
 integration
@@ -5,26 +10,6 @@ perfomance test
 e2e test
 
 // TESTING CAMBIOS
-
-Eliminar todos los test que se repitan en los anteiores?
-Ejemplo: 
-para crearParalelos no se expondra a la api, solo estara en controllador, entonces solo sera de controllador
-
-Reglas:
-- Se eliminaran los test de models que no esten en controlador
-- Solo se validara que la data sea correcta, no se filtrara ni limpiara en models
-- En controlador solo se testera lo que no este en routes ni en modelos
-
-routes
-- Verifican que envie bien el modelo
-- los status code esten correctos
-
-controllers
-- Verficca que devuelva los codigos de estados correctos
-
-models
-- las operaciones en las bases de datos con correctas
-
 
 * endpoint no encontrado api
 * endpoint error api
@@ -34,3 +19,32 @@ models
 * Un profesor puede tener varios paralelos
 * Se tiene que copiar los alumnos de la web service de espol a la base de datos aqui
 * Se tienen que aseguar que el profesor termine de preguntaar
+
+      // Socket.in(`${paraleloId}`).emit('respuesta-estudiante', respuesta)
+      // socket.join(`${paraleloId}`)
+      // io.of('/other namespace')
+      // enviar las preguntas
+      // si esta preguntand, enviar las respuestas
+
+          socket.on('usuario', function({ paraleloId }) {
+      // console.log(mensaje)
+    })
+        socket.on('pregunta-profesor', function({ paraleloId }) {
+      socket.in(paraleloId).emit('pregunta-estudiante')
+    })
+    socket.on('habilitar-pregunta-profesor', function({ paraleloId, preguntaId }) {
+      
+    })
+    socket.on('deshabilitar-pregunta-profesor', function({ paraleloId, preguntaId }) {
+      
+    })
+    socket.on('respuesta-estudiante', function({ paraleloId }) {
+      socket.in(paraleloId).emit('respuesta-estudiante')
+    })
+    socket.on('reconectar-estudiante', function({ }) { 
+      // si esta preguntando profesor enviar la pregunta y habiliar
+    })
+    socket.on('reconectar-profesor', function({ }) {
+      // enviar las preguntas
+      // si esta preguntand, enviar las respuestas
+    })

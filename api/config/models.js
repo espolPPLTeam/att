@@ -181,13 +181,21 @@ EstudianteSchema.statics = {
   eliminar({ estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndRemove({ correo: estudianteCorreo }))
+      self.findOneAndRemove({ correo: estudianteCorreo }).then((accionEstado) => {
+        if (accionEstado) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      })
     })
   },
   anadirPregunta({ correo, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({ correo }, {$addToSet: {'preguntas': preguntaId }}))
+      self.update({ correo }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   obtenerPorCorreo({ correo }) {
@@ -229,25 +237,33 @@ ParaleloSchema.statics = {
   anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
-    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+  eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   anadirPreguntaEstudiante({ paraleloId, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({ _id: paraleloId }, {$addToSet: {'preguntasEstudiante': preguntaId }}))
+      self.update({ _id: paraleloId }, {$addToSet: {'preguntasEstudiante': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   }
 }
@@ -273,7 +289,7 @@ PreguntaEstudianteSchema.statics = {
     return new Promise(function(resolve) {
       self.update({ _id: preguntaId }, {$set: { destacada: destacadaEstado }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
-      })  
+      })
     })
   }
 }

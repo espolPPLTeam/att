@@ -1,15 +1,20 @@
+// http://json-schema.org/example2.html
+
 // /api/att/profesor/paralelos/:profesorCorreo
 const PROFESOR_DATOS__PARALELOS = {
+  "minProperties": 4,
+  "additionalProperties": false,
   "properties": {
     "_id": { "type": "string" },
     "codigo": { "type": "string" },
     "curso": { "type": "string" },
     "nombre": { "type": "string" }
-  },
-  "additionalProperties": false
+  }
 }
 
 const PROFESOR_DATOS = {
+  "minProperties": 5,
+  "additionalProperties": false,
   "properties": {
     "correo": {
       "type": "string",
@@ -25,8 +30,7 @@ const PROFESOR_DATOS = {
       "type": "array",
       "items" : PROFESOR_DATOS__PARALELOS
     }
-  },
-  "additionalProperties": false
+  }
 }
 
 const ERROR_SERVIDOR = {
@@ -39,7 +43,6 @@ const ERROR_SERVIDOR = {
 }
 
 const OK_ERROR = {
-  "title": "OK_ERROR",
   "type": "object",
   "properties": {
     "datos": { "type": "string" },

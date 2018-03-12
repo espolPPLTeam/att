@@ -71,7 +71,7 @@ describe('Routes - Integration', () => {
       done()
     })
   })
-  describe('GET Profesores Obtener Datos', () => {
+  describe('@t1 GET Profesores Obtener Datos', () => {
     let doc = {
       nombre: 'Profesores Obtener Datos',
       metodo: 'GET',
@@ -86,7 +86,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t1.1 OK', (done) => {
       let profesor = data.profesores[0]
       let paralelo = data.paralelos[0]
       co(function *() {
@@ -108,7 +108,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(5000)
-    it('NO ES EMAIL', (done) => {
+    it('@t1.2 NO ES EMAIL', (done) => {
       request(app)
       .get('/api/att/profesor/paralelos/' + 'aa')
       .end(function(err, res) {
@@ -118,7 +118,7 @@ describe('Routes - Integration', () => {
         done()
       })
     }).timeout(5000)
-    it('NO EXISTE', (done) => {
+    it('@t1.3 NO EXISTE', (done) => {
       let profesor = data.profesores[0]
       request(app)
       .get('/api/att/profesor/paralelos/' + profesor['correo'])
@@ -130,7 +130,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-  describe('POST Crear Pregunta Estudiante', () => {
+  describe('@t2 POST Crear Pregunta Estudiante', () => {
     // TODO: si no se envia el campo de creador?
     let doc = {
       nombre: 'Crear pregunta estudiante',
@@ -149,7 +149,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t2.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
@@ -169,7 +169,7 @@ describe('Routes - Integration', () => {
         done()
       })
     }).timeout(5000)
-    it('PARALELOID ES CAMPO OBLIGATORIO', (done) => {
+    it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
       let req = { 
         texto: 'Mi primera pregunta',
@@ -187,7 +187,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-  describe('PUT Destacar Pregunta', () => {
+  describe('@t3 PUT Destacar Pregunta', () => {
     let doc = {
       nombre: 'Descatar pregunta',
       metodo: 'PUT',
@@ -199,7 +199,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t3.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
@@ -231,7 +231,7 @@ describe('Routes - Integration', () => {
           })
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('PREGUNTA ID NO EXISTE', (done) => {
+    it('@t3.2 PREGUNTA ID NO EXISTE', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
@@ -253,8 +253,8 @@ describe('Routes - Integration', () => {
   })
 
   // TODO: error docs
-  describe('URL NO VALIDO', () => {
-    it('EL URL INGRESADO NO EXISTE', (done) => {
+  describe('@t4 URL NO VALIDO', () => {
+    it('@t4.1 EL URL INGRESADO NO EXISTE', (done) => {
       request(app)
         .put('/api/att/loquesea')
         .end(function(err, res) {

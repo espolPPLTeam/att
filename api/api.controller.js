@@ -5,7 +5,13 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       	try {
           let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo: profesorCorreo })
           if (profesorDatos) {
-            return responses.OK({ datos: profesorDatos })
+            let paralelos = profesorDatos['paralelos']
+            let profesor = (({ correo, tipo, nombres, apellidos }) => ({ correo, tipo, nombres, apellidos }))(profesorDatos)
+            let paralelos_filtrados = paralelos.map(function(paralelo) {
+               return (({ codigo, _id, curso, nombre }) => ({ codigo, _id, curso, nombre }))(paralelo)
+            }, [])
+            profesor['paralelos'] = paralelos_filtrados
+            return responses.OK({ datos: profesor })
           } else {
             return responses.OK_ERROR({ mensaje: messages.PROFESOR_NO_EXISTE })
           }
