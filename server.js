@@ -1,3 +1,8 @@
+process.on('uncaughtException', function(err) {
+  console.error('Caught exception: ' + err)
+  console.error(err.stack)
+})
+
 const { app, server } = require('./app')
 
 function onError(error) {

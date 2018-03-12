@@ -5,13 +5,11 @@ module.exports = ({ app, controller, logger }) => {
       let { profesorCorreo } = req.params
       controller.ObtenerParalelosProfesor({ profesorCorreo })
         .then((resp) => {
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
         .catch((err, resp) => {
           logger.error(err)
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
     })
 
@@ -22,13 +20,11 @@ module.exports = ({ app, controller, logger }) => {
       let { _id, correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
       controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
         .then((resp) => {
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
         .catch((err, resp) => {
           logger.error(err)
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
     })
 
@@ -38,13 +34,11 @@ module.exports = ({ app, controller, logger }) => {
       let { preguntaId, destacadaEstado } = req.body
       controller.DestacarPregunta({ preguntaId, destacadaEstado })
         .then((resp) => {
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
         .catch((err, resp) => {
           logger.error(err)
-          res.json(resp)
-          res.status(resp.codigoEstado)
+          res.status(resp.codigoEstado).json(resp)
         })
     })
 
@@ -53,6 +47,12 @@ module.exports = ({ app, controller, logger }) => {
     .get((req, res) => {
 
     })
+
+  app
+  .use((req, res) => {
+    res.status(controller.URL_NO_VALIDO.codigoEstado).json(controller.URL_NO_VALIDO)
+  })
+
 }
 
 

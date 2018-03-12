@@ -4,37 +4,24 @@ const data = require('./database.mock')
 const mongoSchema = require('../config/models')
 const mongo = require('../config/db')
 const logger = require('../config/logger')
+const expect = require('chai').expect
 
 process.on('uncaughtException', function(err) {
   logger.error('Caught exception: ' + err)
   logger.error(err.stack)
 })
 
-async function ConectarMongo() {
-  try {
-    await mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
-  } catch (err) {
-    console.error(err)
-    exit(1)
-  }
-}
 const apiModel = require('../api.model')({ db: mongoSchema, logger })
-const creadorEstudiantePrimero = {
-      _id: 'Bye0Ouve3b', 
-      correo: 'stsemaci@espol.edu.ec', 
-      matricula: '201121507', 
-      nombres: 'STEVEN SEBASTIAN', 
-      apellidos: 'QUEZADA'}
-
-const paraleloUnoId = 'ByRJtODl3-'
-const paraleloDosId = 'BJBRuuDgn-'
 
 describe('Database', () =>  {
   before(function(done) {
     co(function *() {
-      yield ConectarMongo()
+      yield mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
       yield mongo.Limpiar()
       done()
+    }).catch((err) => {
+      console.error(err)
+      exit(1)
     })
   })
   after(function(done) {
@@ -42,22 +29,23 @@ describe('Database', () =>  {
     done()
   })
   beforeEach(function(done) {
+    this.sinon.stub(logger, 'error')
     co(function *() {
       yield mongo.Limpiar()
       done()
     })
   })
   describe('Acciones basicas', () =>  {
-    it('crear Paralelo', (done) => {
+    it('CREAR Paralelo', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         const paraleloCreado = yield apiModel.crearParalelo(paralelo)
         const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id'] })
-        assert.equal(paralelo['nombre'], paraleloEncontrado['nombre'], 'Tienen que ser iguales')
+        expect(paralelo['nombre']).to.equal(paraleloEncontrado['nombre'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('crear Profesor y obtener Profesor', (done) => {
+    it('CREAR Profesor y OBTENER Profesor', (done) => {
       co(function *() {
         const profesor = data.profesores[0]
         const paralelo = data.paralelos[0]
@@ -80,14 +68,14 @@ describe('Database', () =>  {
         })
         const profesorCreado = yield apiModel.crearProfesor(profesor)
         const profesorEncontrado = yield apiModel.obtenerDatosProfesorPorCorreo({ correo: profesor['correo'] })
-        assert.equal(profesor['correo'], profesorEncontrado['correo'], 'Tienen que ser iguales')
-        assert.equal(profesorEncontrado['paralelos'].length, 2, 'Tienen que ser dos paralelos')
-        assert.equal(profesorEncontrado['paralelos'][0]['nombre'], paralelo['nombre'], 'Tienen que tener el mismo nombre')
-        assert.equal(profesorEncontrado['paralelos'][1]['nombre'], paraleloDos['nombre'], 'Tienen que tener el mismo nombre')
+        expect(profesor['correo']).to.equal(profesorEncontrado['correo'])
+        expect(profesorEncontrado['paralelos'].length).to.equal(2)
+        expect(profesorEncontrado['paralelos'][0]['nombre']).to.equal(paralelo['nombre'])
+        expect(profesorEncontrado['paralelos'][1]['nombre']).to.equal(paraleloDos['nombre'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('crear Estudiante y obtener Estudiante', (done) => {
+    it('CREAR Estudiante y OBTENER Estudiante', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         const estudiante = data.estudiantes[0]
@@ -102,12 +90,12 @@ describe('Database', () =>  {
         })
         const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
         const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo'] })
-        assert.equal(estudiante['correo'], estudianteEncontrado['correo'], 'Tienen que ser iguales')
-        assert.equal(estudianteEncontrado['paraleloId'], paraleloCreado['_id'], 'Tienen que estar estudiante en paralelo')
+        expect(estudiante['correo']).to.equal(estudianteEncontrado['correo'])
+        expect(estudianteEncontrado['paraleloId']).to.equal(paraleloCreado['_id'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('anadir estudiante a paralelo', (done) => {
+    it('ANADIR estudiante A paralelo', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         const paraleloCreado = yield apiModel.crearParalelo(paralelo)
@@ -119,11 +107,11 @@ describe('Database', () =>  {
           estudianteCorreo: 'joeedrod@espol.edu.ec'
         })
         const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: 'joeedrod@espol.edu.ec' })
-        assert.equal(paraleloEstudiante['curso'], paralelo['curso'], 'Tienen que ser iguales')
+        expect(paraleloEstudiante['curso']).to.equal(paralelo['curso'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('anadir profesor a paralelo', (done) => {
+    it('ANADIR profesor A paralelo', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         yield apiModel.crearParalelo(paralelo)
@@ -135,11 +123,11 @@ describe('Database', () =>  {
           profesorCorreo: 'joeedrod@espol.edu.ec'
         })
         const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParalelosProfesor({ profesorCorreo: 'joeedrod@espol.edu.ec' })
-        assert.equal(paraleloEstudiante[0]['curso'], paralelo['curso'], 'Tienen que ser iguales')
+        expect(paraleloEstudiante[0]['curso']).to.equal(paralelo['curso'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('eliminar estudiante', (done) => {
+    it('ELIMINAR estudiante', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         const estudianteUno = data.estudiantes[0]
@@ -162,10 +150,10 @@ describe('Database', () =>  {
           },
           estudianteCorreo: estudianteDos['correo']
         })
-        assert.equal(estudianteUno['correo'], estudianteEncontrado['correo'], 'Tienen que ser iguales')
+        expect(estudianteUno['correo']).to.equal(estudianteEncontrado['correo'])
         const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: estudianteUno['correo'] })
-        assert.equal(paraleloEstudiante['curso'], paralelo['curso'], 'Tienen que ser iguales')
-        assert.equal(paraleloEstudiante['estudiantes'].length, 2, 'Tienen haber dos estudiantes')
+        expect(paraleloEstudiante['curso']).to.equal(paralelo['curso'])
+        expect(paraleloEstudiante['estudiantes'].length).to.equal(2)
         yield apiModel.eliminarEstudiante({ 
           paralelo: { 
             curso: paralelo['curso'], 
@@ -174,14 +162,14 @@ describe('Database', () =>  {
           estudianteCorreo: estudianteUno['correo'] 
         })
         const estudianteDatos = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo:  estudianteUno['correo'] })
-        assert.equal(estudianteDatos, null, 'Tiene que estar eliminado estudiante uno')
+        expect(estudianteDatos).to.equal(null)
         const paraleloEstudianteDos = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: estudianteDos['correo'] })
-        assert.equal(paraleloEstudianteDos['estudiantes'].length, 1, 'Tienen haber un estudiante')
-        assert.equal(paraleloEstudianteDos['estudiantes'][0], estudianteDos['correo'], 'Tienen que coincidir los datos del estudiante')
+        expect(paraleloEstudianteDos['estudiantes'].length).to.equal(1)
+        expect(paraleloEstudianteDos['estudiantes'][0]).to.equal(estudianteDos['correo'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('cambiar paralelo estudiante', (done) => {
+    it('CAMBIAR estudiante DE paralelo', (done) => {
       co(function *() {
         const paralelo = data.paralelos[0]
         const paraleloDos = data.paralelos[1]
@@ -224,9 +212,9 @@ describe('Database', () =>  {
         })
         const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id']})
         const paraleloEncontradoDos = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreadoDos['_id']})
-        assert.equal(paraleloEncontrado['estudiantes'].length, 1, 'Solo un estudiante')
-        assert.equal(paraleloEncontradoDos['estudiantes'].length, 2, 'Dos estudiante')
-        assert.equal(paraleloEncontrado['estudiantes'][0], estudianteDos['correo'], 'Solo un estudiante')
+        expect(paraleloEncontrado['estudiantes'].length).to.equal(1)
+        expect(paraleloEncontradoDos['estudiantes'].length).to.equal(2)
+        expect(paraleloEncontrado['estudiantes'][0]).to.equal(estudianteDos['correo'])
         done()
       }).catch((err) => console.error(err))
     }).timeout(5000)

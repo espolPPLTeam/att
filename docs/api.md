@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "SyjTksQFz",
+        "_id": "rJgEpFsmFz",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -32,6 +32,22 @@
 
 
 ### ERRORS:
+__NO ES EMAIL__
+
+Cuando el campo _profesorCorreo_ no es válido
+
+
+_response_
+
+```js
+{
+  "estado": false,
+  "datos": "El correo no es válido",
+  "codigoEstado": 200
+}
+```
+	
+	
 __NO EXISTE__
 
 
@@ -87,7 +103,7 @@ _response_
   "datos": {
     "texto": "Mi primera pregunta",
     "paralelo": "aaaa",
-    "_id": "Syloaks7KG",
+    "_id": "rkW46FjXYM",
     "destacada": false,
     "creador": {
       "correo": "kenjoale@espol.edu.ec",
@@ -146,7 +162,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "B1WiayjXtG",
+  "preguntaId": "rJGN6YoXYG",
   "destacadaEstado": true
 }
 ```

@@ -251,6 +251,20 @@ describe('Routes - Integration', () => {
         })
     }).timeout(5000)
   })
+
+  // TODO: error docs
+  describe('URL NO VALIDO', () => {
+    it('EL URL INGRESADO NO EXISTE', (done) => {
+      request(app)
+        .put('/api/att/loquesea')
+        .end(function(err, res) {
+          expect(res.body).to.deep.equal(responses.URL_NO_VALIDO)
+          expect(res.body.estado).to.equal(responses.URL_NO_VALIDO.estado)
+          expect(res.status).to.equal(responses.URL_NO_VALIDO.codigoEstado)
+          done()
+        })
+    })
+  })
   // describe('GET Preguntas Estudiantes Hoy', () => {
   //   it('OK', (done) => {
   //     done()
