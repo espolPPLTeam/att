@@ -92,11 +92,11 @@ describe('Routes - Integration', () => {
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
         let paraleloCreado = yield model.crearParalelo(paralelo)
-        yield model.anadirProfesorAParalelo({ 
-          paralelo: { 
-            curso: paralelo['curso'], 
+        yield model.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paralelo['curso'],
             codigo: paralelo['codigo']
-          }, 
+          },
           profesorCorreo: profesor['correo'] })
         request(app)
         .get('/api/att/profesor/paralelos/' + profesor['correo'])
@@ -153,7 +153,7 @@ describe('Routes - Integration', () => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let req = { 
+      let req = {
         texto,
         paraleloId,
         creador: estudiante
@@ -171,7 +171,7 @@ describe('Routes - Integration', () => {
     }).timeout(5000)
     it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
-      let req = { 
+      let req = {
         texto: 'Mi primera pregunta',
         creador: estudiante
       }
@@ -201,21 +201,24 @@ describe('Routes - Integration', () => {
     }
     it('@t3.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
+      let paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
-      let paraleloId = 'aaaa'
-      
+
       co(function *() {
-        let preguntaCreada = yield model.crearPreguntaEstudiante({ 
-        texto: 'Mi primera pregunta', 
-        paraleloId: 'aaa', 
-        creador: { 
-          _id: 'aaa', 
-          correo: estudiante['correo'], 
-          matricula: estudiante['matricula'], 
-          nombres: estudiante['nombres'], 
-          apellidos: estudiante['apellidos'] 
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let paraleloId = paraleloCreado['_id']
+        let preguntaCreada = yield model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: estudiante['correo'],
+          matricula: estudiante['matricula'],
+          nombres: estudiante['nombres'],
+          apellidos: estudiante['apellidos']
         }})
-        let req = { 
+        let req = {
           preguntaId: preguntaCreada['_id'],
           destacadaEstado: true
         }
@@ -235,7 +238,7 @@ describe('Routes - Integration', () => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let req = { 
+      let req = {
         preguntaId: 'sdasssdas',
         destacadaEstado: true
       }
