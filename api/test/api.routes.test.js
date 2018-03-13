@@ -75,7 +75,7 @@ describe('Routes - Integration', () => {
     let doc = {
       nombre: 'Profesores Obtener Datos',
       metodo: 'GET',
-      url: '/api/att/profesor/paralelos/:profesorCorreo',
+      url: '/api/att/profesor/datosProfesor/:profesorCorreo',
       descripcion: 'Da los paralelos para que se pueda escribir en la pagina principal los paralelos',
       params: [
         {
@@ -99,7 +99,7 @@ describe('Routes - Integration', () => {
           },
           profesorCorreo: profesor['correo'] })
         request(app)
-        .get('/api/att/profesor/paralelos/' + profesor['correo'])
+        .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
         .end(function(err, res) {
           generatorDocs.OK({ docs, doc, res })
           expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
@@ -110,7 +110,7 @@ describe('Routes - Integration', () => {
     }).timeout(5000)
     it('@t1.2 NO ES EMAIL', (done) => {
       request(app)
-      .get('/api/att/profesor/paralelos/' + 'aa')
+      .get('/api/att/profesor/datosProfesor/' + 'aa')
       .end(function(err, res) {
         generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
         expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
@@ -121,7 +121,7 @@ describe('Routes - Integration', () => {
     it('@t1.3 NO EXISTE', (done) => {
       let profesor = data.profesores[0]
       request(app)
-      .get('/api/att/profesor/paralelos/' + profesor['correo'])
+      .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
       .end(function(err, res) {
         generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
         expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)

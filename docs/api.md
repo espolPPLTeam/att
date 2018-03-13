@@ -1,5 +1,5 @@
 # Api DOCS
-{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/paralelos/:profesorCorreo"  %}Da los paralelos para que se pueda escribir en la pagina principal los paralelos
+{% api "Profesores Obtener Datos", method="GET", url="/api/att/profesor/datosProfesor/:profesorCorreo"  %}Da los paralelos para que se pueda escribir en la pagina principal los paralelos
 ### Params:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------|
@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "ryEXSuBFf",
+        "_id": "BkMahitrYz",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -152,7 +152,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "HJxHXruHYz",
+  "preguntaId": "HyMC3iFrtG",
   "destacadaEstado": true
 }
 ```

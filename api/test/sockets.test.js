@@ -1,4 +1,4 @@
-const ioOptions = { transports: ['websocket'] , forceNew: true , reconnection: false } 
+const ioOptions = { transports: ['websocket'] , forceNew: true , reconnection: false }
 const server = require('./socket.server.test').http
 const io = require('socket.io-client')
 const expect = require('chai').expect
@@ -10,12 +10,11 @@ describe('Sockets', () => {
   let docs = []
   beforeEach(function(done){
     server.listen(process.env.PORT || 3000, function() {
-      console.log('')
       profesor = io(`http://localhost:${process.env.PORT || 3000}/att`, ioOptions)
       estudiante = io(`http://localhost:${process.env.PORT || 3000}/att`, ioOptions)
       done()
     })
-    
+
   })
   afterEach(function(){
     profesor.disconnect()
@@ -26,22 +25,25 @@ describe('Sockets', () => {
     server.close()
   })
   it('@t1 ESTUDIANTE HACE UNA PREGUNTA', function(done) {
+    this.timeout(6000)
     let doc = {
 
     }
     let estudianteData = data.estudiantes[0]
-    let paraleloId = 'aaa'
+    let paraleloId = 'pppp'
     let texto = 'Mi primera pregunta'
     let _id = 'iii'
     estudianteData['_id'] = 'eeee'
     let pregunta = {
       preguntaId: _id,
-      texto, 
+      texto,
       paraleloId,
       creador: estudianteData }
     estudiante.on('connect', function() {
       estudiante.emit('unirse-a-paralelo', { paraleloId })
-      estudiante.emit('pregunta-estudiante', pregunta )
+      setTimeout(function() {
+        estudiante.emit('pregunta-estudiante', pregunta )
+      }, 500)
     })
     profesor.on('connect', function() {
       profesor.emit('unirse-a-paralelo', { paraleloId })
@@ -53,5 +55,5 @@ describe('Sockets', () => {
       expect(preguntaRecibida).to.deep.equal(pregunta)
       done()
     })
-  }).timeout(15000)
+  })
 })

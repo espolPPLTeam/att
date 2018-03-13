@@ -8,6 +8,7 @@ module.exports = function({ io, shortid, logger }) {
       socket.join(`${paraleloId}`)
     })
     socket.on('pregunta-estudiante', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+      socket.join(`${paraleloId}`)
       Socket.in(`${paraleloId}`).emit('pregunta-estudiante', { preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
     })
     socket.on('disconnect', function() {

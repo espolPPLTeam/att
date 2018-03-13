@@ -106,10 +106,10 @@ npm run test:s # test socket
 
 3. Correr test con tags
 
-Si se quiere correr el test de model de un determinado tag(ver en los archivos de testing)
+Si se quiere correr el test de router de un determinado tag(ver en los archivos de testing)
 
 ```sh
-npm run test:m --grep @t1.1
+npm run test:r --grep @t1.1
 ```
 
 ## Deployment
