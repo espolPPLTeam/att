@@ -32,6 +32,7 @@ describe('Model', () =>  {
       yield mongo.Limpiar()
       done()
     }).catch((err) => {
+      console.log('no se puedo conectar')
       console.error(err)
       exit(1)
     })
@@ -48,12 +49,6 @@ describe('Model', () =>  {
   })
 
   // describe('@t1 CREAR', () => {
-  //   after(function(done) {
-  //     co(function *() {
-  //       yield mongo.Limpiar()
-  //       done()
-  //     })
-  //   })
   //   describe('@t1.1 ESTUDIANTE', () => {
   //     it('@t1.1.1 OK', (done) => {
   //       const estudiante = data.estudiantes[0]
@@ -325,6 +320,83 @@ describe('Model', () =>  {
   })
 
   describe('@t5 CAMBIO DE PARALELO', () => {
+    describe('@t5.1 PROFESOR', () => {
+      it('@t5.1.1 OK', (done) => {
+        co(function *() {
+          const paraleloNuevo = data.paralelos[1]
+          const paraleloAntiguo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreadoNuevo = yield apiModel.crearParalelo(paraleloNuevo)
+          const paraleloCreadoAntiguo = yield apiModel.crearParalelo(paraleloAntiguo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paraleloAntiguo['curso'],
+              codigo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const cambiado = yield apiModel.cambiarEstudianteDeParalelo({
+            paraleloNuevo: {
+              cursoNuevo: paraleloNuevo['curso'],
+              codigoNuevo: paraleloNuevo['codigo']
+            },
+            paraleloAntiguo: {
+              cursoAntiguo: paraleloAntiguo['curso'],
+              codigoAntiguo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(cambiado).to.be.true
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t5.1.2 PARAMETROS UNDEFINED', (done) => {
+        const paraleloNuevo = data.paralelos[0]
+        apiModel.cambiarEstudianteDeParalelo({
+          paraleloNuevo: {
+            cursoNuevo: paraleloNuevo['curso'],
+            codigoNuevo: paraleloNuevo['codigo']
+          },
+          paraleloAntiguo: {
 
+          }
+        }).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['cursoNuevo', 'codigoNuevo', 'cursoAntiguo', 'codigoAntiguo', 'estudianteCorreo']))
+          done()
+        })
+      })
+      it('@t5.1.3 PARALELO NUEVO NO EXISTE', (done) => {
+        co(function *() {
+          const paraleloNuevo = data.paralelos[0]
+          const paraleloAntiguo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreadoNuevo = yield apiModel.crearParalelo(paraleloNuevo)
+          const paraleloCreadoAntiguo = yield apiModel.crearParalelo(paraleloAntiguo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paraleloAntiguo['curso'],
+              codigo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const cambiado = yield apiModel.cambiarEstudianteDeParalelo({
+            paraleloNuevo: {
+              cursoNuevo: 'aaa',
+              codigoNuevo: paraleloNuevo['codigo']
+            },
+            paraleloAntiguo: {
+              cursoAntiguo: paraleloAntiguo['curso'],
+              codigoAntiguo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(cambiado).to.be.false
+          done()
+        }).catch((err) => { console.log(err) })
+      })
+    })
   })
+
 })

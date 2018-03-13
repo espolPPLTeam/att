@@ -138,11 +138,7 @@ module.exports = ({ db, logger, messages }) => {
           Paralelo.anadirEstudiante({ paralelo: { curso: cursoNuevo, codigo: codigoNuevo }, estudianteCorreo }),
           Paralelo.eliminarEstudiante({ paralelo: { curso: cursoAntiguo, codigo: codigoAntiguo }, estudianteCorreo })])
             .then((values) => {
-              if (values[0] && values[1]) {
-                resolve(true)
-              } else {
-                resolve(false)
-              }
+              resolve(values[0] && values[1])
         }).catch((err) => {
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)

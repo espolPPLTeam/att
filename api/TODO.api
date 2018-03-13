@@ -1,4 +1,5 @@
-[ ] api.models mejorar con errores de pedidos y ver cuales mejorar
+[ ] api.models error en tag t1.1
+[ ] error sockets testing
 [ ] docs socketio template
 [ ] webService espol generador npm
 [ ] ruta /profesor/preguntasEstudianteHoy/:paraleloId
@@ -33,15 +34,15 @@ e2e test
       socket.in(paraleloId).emit('pregunta-estudiante')
     })
     socket.on('habilitar-pregunta-profesor', function({ paraleloId, preguntaId }) {
-      
+
     })
     socket.on('deshabilitar-pregunta-profesor', function({ paraleloId, preguntaId }) {
-      
+
     })
     socket.on('respuesta-estudiante', function({ paraleloId }) {
       socket.in(paraleloId).emit('respuesta-estudiante')
     })
-    socket.on('reconectar-estudiante', function({ }) { 
+    socket.on('reconectar-estudiante', function({ }) {
       // si esta preguntando profesor enviar la pregunta y habiliar
     })
     socket.on('reconectar-profesor', function({ }) {

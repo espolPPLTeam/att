@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "Bkzeo2eSYz",
+        "_id": "ryEXSuBFf",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -152,7 +152,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "SJMinxrYz",
+  "preguntaId": "HJxHXruHYz",
   "destacadaEstado": true
 }
 ```
