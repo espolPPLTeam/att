@@ -23,6 +23,12 @@
 
 https://joelerll95.gitbooks.io/att/content/
 
+__Correrlo en local__
+
+```sh
+npm run docs:s
+```
+
 ## Prerequisites
 
 * Nodejs > 9.3.0
@@ -83,8 +89,27 @@ npm run dev
 
 ## Testing
 
+1. Correr todos los test
+
 ```sh
 npm run test
+```
+
+2. Correr algun determinado test
+
+```sh
+npm run test:c # test controllers
+npm run test:m # test model
+npm run test:r # test router
+npm run test:s # test socket
+```
+
+3. Correr test con tags
+
+Si se quiere correr el test de router de un determinado tag(ver en los archivos de testing)
+
+```sh
+npm run test:r --grep @t1.1
 ```
 
 ## Deployment

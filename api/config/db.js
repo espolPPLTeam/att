@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+mongoose.Promise = Promise
 var conn
 let Conectar = function(url) {
   return new Promise(function(resolve) {

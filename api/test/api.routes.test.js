@@ -71,11 +71,11 @@ describe('Routes - Integration', () => {
       done()
     })
   })
-  describe('GET Profesores Obtener Datos', () => {
+  describe('@t1 GET Profesores Obtener Datos', () => {
     let doc = {
       nombre: 'Profesores Obtener Datos',
       metodo: 'GET',
-      url: '/api/att/profesor/paralelos/:profesorCorreo',
+      url: '/api/att/profesor/datosProfesor/:profesorCorreo',
       descripcion: 'Da los paralelos para que se pueda escribir en la pagina principal los paralelos',
       params: [
         {
@@ -86,20 +86,20 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t1.1 OK', (done) => {
       let profesor = data.profesores[0]
       let paralelo = data.paralelos[0]
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
         let paraleloCreado = yield model.crearParalelo(paralelo)
-        yield model.anadirProfesorAParalelo({ 
-          paralelo: { 
-            curso: paralelo['curso'], 
+        yield model.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paralelo['curso'],
             codigo: paralelo['codigo']
-          }, 
+          },
           profesorCorreo: profesor['correo'] })
         request(app)
-        .get('/api/att/profesor/paralelos/' + profesor['correo'])
+        .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
         .end(function(err, res) {
           generatorDocs.OK({ docs, doc, res })
           expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
@@ -108,9 +108,9 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(5000)
-    it('NO ES EMAIL', (done) => {
+    it('@t1.2 NO ES EMAIL', (done) => {
       request(app)
-      .get('/api/att/profesor/paralelos/' + 'aa')
+      .get('/api/att/profesor/datosProfesor/' + 'aa')
       .end(function(err, res) {
         generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
         expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
@@ -118,10 +118,10 @@ describe('Routes - Integration', () => {
         done()
       })
     }).timeout(5000)
-    it('NO EXISTE', (done) => {
+    it('@t1.3 NO EXISTE', (done) => {
       let profesor = data.profesores[0]
       request(app)
-      .get('/api/att/profesor/paralelos/' + profesor['correo'])
+      .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
       .end(function(err, res) {
         generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
         expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
@@ -130,7 +130,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-  describe('POST Crear Pregunta Estudiante', () => {
+  describe('@t2 POST Crear Pregunta Estudiante', () => {
     // TODO: si no se envia el campo de creador?
     let doc = {
       nombre: 'Crear pregunta estudiante',
@@ -149,11 +149,11 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t2.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let req = { 
+      let req = {
         texto,
         paraleloId,
         creador: estudiante
@@ -169,9 +169,9 @@ describe('Routes - Integration', () => {
         done()
       })
     }).timeout(5000)
-    it('PARALELOID ES CAMPO OBLIGATORIO', (done) => {
+    it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
-      let req = { 
+      let req = {
         texto: 'Mi primera pregunta',
         creador: estudiante
       }
@@ -187,7 +187,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-  describe('PUT Destacar Pregunta', () => {
+  describe('@t3 PUT Destacar Pregunta', () => {
     let doc = {
       nombre: 'Descatar pregunta',
       metodo: 'PUT',
@@ -199,23 +199,26 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('OK', (done) => {
+    it('@t3.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
+      let paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
-      let paraleloId = 'aaaa'
-      
+
       co(function *() {
-        let preguntaCreada = yield model.crearPreguntaEstudiante({ 
-        texto: 'Mi primera pregunta', 
-        paraleloId: 'aaa', 
-        creador: { 
-          _id: 'aaa', 
-          correo: estudiante['correo'], 
-          matricula: estudiante['matricula'], 
-          nombres: estudiante['nombres'], 
-          apellidos: estudiante['apellidos'] 
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let paraleloId = paraleloCreado['_id']
+        let preguntaCreada = yield model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: estudiante['correo'],
+          matricula: estudiante['matricula'],
+          nombres: estudiante['nombres'],
+          apellidos: estudiante['apellidos']
         }})
-        let req = { 
+        let req = {
           preguntaId: preguntaCreada['_id'],
           destacadaEstado: true
         }
@@ -231,11 +234,11 @@ describe('Routes - Integration', () => {
           })
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('PREGUNTA ID NO EXISTE', (done) => {
+    it('@t3.2 PREGUNTA ID NO EXISTE', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
-      let req = { 
+      let req = {
         preguntaId: 'sdasssdas',
         destacadaEstado: true
       }
@@ -253,8 +256,8 @@ describe('Routes - Integration', () => {
   })
 
   // TODO: error docs
-  describe('URL NO VALIDO', () => {
-    it('EL URL INGRESADO NO EXISTE', (done) => {
+  describe('@t4 URL NO VALIDO', () => {
+    it('@t4.1 EL URL INGRESADO NO EXISTE', (done) => {
       request(app)
         .put('/api/att/loquesea')
         .end(function(err, res) {

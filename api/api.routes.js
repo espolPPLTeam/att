@@ -1,6 +1,6 @@
 module.exports = ({ app, controller, logger }) => {
   app
-  .route('/profesor/paralelos/:profesorCorreo')
+  .route('/profesor/datosProfesor/:profesorCorreo')
     .get((req, res) => {
       let { profesorCorreo } = req.params
       controller.ObtenerParalelosProfesor({ profesorCorreo })
@@ -45,18 +45,48 @@ module.exports = ({ app, controller, logger }) => {
   app
   .route('/profesor/preguntasEstudianteHoy/:paraleloId')
     .get((req, res) => {
+      let { paraleloId } = req.params
+      // con cuales pregunta fueron destacadas
+    })
 
+  app
+  .route('/estudiante/misPreguntasHoy/:estudianteId')
+    .get((req, res) => {
+      let { estudianteId } = req.params
+    })
+
+  app
+  .route('/profesor/respuestasPregunta/:preguntaId')
+    .get((req, res) => {
+      let { preguntaId } = req.params
+    })
+
+  app
+  .route('/profesor/misPreguntasHoy/:paraleloId')
+    .get((req, res) => {
+      let { paraleloId } = req.params
+    })
+
+  app
+  .route('/profesor/preguntar')
+    .post((req, res) => {
+      let { texto, paraleloId } = req.body
+    })
+
+  app
+  .route('/profesor/terminarPregunta')
+    .put((req, res) => {
+      let { preguntaId, paraleloId } = req.body
+    })
+
+  app
+  .route('/profesor/preguntasHistorial/:paraleloId')
+    .get((req, res) => {
+      let { paraleloId } = req.params
     })
 
   app
   .use((req, res) => {
     res.status(controller.URL_NO_VALIDO.codigoEstado).json(controller.URL_NO_VALIDO)
   })
-
 }
-
-
-// app.route('/profesor/respuestasPregunta')
-// app.route('/profesor/crearPregunta')
-// app.route('/profesor/preguntasProfesorHistorial')
-// app.route('/profesor/terminarPregunta')

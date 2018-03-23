@@ -1,27 +1,38 @@
+process.on('uncaughtException', function(err) {
+  console.error('Caught exception: ' + err)
+  console.error(err.stack)
+})
 const assert = require('assert')
 const co = require('co')
 const data = require('./database.mock')
 const mongoSchema = require('../config/models')
 const mongo = require('../config/db')
+const messages = require('../config/messages')
 const logger = require('../config/logger')
 const sinon = require('sinon')
 const expect = require('chai').expect
 require('mocha-sinon')
 
-process.on('uncaughtException', function(err) {
-  logger.error('Caught exception: ' + err)
-  logger.error(err.stack)
-})
+function crearStub(tipo, metodo, response) {
+  let modelStub = {}
+  if (tipo === 'resolve') {
+    modelStub[metodo] = () => { return Promise.resolve(response) }
+    return modelStub
+  }
+  modelStub[metodo] = () => { return Promise.reject(response) }
+  return modelStub
+}
 
-const apiModel = require('../api.model')({ db: mongoSchema, logger })
+const apiModel = require('../api.model')({ db: mongoSchema, logger, messages })
 
-describe('Database', () =>  {
+describe('Model', () =>  {
   before(function(done) {
     co(function *() {
       yield mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
       yield mongo.Limpiar()
       done()
     }).catch((err) => {
+      console.log('no se puedo conectar')
       console.error(err)
       exit(1)
     })
@@ -36,259 +47,356 @@ describe('Database', () =>  {
       done()
     })
   })
-  describe('Acciones basicas', () =>  {
-    beforeEach(function(done) {
-      this.sinon.stub(logger, 'error')
-      done()
+
+  // describe('@t1 CREAR', () => {
+  //   describe('@t1.1 ESTUDIANTE', () => {
+  //     it('@t1.1.1 OK', (done) => {
+  //       const estudiante = data.estudiantes[0]
+  //       apiModel.crearEstudiante(estudiante).then((resp) => {
+  //         expect(estudiante['correo']).to.equal(resp['correo'])
+  //         expect(resp['error']).to.equal(undefined)
+  //         expect(resp['MensajeError']).to.equal(undefined)
+  //         done()
+  //       }).catch((err) => console.error(err))
+  //     }).timeout(5000)
+  //     it('@t1.1.2 PARAMETROS UNDEFINED', (done) => {
+  //       const estudiante = data.estudiantes[0]
+  //       estudiante['correo'] = undefined
+  //       apiModel.crearEstudiante(estudiante).catch((mensajeError) => {
+  //         expect(mensajeError).to.equal(messages.ERROR_AL_CREAR)
+  //         done()
+  //       })
+  //     }).timeout(5000)
+  //   })
+  //   describe('@t1.2 PROFESOR', () => {
+  //     it('@t1.2.1 OK', (done) => {
+  //       const profesor = data.profesores[0]
+  //       apiModel.crearProfesor(profesor).then((resp) => {
+  //         expect(profesor['correo']).to.equal(resp['correo'])
+  //         expect(resp['error']).to.equal(undefined)
+  //         expect(resp['MensajeError']).to.equal(undefined)
+  //         done()
+  //       }).catch((err) => console.error(err))
+  //     }).timeout(5000)
+  //     it('@t1.2.2 PARAMETROS UNDEFINED', (done) => {
+  //       const profesor = data.profesores[0]
+  //       profesor['correo'] = undefined
+  //       apiModel.crearProfesor(profesor).catch((mensajeError) => {
+  //         expect(mensajeError).to.equal(messages.ERROR_AL_CREAR)
+  //         done()
+  //       })
+  //     }).timeout(5000)
+  //   })
+  //   describe('@t1.3 PARALELO', () => {
+  //     it('@t1.2.1 OK', (done) => {
+  //       const paralelo = data.paralelos[0]
+  //       apiModel.crearParalelo(paralelo).then((resp) => {
+  //         expect(paralelo['codigo']).to.equal(resp['codigo'])
+  //         expect(resp['error']).to.equal(undefined)
+  //         expect(resp['MensajeError']).to.equal(undefined)
+  //         done()
+  //       })
+  //     }).timeout(5000)
+  //     it('@t1.2.1 PARAMETROS UNDEFINED', (done) => {
+  //       const paralelo = data.paralelos[0]
+  //       paralelo['codigo'] = undefined
+  //       apiModel.crearParalelo(paralelo).catch((mensajeError) => {
+  //         expect(mensajeError).to.equal(messages.ERROR_AL_CREAR)
+  //         done()
+  //       })
+  //     }).timeout(5000)
+  //   })
+  // })
+
+  describe('@t2 OBTENER', () => {
+    describe('@t2.1 ESTUDIANTE', () => {
+      it('@t2.1.1 OK', (done) => {
+        co(function *() {
+          const paralelo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          yield mongoSchema.Paralelo.anadirEstudiante({ // TODO: mejorar
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const estudianteDatos = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo']})
+          expect(estudianteDatos['correo']).to.equal(estudiante['correo'])
+          expect(estudianteDatos['paraleloId']).to.equal(paraleloCreado['_id'])
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t2.1.2 PARAMETROS UNDEFINED', (done) => {
+        apiModel.obtenerDatosEstudiantePorCorreo({}).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['correo']))
+          done()
+        })
+      }).timeout(5000)
+      it('@t2.1.3 CORREO NO EXISTE', (done) => {
+        apiModel.obtenerDatosEstudiantePorCorreo({ correo: 'noexisteestecorreo'}).then((resp) => {
+          expect(resp).to.equal(null)
+          done()
+        })
+      }).timeout(5000)
     })
-    it('CREAR Paralelo', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id'] })
-        expect(paralelo['nombre']).to.equal(paraleloEncontrado['nombre'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('CREAR Profesor y OBTENER Profesor', (done) => {
-      co(function *() {
-        const profesor = data.profesores[0]
-        const paralelo = data.paralelos[0]
-        const paraleloDos = data.paralelos[1]
-        yield apiModel.crearParalelo(paralelo)
-        yield apiModel.crearParalelo(paraleloDos)
-        yield apiModel.anadirProfesorAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          profesorCorreo: profesor['correo']
+    describe('@t2.2 PROFESOR', () => {
+      it('@t2.2.1 OK', (done) => {
+        co(function *() {
+          const paralelo = data.paralelos[0]
+          const profesor = data.profesores[0]
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const profesorCreado = yield apiModel.crearProfesor(profesor)
+          yield mongoSchema.Paralelo.anadirProfesor({ // TODO: mejorar
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            profesorCorreo: profesor['correo']
+          })
+          const profesorDatos = yield apiModel.obtenerDatosProfesorPorCorreo({ correo: profesor['correo']})
+          expect(profesorDatos['correo']).to.equal(profesor['correo'])
+          expect(profesorDatos['paralelos']).to.be.an('array')
+          expect(profesorDatos['paralelos']).to.have.lengthOf(1)
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t2.2.2 PARAMETROS UNDEFINED', (done) => {
+        apiModel.obtenerDatosProfesorPorCorreo({}).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['correo']))
+          done()
         })
-        yield apiModel.anadirProfesorAParalelo({
-          paralelo: {
-            curso: paraleloDos['curso'],
-            codigo: paraleloDos['codigo']
-          },
-          profesorCorreo: profesor['correo']
+      }).timeout(5000)
+      it('@t2.2.3 CORREO NO EXISTE', (done) => {
+        apiModel.obtenerDatosProfesorPorCorreo({ correo: 'noexisteestecorreo'}).then((resp) => {
+          expect(resp).to.equal(null)
+          done()
         })
-        const profesorCreado = yield apiModel.crearProfesor(profesor)
-        const profesorEncontrado = yield apiModel.obtenerDatosProfesorPorCorreo({ correo: profesor['correo'] })
-        expect(profesor['correo']).to.equal(profesorEncontrado['correo'])
-        expect(profesorEncontrado['paralelos'].length).to.equal(2)
-        expect(profesorEncontrado['paralelos'][0]['nombre']).to.equal(paralelo['nombre'])
-        expect(profesorEncontrado['paralelos'][1]['nombre']).to.equal(paraleloDos['nombre'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('CREAR Estudiante y OBTENER Estudiante', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const estudiante = data.estudiantes[0]
-
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudiante['correo']
-        })
-        const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
-        const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo'] })
-        expect(estudiante['correo']).to.equal(estudianteEncontrado['correo'])
-        expect(estudianteEncontrado['paraleloId']).to.equal(paraleloCreado['_id'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('ANADIR estudiante A paralelo', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        const estaCreadoParalelo = yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: 'joeedrod@espol.edu.ec'
-        })
-        const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: 'joeedrod@espol.edu.ec' })
-        expect(paraleloEstudiante['curso']).to.equal(paralelo['curso'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('ANADIR profesor A paralelo', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        yield apiModel.crearParalelo(paralelo)
-        yield apiModel.anadirProfesorAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          profesorCorreo: 'joeedrod@espol.edu.ec'
-        })
-        const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParalelosProfesor({ profesorCorreo: 'joeedrod@espol.edu.ec' })
-        expect(paraleloEstudiante[0]['curso']).to.equal(paralelo['curso'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('ELIMINAR estudiante', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const estudianteUno = data.estudiantes[0]
-        const estudianteDos = data.estudiantes[1]
-
-        yield apiModel.crearParalelo(paralelo)
-        const estudianteCreado = yield apiModel.crearEstudiante(estudianteUno)
-        const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudianteUno['correo'] })
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudianteUno['correo']
-        })
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudianteDos['correo']
-        })
-        expect(estudianteUno['correo']).to.equal(estudianteEncontrado['correo'])
-        const paraleloEstudiante = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: estudianteUno['correo'] })
-        expect(paraleloEstudiante['curso']).to.equal(paralelo['curso'])
-        expect(paraleloEstudiante['estudiantes'].length).to.equal(2)
-        yield apiModel.eliminarEstudiante({ 
-          paralelo: { 
-            curso: paralelo['curso'], 
-            codigo: paralelo['codigo'] 
-          }, 
-          estudianteCorreo: estudianteUno['correo'] 
-        })
-        const estudianteDatos = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo:  estudianteUno['correo'] })
-        expect(estudianteDatos).to.equal(null)
-        const paraleloEstudianteDos = yield mongoSchema.Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: estudianteDos['correo'] })
-        expect(paraleloEstudianteDos['estudiantes'].length).to.equal(1)
-        expect(paraleloEstudianteDos['estudiantes'][0]).to.equal(estudianteDos['correo'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('CAMBIAR estudiante DE paralelo', (done) => {
-      co(function *() {
-        const paralelo = data.paralelos[0]
-        const paraleloDos = data.paralelos[1]
-        const estudianteUno = data.estudiantes[0]
-        const estudianteDos = data.estudiantes[1]
-        const estudianteTres = data.estudiantes[2]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        const paraleloCreadoDos = yield apiModel.crearParalelo(paraleloDos)
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudianteUno['correo']
-        })
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudianteDos['correo']
-        })
-        yield apiModel.anadirEstudianteAParalelo({
-          paralelo: {
-            curso: paraleloDos['curso'],
-            codigo: paraleloDos['codigo']
-          },
-          estudianteCorreo: estudianteTres['correo']
-        })
-        yield apiModel.cambiarEstudianteDeParalelo({ 
-          paraleloNuevo: { 
-            cursoNuevo: paraleloDos['curso'], 
-            codigoNuevo: paraleloDos['codigo'] 
-          }, 
-          paraleloAntiguo: { 
-            cursoAntiguo: paralelo['curso'], 
-            codigoAntiguo: paralelo['codigo'] 
-          }, 
-          estudianteCorreo: estudianteUno['correo'] 
-        })
-        const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id']})
-        const paraleloEncontradoDos = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreadoDos['_id']})
-        expect(paraleloEncontrado['estudiantes'].length).to.equal(1)
-        expect(paraleloEncontradoDos['estudiantes'].length).to.equal(2)
-        expect(paraleloEncontrado['estudiantes'][0]).to.equal(estudianteDos['correo'])
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
+      }).timeout(5000)
+    })
   })
-  describe('Preguntar a profesor', () =>  {
-    it('crear Pregunta Estudiante', (done) =>  {
-      co(function *() {
+
+  describe('@t3 ELIMINAR', () => {
+    describe('@t3.1 ESTUDIANTE', () => {
+      it('@t3.1.1 OK', (done) => {
+        co(function *() {
+          const paralelo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          yield mongoSchema.Paralelo.anadirEstudiante({ // TODO: mejorar
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const estudianteDatos = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo']})
+          expect(estudianteDatos['correo']).to.equal(estudiante['correo'])
+          expect(estudianteDatos['paraleloId']).to.equal(paraleloCreado['_id'])
+          const resp = yield apiModel.eliminarEstudiante({
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t3.1.2 PARAMETROS UNDEFINED', (done) => {
         const paralelo = data.paralelos[0]
         const estudiante = data.estudiantes[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        yield apiModel.crearEstudiante(estudiante)
-        const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ 
-          texto: 'Mi primera Pregunta', 
-          paraleloId: paraleloCreado['_id'], 
-          creador: estudiante
-        })
-        yield apiModel.anadirEstudianteAParalelo({
+        apiModel.eliminarEstudiante({
           paralelo: {
             curso: paralelo['curso'],
             codigo: paralelo['codigo']
-          },
-          estudianteCorreo: estudiante['correo']
+          }
+        }).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'estudianteCorreo']))
+          done()
         })
-        const preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        const paraleloEncontrado = yield mongoSchema.Paralelo.obtenerPorId({ paraleloId: paraleloCreado['_id']})
-        const estudianteEncontrado = yield apiModel.obtenerDatosEstudiantePorCorreo({ correo: estudiante['correo'] })
-        expect(preguntaEncontrada['texto']).to.equal(preguntaCreada['texto'])
-        expect(estudianteEncontrado['preguntas'].length).to.equal(1)
-        expect(paraleloEncontrado['preguntasEstudiante'].length).to.equal(1)
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
-    it('destacar pregunta @destacar', (done) => {
-      co(function *() {
+      }).timeout(5000)
+    })
+  })
+
+  describe('@t4 ANADIR A PARALELO', () => {
+    describe('@t4.1 ESTUDIANTE', () => {
+      it('@t4.1.1 OK', (done) => {
+        co(function *() {
+          const paralelo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(estado).to.be.true
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t4.1.2 PARAMETROS UNDEFINED', (done) => {
         const paralelo = data.paralelos[0]
         const estudiante = data.estudiantes[0]
-        const paraleloCreado = yield apiModel.crearParalelo(paralelo)
-        const preguntaCreada = yield apiModel.crearPreguntaEstudiante({ 
-          texto: 'Mi primera Pregunta', 
-          paraleloId: paraleloCreado['_id'], 
-          creador: estudiante
+        apiModel.anadirEstudianteAParalelo({
+          paralelo: {
+            curso: paralelo['curso'],
+            codigo: paralelo['codigo']
+          }
+        }).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'estudianteCorreo']))
+          done()
         })
-        let preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        expect(preguntaEncontrada['destacada']).to.equal(false)
-        yield apiModel.destacarPregunta({ preguntaId: preguntaCreada['_id'], destacadaEstado: true })
-        preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        expect(preguntaEncontrada['destacada']).to.equal(true)
-        yield apiModel.destacarPregunta({ preguntaId: preguntaCreada['_id'], destacadaEstado: false })
-        preguntaEncontrada = yield mongoSchema.PreguntaEstudiante.obtenerPorId({ preguntaId: preguntaCreada['_id'] })
-        expect(preguntaEncontrada['destacada']).to.equal(false)
-        done()
+      }).timeout(5000)
+      it('@t4.1.3 NO SE REALIZO CORRECTAMENTE', (done) => {
+        co(function *() {
+          const paralelo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: 'aaaa'
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(estado).to.be.false
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+    })
+    describe('@t4.2 PROFESOR', () => {
+      const paralelo = data.paralelos[0]
+      const profesor = data.profesores[0]
+      it('@t4.2.1 OK', (done) => {
+        co(function *() {
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const profesorCreado = yield apiModel.crearProfesor(profesor)
+          const estado = yield apiModel.anadirProfesorAParalelo({
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: paralelo['codigo']
+            },
+            profesorCorreo: profesor['correo']
+          })
+          expect(estado).to.be.true
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t4.2.2 PARAMETROS UNDEFINED', (done) => {
+        apiModel.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paralelo['curso'],
+            codigo: paralelo['codigo']
+          }
+        }).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'profesorCorreo']))
+          done()
+        })
+      }).timeout(5000)
+      it('@t4.2.3 NO SE REALIZO CORRECTAMENTE', (done) => {
+        co(function *() {
+          const paraleloCreado = yield apiModel.crearParalelo(paralelo)
+          const estudianteCreado = yield apiModel.crearProfesor(profesor)
+          const estado = yield apiModel.anadirProfesorAParalelo({
+            paralelo: {
+              curso: paralelo['curso'],
+              codigo: 'aaaa'
+            },
+            profesorCorreo: profesor['correo']
+          })
+          expect(estado).to.be.false
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+    })
+  })
+
+  describe('@t5 CAMBIO DE PARALELO', () => {
+    describe('@t5.1 PROFESOR', () => {
+      it('@t5.1.1 OK', (done) => {
+        co(function *() {
+          const paraleloNuevo = data.paralelos[1]
+          const paraleloAntiguo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreadoNuevo = yield apiModel.crearParalelo(paraleloNuevo)
+          const paraleloCreadoAntiguo = yield apiModel.crearParalelo(paraleloAntiguo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paraleloAntiguo['curso'],
+              codigo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const cambiado = yield apiModel.cambiarEstudianteDeParalelo({
+            paraleloNuevo: {
+              cursoNuevo: paraleloNuevo['curso'],
+              codigoNuevo: paraleloNuevo['codigo']
+            },
+            paraleloAntiguo: {
+              cursoAntiguo: paraleloAntiguo['curso'],
+              codigoAntiguo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(cambiado).to.be.true
+          done()
+        }).catch((err) => { console.log(err) })
+      }).timeout(5000)
+      it('@t5.1.2 PARAMETROS UNDEFINED', (done) => {
+        const paraleloNuevo = data.paralelos[0]
+        apiModel.cambiarEstudianteDeParalelo({
+          paraleloNuevo: {
+            cursoNuevo: paraleloNuevo['curso'],
+            codigoNuevo: paraleloNuevo['codigo']
+          },
+          paraleloAntiguo: {
+
+          }
+        }).catch((mensajeError) => {
+          expect(mensajeError).to.equal(messages.NO_ESTA_ENVIANDO(['cursoNuevo', 'codigoNuevo', 'cursoAntiguo', 'codigoAntiguo', 'estudianteCorreo']))
+          done()
+        })
+      })
+      it('@t5.1.3 PARALELO NUEVO NO EXISTE', (done) => {
+        co(function *() {
+          const paraleloNuevo = data.paralelos[0]
+          const paraleloAntiguo = data.paralelos[0]
+          const estudiante = data.estudiantes[0]
+          const paraleloCreadoNuevo = yield apiModel.crearParalelo(paraleloNuevo)
+          const paraleloCreadoAntiguo = yield apiModel.crearParalelo(paraleloAntiguo)
+          const estudianteCreado = yield apiModel.crearEstudiante(estudiante)
+          const estado = yield apiModel.anadirEstudianteAParalelo({
+            paralelo: {
+              curso: paraleloAntiguo['curso'],
+              codigo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          const cambiado = yield apiModel.cambiarEstudianteDeParalelo({
+            paraleloNuevo: {
+              cursoNuevo: 'aaa',
+              codigoNuevo: paraleloNuevo['codigo']
+            },
+            paraleloAntiguo: {
+              cursoAntiguo: paraleloAntiguo['curso'],
+              codigoAntiguo: paraleloAntiguo['codigo']
+            },
+            estudianteCorreo: estudiante['correo']
+          })
+          expect(cambiado).to.be.false
+          done()
+        }).catch((err) => { console.log(err) })
       })
     })
-    it('obtener pregunta estudiantes de paralelo', (done) => {
-      co(function *() {
-        const estudiante = data.estudiantes[0]
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi primera Pregunta',  paraleloId: 'aa', creador: estudiante })
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi segunda Pregunta',  paraleloId: 'aa', creador: estudiante })
-        yield apiModel.crearPreguntaEstudiante({ texto: 'Mi tercera Pregunta',  paraleloId: 'aaaa', creador: estudiante })
-        const preguntas = yield apiModel.obtenerPreguntasEstudiantesPorParalelo({ paraleloId: 'aa' })
-        expect(preguntas.length).to.equal(2)
-        done()
-      }).catch((err) => console.error(err))
-    }).timeout(5000)
   })
-  // it('crearPreguntaProfesorYHabilitarla', (done) =>  {
-    
-  // })
-  // it('crearRespuestaEstudiante', (done) =>  {
-    
-  // })
+
 })

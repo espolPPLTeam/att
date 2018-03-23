@@ -11,7 +11,10 @@ function generateAPI({ docs }) {
 }
 
 function generateREALTIME({ docs }) {
-
+  del.sync([path.join(__dirname, '../../docs/sockets.md')], { force: true })
+  nunjucks.configure(path.join(__dirname, 'templates'), { autoescape: false })
+  const res = nunjucks.render(path.join(__dirname, 'templates/sockets.template.md'), { docs, blockInicio: '{%', blockFin: '%}' })
+  fs.appendFileSync(path.join(__dirname, '../../docs/sockets.md'), res) 
 }
 
 function toString(objeto) {

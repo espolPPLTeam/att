@@ -10,6 +10,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 if (process.env.NODE_ENV !== 'testing')
   db.Conectar(process.env.MONGO_URL_ATT).then().catch((err) => console.log(err))
 
+if (process.env.NODE_ENV === 'development') {
+  const morgan = require('morgan')
+  app.use(morgan('tiny'))
+}
+
 const io = require('socket.io')(server, {'pingInterval': 60000, 'pingTimeout': 120000})
 
 const apiATT = express()

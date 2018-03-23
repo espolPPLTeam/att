@@ -30,12 +30,12 @@ describe('Controller', () =>  {
   const paramsController = { responses, messages, model: {}, logger, validator }
   const controllerRequire = require('../api.controller')
 
-  describe('ObtenerParalelosProfesor', () =>  {
+  describe('@t1 ObtenerParalelosProfesor', () =>  {
     const profesor = data.profesores[0]
   	beforeEach(function() {
       this.sinon.stub(logger, 'error')
   	})
-    it('SERVER ERROR', (done) => {
+    it('@t1.1 SERVER ERROR', (done) => {
       paramsController['model'] = crearStub('reject', 'obtenerDatosProfesorPorCorreo', 'return')
       const controller = controllerRequire(paramsController)
       controller.ObtenerParalelosProfesor({ profesorCorreo: profesor['correo'] })
@@ -47,11 +47,11 @@ describe('Controller', () =>  {
     })
   })
 
-  describe('preguntasEstudianteHoy', () =>  {
+  describe('@t2 preguntasEstudianteHoy', () =>  {
     beforeEach(function() {
       this.sinon.stub(logger, 'error')
     })
-    it('SERVER ERROR', (done) => {
+    it('@t2.1 SERVER ERROR', (done) => {
       paramsController['model'] = crearStub('reject', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
       const controller = controllerRequire(paramsController)
       controller.PreguntasEstudianteHoy({ paraleloId:  'aaa'})
@@ -63,12 +63,12 @@ describe('Controller', () =>  {
     })
   })
 
-  describe('crearPreguntaEstudiante', () =>  {
+  describe('@t3 crearPreguntaEstudiante', () =>  {
     let estudiante = data.estudiantes[0]
     beforeEach(function() {
       this.sinon.stub(logger, 'error')
     })
-    it('SERVER ERROR', (done) => {
+    it('@t3.1 SERVER ERROR', (done) => {
       paramsController['model'] = crearStub('reject', 'crearPreguntaEstudiante', 'return')
       const controller = controllerRequire(paramsController)
       controller.CrearPreguntaEstudiante({ 
@@ -89,11 +89,11 @@ describe('Controller', () =>  {
     })
   })
 
-  describe('destacarPregunta', () =>  {
+  describe('@t4 destacarPregunta', () =>  {
     beforeEach(function() {
       this.sinon.stub(logger, 'error')
     })
-    it('SERVER ERROR', (done) => {
+    it('@t4.1 SERVER ERROR', (done) => {
       paramsController['model'] = crearStub('reject', 'destacarPregunta', 'return')
       const controller = controllerRequire(paramsController)
       controller.DestacarPregunta({ preguntaId: 'aaa', destacadaEstado: true })

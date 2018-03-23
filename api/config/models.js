@@ -9,15 +9,15 @@ const EstudianteSchema = mongoose.Schema({
 	  'default': shortid.generate
   },
   token: { type: String },
-  nombres: { type: String },
-  apellidos: { type: String },
-  correo: { type: String },
-  matricula: { type: String },
-  preguntas:  [{ 
+  nombres: { type: String, required: true },
+  apellidos: { type: String, required: true },
+  correo: { type: String, required: true },
+  matricula: { type: String, required: true },
+  preguntas:  [{
   	type: String,
 	  ref: 'Pregunta'
   }],
-  respuestas:  [{ 
+  respuestas:  [{
   	type: String,
 	  ref: 'Respuesta'
   }]
@@ -29,14 +29,15 @@ const ProfesorSchema = mongoose.Schema({
 	  'default': shortid.generate
   },
   token: { type: String },
-  correo: { type: String },
-  nombres: { type: String },
-  apellidos: { type: String },
+  correo: { type: String, required: true },
+  nombres: { type: String, required: true },
+  apellidos: { type: String, required: true },
   tipo: {
     type: String,
-    enum: ['titular', 'peer']
+    enum: ['titular', 'peer'],
+    required: true
   },
-  preguntas:  [{ 
+  preguntas:  [{
     type: String,
     ref: 'Pregunta'
   }]
@@ -47,19 +48,19 @@ const ParaleloSchema = new mongoose.Schema({
     type: String,
     'default': require('shortid').generate
   },
-  codigo: { type: String }, // TODO> tiene que ser un enum
-  nombre: { type: String },
-  curso: { type: String },
-  anio: { type: String },
-  termino: { type: String, enum: ['1', '2'] },
+  codigo: { type: String, required: true }, // TODO> tiene que ser un enum
+  nombre: { type: String, required: true },
+  curso: { type: String, required: true },
+  anio: { type: String, required: true },
+  termino: { type: String, enum: ['1', '2'], required: true },
   habilitado: {
     type: Boolean,
-    'default': true
+    'default': false
   },
   profesores: [{
     type: String,
     ref: 'Profesor',
-    field: 'correo' 
+    field: 'correo'
   }],
   estudiantes: [{
     type: String,
@@ -88,7 +89,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
     apellidos: { type: String }
   },
   texto: { type: String },
-  paralelo: { 
+  paralelo: {
     type: String,
     ref: 'Paralelo'
   },
@@ -119,7 +120,7 @@ const PreguntaProfesorSchema = mongoose.Schema({
     }
   },
   numeroEstudiantesPresentes: { type: Number },
-  respuestas: [{ 
+  respuestas: [{
   	type: String,
 	  ref: 'Respuesta',
   }]
@@ -181,13 +182,21 @@ EstudianteSchema.statics = {
   eliminar({ estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndRemove({ correo: estudianteCorreo }))
+      self.findOneAndRemove({ correo: estudianteCorreo }).then((accionEstado) => {
+        if (accionEstado) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      })
     })
   },
   anadirPregunta({ correo, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({ correo }, {$addToSet: {'preguntas': preguntaId }}))
+      self.update({ correo }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   obtenerPorCorreo({ correo }) {
@@ -214,6 +223,12 @@ ParaleloSchema.statics = {
       resolve(self.findOne({ _id: paraleloId }))
     })
   },
+  obtenerPorCursoYCodigo({ curso, codigo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ curso, codigo }))
+    })
+  },
   obtenerParaleloEstudiante({ estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
@@ -229,25 +244,33 @@ ParaleloSchema.statics = {
   anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'estudiantes': estudianteCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$addToSet: {'profesores': profesorCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
-    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+  eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}))
+      self.update({$and: [{ codigo }, { curso }]}, {$pull: {'estudiantes': estudianteCorreo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   },
   anadirPreguntaEstudiante({ paraleloId, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOneAndUpdate({ _id: paraleloId }, {$addToSet: {'preguntasEstudiante': preguntaId }}))
+      self.update({ _id: paraleloId }, {$addToSet: {'preguntasEstudiante': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   }
 }
@@ -273,14 +296,14 @@ PreguntaEstudianteSchema.statics = {
     return new Promise(function(resolve) {
       self.update({ _id: preguntaId }, {$set: { destacada: destacadaEstado }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
-      })  
+      })
     })
   }
 }
 
 // TODO: todos los que mande a update tienen que tener confirmacion de actualizacion
 
-module.exports = { 
+module.exports = {
   Estudiante: mongoose.model('Estudiante', EstudianteSchema),
   PreguntaEstudiante: mongoose.model('PreguntaEstudiante', PreguntaEstudianteSchema),
   Profesor: mongoose.model('Profesor', ProfesorSchema),

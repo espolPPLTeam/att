@@ -1,148 +1,194 @@
-module.exports = ({ db, logger }) => {
+module.exports = ({ db, logger, messages }) => {
   let PreguntaEstudiante = db.PreguntaEstudiante
   let Estudiante = db.Estudiante
   let Profesor = db.Profesor
   let Paralelo = db.Paralelo
   const proto = {
-    crearParalelo({ codigo, nombre, curso, termino, anio }) {
-      return new Promise(function(resolve, reject) {
-        let paraleloCreado = new Paralelo({ codigo, nombre, curso, termino, anio })
-        paraleloCreado.crear()
-          .then(() => {
-            resolve(paraleloCreado)
-          }).catch(err => logger.error(err))
-      })
-    },
-    anadirEstudianteAParalelo({ paralelo: { curso, codigo }, estudianteCorreo }) {
-      return new Promise(function(resolve, reject) {
-        Paralelo.anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
-          .then(() => {
-            resolve(true)
-          }).catch(err => logger.error(err))
-      })
-    },
-    anadirProfesorAParalelo({ paralelo: { curso, codigo }, profesorCorreo }) {
-      return new Promise(function(resolve, reject) {
-        Paralelo.anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo })
-          .then(() => {
-            resolve(true)
-          }).catch(err => logger.error(err))
-      })
-    },
-    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
-      return new Promise(function(resolve, reject) {
-        Promise.all([
-          Estudiante.eliminar({ estudianteCorreo }),
-          Paralelo.eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
-          ]).then((values) => {
-            resolve(true)
-        }).catch(err => logger.error(err))
-      }).catch(err => logger.error(err))
-    },
-    cambiarEstudianteDeParalelo({ paraleloNuevo: { cursoNuevo, codigoNuevo }, paraleloAntiguo: { cursoAntiguo, codigoAntiguo }, estudianteCorreo }) {
-      return new Promise(function(resolve, reject) {
-        Promise.all([
-          Paralelo.anadirEstudiante({ paralelo: { curso: cursoNuevo, codigo: codigoNuevo }, estudianteCorreo }),
-          Paralelo.eliminarEstudiante({ paralelo: { curso: cursoAntiguo, codigo: codigoAntiguo }, estudianteCorreo })
-          ]).then((values) => {
-            resolve(true)
-        }).catch(err => logger.error(err))
-      }).catch(err => logger.error(err))
-    },
     crearEstudiante({ correo, matricula, nombres, apellidos }) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve, reject) => {
         let estudiante = new Estudiante({ correo, matricula, nombres, apellidos })
         estudiante.crear()
           .then(() => {
             resolve(estudiante)
-          }).catch(err => logger.error(err))
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_CREAR)
+        })
       })
     },
     crearProfesor({ correo, tipo, nombres, apellidos }) {
+      return new Promise((resolve, reject) => {
+          let profesor = new Profesor({ correo, tipo, nombres, apellidos })
+          profesor.crear()
+            .then(() => {
+              resolve(profesor)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_CREAR)
+          })
+      })
+    },
+    crearParalelo({ codigo, nombre, curso, termino, anio }) {
       return new Promise(function(resolve, reject) {
-        let profesor = new Profesor({ correo, tipo, nombres, apellidos })
-        profesor.crear()
-          .then(() => {
-            resolve(profesor)
-          }).catch(err => logger.error(err))
+          let paraleloCreado = new Paralelo({ codigo, nombre, curso, termino, anio })
+          paraleloCreado.crear()
+            .then(() => {
+              resolve(paraleloCreado)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_CREAR)
+          })
       })
     },
     obtenerDatosEstudiantePorCorreo({ correo }) {
-      return new Promise(function(resolve, reject) {
-        Promise.all([
-          Estudiante.obtenerPorCorreo({ correo }),
-          Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: correo })
-          ]).then((values) => {
-            let estudiante = null
-            if (values[0]) {
-              estudiante = values[0]
-              if ( values[1] ) {
-                estudiante['paraleloId'] = values[1]['_id'] 
-              } else {
-                estudiante['paraleloId'] = null
-              }
-            }
-            resolve(estudiante)
-        }).catch(err => logger.error(err))
+      if (!correo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['correo']))
+      return new Promise((resolve) => {
+          Promise.all([
+            Estudiante.obtenerPorCorreo({ correo }),
+            Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: correo })])
+              .then((values) => {
+                let estudianteDatos = values[0]
+                let paraleloDatos = values[1]
+                let estudiante = null
+                if (estudianteDatos) {
+                  estudiante = JSON.parse(JSON.stringify(estudianteDatos))
+                  estudiante['paraleloId'] = paraleloDatos ? paraleloDatos['_id'] : null
+                }
+                resolve(estudiante)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_OBTENER)
+          })
       })
     },
     obtenerDatosProfesorPorCorreo({ correo }) {
-      return new Promise(function(resolve, reject) {
+      if (!correo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['correo']))
+      return new Promise((resolve) => {
         Promise.all([
           Profesor.obtenerPorCorreo({ correo }),
-          Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo })
-          ]).then((values) => {
-            let paralelos = values[1]
-            let profesorDatos = values[0]
-            // TODO: pasar esto filtrado a controller
-            if (values[0]) {
-              let profesor = (({ correo, tipo, nombres, apellidos }) => ({ correo, tipo, nombres, apellidos }))(profesorDatos)
-              const PARALELOS_FILTRADOS = paralelos.map(function(paralelo) {
-                return (({ codigo, _id, curso, nombre }) => ({ codigo, _id, curso, nombre }))(paralelo)
-              }, [])
-              profesor['paralelos'] = PARALELOS_FILTRADOS
-              resolve(profesor)
-            } else {
-              let profesor = null
-              resolve(profesor)
-            }
-            
-        }).catch(err => logger.error(err))
+          Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo }) ])
+            .then((values) => {
+              const paralelos = values[1]
+              const profesorDatos = values[0]
+              if (profesorDatos) {
+                let profesor = JSON.parse(JSON.stringify(profesorDatos)) // porque por alguna razon no se puede asignar
+                profesor['paralelos'] = paralelos
+                resolve(profesor)
+              } else {
+                let profesor = null
+                resolve(profesor)
+              }
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
       })
     },
+    eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
+      if (!curso || !codigo || !estudianteCorreo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'estudianteCorreo']))
+      return new Promise(function(resolve) {
+        Promise.all([
+          Estudiante.eliminar({ estudianteCorreo }),
+          Paralelo.eliminarEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
+          ]).then((resp) => {
+            resolve(true)
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
+      })
+    },
+    anadirEstudianteAParalelo({ paralelo: { curso, codigo }, estudianteCorreo }) {
+      if (!curso || !codigo || !estudianteCorreo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'estudianteCorreo']))
+      return new Promise(function(resolve) {
+          Promise.all([
+            // Paralelo.obtenerPorCursoYCodigo({ correo: estudianteCorreo }),
+            // Estudiante.obtenerPorCorreo({ correo: estudianteCorreo }),
+            Paralelo.anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo })
+          ]).then((values) => {
+            resolve(values[0])
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_OBTENER)
+          })
+      })
+    },
+    anadirProfesorAParalelo({ paralelo: { curso, codigo }, profesorCorreo }) {
+      if (!curso || !codigo || !profesorCorreo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['curso', 'codigo', 'profesorCorreo']))
+      return new Promise(function(resolve) {
+        Paralelo.anadirProfesor({ paralelo: { curso, codigo }, profesorCorreo })
+          .then((resp) => {
+            resolve(resp)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_OBTENER)
+          })
+      })
+    },
+    cambiarEstudianteDeParalelo({ paraleloNuevo: { cursoNuevo, codigoNuevo }, paraleloAntiguo: { cursoAntiguo, codigoAntiguo }, estudianteCorreo }) {
+      if (!cursoNuevo || !codigoNuevo || !cursoAntiguo || !codigoAntiguo || !estudianteCorreo)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['cursoNuevo', 'codigoNuevo', 'cursoAntiguo', 'codigoAntiguo', 'estudianteCorreo']))
+      return new Promise((resolve) => {
+        Promise.all([
+          Paralelo.anadirEstudiante({ paralelo: { curso: cursoNuevo, codigo: codigoNuevo }, estudianteCorreo }),
+          Paralelo.eliminarEstudiante({ paralelo: { curso: cursoAntiguo, codigo: codigoAntiguo }, estudianteCorreo })])
+            .then((values) => {
+              resolve(values[0] && values[1])
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
+      })
+    },
+    // Preguntas
     crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve) => {
         let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
         pregunta.crear()
           .then(preguntaCreda => {
             Promise.all([
               Estudiante.anadirPregunta({ correo, preguntaId: pregunta['_id'] }),
-              Paralelo.anadirPreguntaEstudiante({ paraleloId, preguntaId: pregunta['_id'] })
-              ]).then((values) => {
-                resolve(pregunta)
-            }).catch(err => logger.error(err))
-          }).catch(err => logger.error(err))
+              Paralelo.anadirPreguntaEstudiante({ paraleloId, preguntaId: pregunta['_id'] })])
+                .then((values) => {
+                  if (values[0] && values[1]) {
+                    resolve(pregunta)
+                  } else {
+                    resolve({})
+                  }
+            }).catch((err) => {
+              logger.error(err)
+              reject(messages.ERROR_AL_OBTENER)
+            })
+        })
       })
     },
-    // TODO: si la pregunta no existe, test
-    // FIXME: TEST
     destacarPregunta({ preguntaId, destacadaEstado }) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve) => {
         PreguntaEstudiante.destacar({ preguntaId, destacadaEstado })
-          .then((accion) => {
-            resolve(accion)
-          }).catch(err => logger.error(err))
+          .then((resp) => {
+            resolve(resp)
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
       })
     },
-    // TODO: si el paraleloId no existe
     obtenerPreguntasEstudiantesPorParalelo({ paraleloId }) {
-      return new Promise(function(resolve, reject) {
+      return new Promise((resolve) => {
         PreguntaEstudiante.obtenerPorParaleloHoy({ paraleloId })
           .then((preguntas) => {
             resolve(preguntas)
-          }).catch(err => logger.error(err))
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
       })
-    },
+    }
     // crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
 
     // },
