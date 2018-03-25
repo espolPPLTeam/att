@@ -268,27 +268,66 @@ describe('Routes - Integration', () => {
         })
     })
   })
-  // describe('GET Preguntas Estudiantes Hoy', () => {
-  //   it('OK', (done) => {
-  //     done()
-    //   it('OK', (done) => {
-    //   paramsController['model'] = crearStub('resolve', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
-    //   const controller = controllerRequire(paramsController)
-    //   controller.preguntasEstudianteHoy({ paraleloId:  'aaa'})
-    //     .then((response) => {
-    //       expect(response['codigoEstado']).to.equal(200)
-    //       expect(response['estado']).to.equal(true)
-    //       done()
-    //     }).catch((err) => console.error(err))
-    // })
-  //   })
-  //   it('PARALELO NO EXISTE', (done) => {
-  //     done()
-  //   })
-  //   it('SERVER ERROR', (done) => {
-  //     done()
-  //   })
-  // })
+  describe('@t5 GET Preguntas Estudiantes Hoy', () => {
+    let doc = {
+      nombre: 'Preguntas Estudiantes Hoy',
+      metodo: 'GET',
+      url: '/api/att/profesor/preguntasEstudianteHoy/:paraleloId',
+      descripcion: 'Obtiene las preguntas que se hicieron el dia actual en el paralelo enviado',
+      params: [
+        {
+          nombre: 'paraleloId',
+          tipo: 'String',
+          descripcion: ' -- '
+        }
+      ],
+      errors: []
+    }
+    it('@t5.1 OK', (done) => {
+      let paralelo = data.paralelos[0]
+      let estudiante_1 = data.estudiantes[0]
+      let estudiante_2 = data.estudiantes[1]
+      let pregunta_1 = {
+
+      }
+      let pregunta_2 = {
+
+      }
+      co(function *() {
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let paraleloId = paraleloCreado['_id']
+        let preguntaCreada_1 = yield model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta estudiante 1',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: estudiante_1['correo'],
+          matricula: estudiante_1['matricula'],
+          nombres: estudiante_1['nombres'],
+          apellidos: estudiante_1['apellidos']
+        }})
+        let preguntaCreada_2 = yield model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta estudiante 2',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: estudiante_2['correo'],
+          matricula: estudiante_2['matricula'],
+          nombres: estudiante_2['nombres'],
+          apellidos: estudiante_2['apellidos']
+        }})
+        request(app)
+        .get(`/api/att/profesor/preguntasEstudianteHoy/${paraleloId}`)
+        .end(function(err, res) {
+          generatorDocs.OK({ docs, doc, res })
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          expect(ajv.validate(schema.PREGUNTAS_HOY_ESTUDIANTES, res.body.datos[0])).to.equal(true)
+          done()
+        })
+      })
+    }).timeout(5000)
+  })
 })
 
 

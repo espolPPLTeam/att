@@ -62,6 +62,17 @@ const ESTUDIANTE = {
   "additionalProperties": false
 }
 
+const ESTUDIANTE_CON_ID = {
+  "type": "object",
+  "properties": {
+    "_id": { "type": "string" },
+    "correo": { "type": "string" },
+    "nombres": { "type": "string" },
+    "apellidos": { "type": "string" }
+  },
+  "additionalProperties": false
+}
+
 const PREGUNTA = {
   "type": "object",
   "properties": {
@@ -77,11 +88,30 @@ const PREGUNTA = {
   "additionalProperties": false
 }
 
+const PREGUNTAS_HOY_ESTUDIANTES = {
+  "type": "object",
+  "minProperties": 7,
+  "additionalProperties": false,
+  "properties": {
+    "creador": { 
+      "type": "object",
+      "items" : ESTUDIANTE_CON_ID 
+    },
+    "_id": { "type": "string" },
+    "destacada": { "type": "boolean" },
+    "texto": { "type": "string" },
+    "paralelo": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}
+
 module.exports = {
   PROFESOR_DATOS,
   ERROR_SERVIDOR,
   OK_ERROR,
-  PREGUNTA
+  PREGUNTA,
+  PREGUNTAS_HOY_ESTUDIANTES
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

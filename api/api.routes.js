@@ -46,7 +46,14 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/preguntasEstudianteHoy/:paraleloId')
     .get((req, res) => {
       let { paraleloId } = req.params
-      // con cuales pregunta fueron destacadas
+      controller.ObtenerPreguntasEstudiante({ paraleloId })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
