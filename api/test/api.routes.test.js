@@ -328,6 +328,63 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
+  describe('@t6 GET PREGUNTAS HECHAS POR ESTUDIANTE', () => {
+    let doc = {
+      nombre: 'Preguntas Estudiantes Hoy',
+      metodo: 'GET',
+      url: '/api/att/estudiante/misPreguntasHoy/:correo',
+      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy',
+      params: [
+        {
+          nombre: 'correo',
+          tipo: 'String',
+          descripcion: ' -- '
+        }
+      ],
+      errors: []
+    }
+    it('@t6.1 OK', (done) => {
+      let estudiante = data.estudiantes[0]
+      let estudiante_2 = data.estudiantes[1]
+      let paralelo = data.paralelos[0]
+      co(function *() {
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let estudianteCreado_2 = yield model.crearEstudiante(estudiante_2)
+        let correo = estudiante['correo']
+        let correo_2 = estudiante_2['correo']
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let preguntaCreada_1 = yield model.crearPreguntaEstudiante({ texto: 'Mi pregunta', paraleloId: paraleloCreado['_id'], creador: estudianteCreado })
+        let preguntaCreada_2 = yield model.crearPreguntaEstudiante({ texto: 'Mi pregunta dos', paraleloId: paraleloCreado['_id'], creador: estudianteCreado })
+        let preguntaCreada_3 = yield model.crearPreguntaEstudiante({ texto: 'Mi pregunta dos', paraleloId: paraleloCreado['_id'], creador: estudianteCreado_2 })
+        request(app)
+        .get(`/api/att/estudiante/misPreguntasHoy/${correo}`)
+        .end(function(err, res) {
+          generatorDocs.OK({ docs, doc, res })
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          expect(ajv.validate(schema.PREGUNTA_ESTUDIANTE, res.body.datos[0])).to.equal(true)
+          done()
+        })
+      })
+      // let texto = 'Mi primera pregunta'
+      // let paraleloId = 'aaaa'
+      // let req = {
+      //   texto,
+      //   paraleloId,
+      //   creador: estudiante
+      // }
+      // request(app)
+      // .post(``)
+      // .send(req)
+      // .end(function(err, res) {
+      //   generatorDocs.OK({ docs, doc, res, req })
+      //   expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
+      //   expect(res.body.estado).to.equal(true)
+      //   expect(res.status).to.equal(200)
+      //   done()
+      // })
+    }).timeout(5000)
+  })
 })
 
 

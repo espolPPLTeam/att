@@ -57,9 +57,17 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
-  .route('/estudiante/misPreguntasHoy/:estudianteId')
+  .route('/estudiante/misPreguntasHoy/:correo')
     .get((req, res) => {
-      let { estudianteId } = req.params
+      let { correo } = req.params
+      controller.PreguntasEstudiante({ correo })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app

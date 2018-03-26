@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "rylIboqrcf",
+        "_id": "S1epVDeI9G",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -152,7 +152,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "ryedWiqH9z",
+  "preguntaId": "r11SwgL9z",
   "destacadaEstado": true
 }
 ```
@@ -213,31 +213,63 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "HJ-_Wi9Sqz",
+        "_id": "r1lkHPeUcM",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "HkGdWiqHqz",
+      "_id": "SJbJBPgU5f",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "HJ-_Wi9Sqz",
-      "createdAt": "2018-03-25T21:56:16.385Z",
-      "updatedAt": "2018-03-25T21:56:16.385Z"
+      "paralelo": "r1lkHPeUcM",
+      "createdAt": "2018-03-26T04:29:43.201Z",
+      "updatedAt": "2018-03-26T04:29:43.201Z"
     },
     {
       "creador": {
-        "_id": "HJ-_Wi9Sqz",
+        "_id": "r1lkHPeUcM",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "SJt-sqB5f",
+      "_id": "BkM1HPxI9G",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "HJ-_Wi9Sqz",
-      "createdAt": "2018-03-25T21:56:16.607Z",
-      "updatedAt": "2018-03-25T21:56:16.607Z"
+      "paralelo": "r1lkHPeUcM",
+      "createdAt": "2018-03-26T04:29:43.382Z",
+      "updatedAt": "2018-03-26T04:29:43.382Z"
+    }
+  ],
+  "codigoEstado": 200
+}
+```
+
+
+
+### ERRORS:
+{% endapi%}
+
+
+{% api "Preguntas Estudiantes Hoy", method="GET", url="/api/att/estudiante/misPreguntasHoy/:correo"  %}Obtiene las preguntas que ha hecho el estudiante el dia de hoy
+### Params:
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------|
+| correo | String |   --   | 
+	
+
+### Response:
+
+```json
+{
+  "estado": true,
+  "datos": [
+    {
+      "texto": "Mi pregunta",
+      "createdAt": "2018-03-26T04:29:43.893Z"
+    },
+    {
+      "texto": "Mi pregunta dos",
+      "createdAt": "2018-03-26T04:29:44.118Z"
     }
   ],
   "codigoEstado": 200

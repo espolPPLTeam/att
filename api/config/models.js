@@ -298,6 +298,14 @@ PreguntaEstudianteSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  obtenerPreguntasPorCorreo({ correo }) {
+    let start = moment().startOf('day')
+    let end = moment().endOf('day')
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({$and: [{ 'creador.correo': correo }, {createdAt: {$gte: start, $lt: end } }]}, { _id: 0 }).select(' texto createdAt'))
+    })
   }
 }
 

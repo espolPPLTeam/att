@@ -188,6 +188,17 @@ module.exports = ({ db, logger, messages }) => {
           reject(messages.ERROR_AL_OBTENER)
         })
       })
+    },
+    obtenerPreguntasEstudiantePorCorreo({ correo }) {
+      return new Promise((resolve) => {
+        PreguntaEstudiante.obtenerPreguntasPorCorreo({ correo })
+          .then((preguntas) => {
+            resolve(preguntas)
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
+      })
     }
     // crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
 

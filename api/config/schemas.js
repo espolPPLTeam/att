@@ -106,12 +106,23 @@ const PREGUNTAS_HOY_ESTUDIANTES = {
   }
 }
 
+const PREGUNTA_ESTUDIANTE = {
+  "type": "object",
+  "minProperties": 2,
+  "additionalProperties": false,
+  "properties": {
+    "texto": { "type": "string" },
+    "createdAt": { "type": "string" }
+  }
+}
+
 module.exports = {
   PROFESOR_DATOS,
   ERROR_SERVIDOR,
   OK_ERROR,
   PREGUNTA,
-  PREGUNTAS_HOY_ESTUDIANTES
+  PREGUNTAS_HOY_ESTUDIANTES,
+  PREGUNTA_ESTUDIANTE
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

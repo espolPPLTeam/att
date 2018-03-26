@@ -69,6 +69,15 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
+    async PreguntasEstudiante({ correo }) {
+      try {
+        let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ correo })
+        return responses.OK({ datos: preguntas })
+      } catch (e) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
     URL_NO_VALIDO: responses.URL_NO_VALIDO
   }
   return Object.assign(Object.create(proto), {})
