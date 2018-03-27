@@ -18,7 +18,15 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  mounted () {
+    this.obtenerPreguntas()
+  },
+  methods: {
+    obtenerPreguntas () {
+      this.$store.dispatch('obtenerPreguntas')
+    }
+  }
 }
 </script>
 
