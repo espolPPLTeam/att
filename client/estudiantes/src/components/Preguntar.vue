@@ -4,12 +4,12 @@
       <v-flex xs12>
         <v-card>
           <v-list three-line>
-            <div v-for="pregunta in preguntas" :key="pregunta.nombre">
+            <div v-for="(pregunta, i) in preguntas" :key="i">
               <v-divider></v-divider>
               <v-list-tile>
                 <v-list-tile-content>
-                  <v-list-tile-title v-html="pregunta.descripcion"></v-list-tile-title>
-                  <v-list-tile-sub-title class="caption text-xs-right">{{pregunta.fecha | moment}}</v-list-tile-sub-title>
+                  <v-list-tile-title v-html="pregunta.texto"></v-list-tile-title>
+                  <v-list-tile-sub-title class="caption text-xs-right">{{pregunta.createdAt | moment}}</v-list-tile-sub-title>
                 </v-list-tile-content>
               </v-list-tile>
             </div>
@@ -38,34 +38,28 @@
 <script>
 export default {
   name: 'Preguntar',
+  computed: {
+    preguntas () {
+      return this.$store.getters.preguntas
+    }
+  },
   data () {
     return {
-      pregunta: '',
-      preguntas: [
-        {
-          descripcion: 'Esta es la pregunta 1',
-          fecha: new Date()
-        },
-        {
-          descripcion: 'Esta es la pregunta 2',
-          fecha: new Date()
-        },
-        {
-          descripcion: 'Esta es la pregunta 3',
-          fecha: new Date()
-        }
-      ]
+      pregunta: ''
     }
   },
   methods: {
     preguntar () {
       const pregunta = {
-        fecha: new Date(),
-        descripcion: this.pregunta
+        createdAt: new Date(),
+        texto: this.pregunta
       }
-      this.preguntas.push(pregunta)
+      this.$store.dispatch('anadirPregunta', pregunta)
       this.pregunta = ''
     }
+  },
+  mounted () {
+    console.log('Preguntar Mounted')
   }
 }
 </script>
