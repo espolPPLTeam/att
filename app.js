@@ -1,11 +1,25 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
 const server = require('http').Server(app)
 const db = require('./api/config/db')
 const PORT = process.env.PORT || '8000'
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(session({
+  secret: process.env.SECRET,
+  resave: true,
+  expire: 1 * 24 * 60 * 60 ,
+  saveUninitialized: true,
+  store: new MongoStore({
+      url: process.env.MONGO_URL_ATT,
+      ttl: 12 * 60 * 60
+    })
+}))
 
 if (process.env.NODE_ENV !== 'testing')
   db.Conectar(process.env.MONGO_URL_ATT).then().catch((err) => console.log(err))

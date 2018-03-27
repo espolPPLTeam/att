@@ -71,6 +71,19 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
+  .route('/login')
+    .post((req, res) => {
+      let { correo, jwt } = req.params
+      // jwt o cookie
+    })
+
+  app
+  .route('/logout')
+    .post((res, res) => {
+
+    })
+
+  app
   .route('/profesor/respuestasPregunta/:preguntaId')
     .get((req, res) => {
       let { preguntaId } = req.params

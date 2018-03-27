@@ -330,7 +330,7 @@ describe('Routes - Integration', () => {
   })
   describe('@t6 GET PREGUNTAS HECHAS POR ESTUDIANTE', () => {
     let doc = {
-      nombre: 'Preguntas Estudiantes Hoy',
+      nombre: 'Estudiante preguntas hechas',
       metodo: 'GET',
       url: '/api/att/estudiante/misPreguntasHoy/:correo',
       descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy',
