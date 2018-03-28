@@ -116,13 +116,48 @@ const PREGUNTA_ESTUDIANTE = {
   }
 }
 
+const PROFESOR_DATOS_PREGUNTA = {
+  "minProperties": 5,
+  "additionalProperties": false,
+  "properties": {
+    "_id": {
+      "type": "string"
+    },
+    "correo": {
+      "type": "string",
+      "format": "email"
+    },
+    "tipo": { 
+      "type": "string" ,
+      "enum": ["peer", "titular"]
+    },
+    "nombres": { "type": "string" },
+    "apellidos": { "type": "string" }
+  }
+}
+
+const PROFESOR_CREAR_PREGUNTA = {
+  "type": "object",
+  "minProperties": 3,
+  "additionalProperties": false,
+  "properties": {
+    "_id": { "type": "string" },
+    "texto": { "type": "string" },
+    "creador": { 
+      "type": "object",
+      "items" : PROFESOR_DATOS_PREGUNTA 
+    }
+  }
+}
+
 module.exports = {
   PROFESOR_DATOS,
   ERROR_SERVIDOR,
   OK_ERROR,
   PREGUNTA,
   PREGUNTAS_HOY_ESTUDIANTES,
-  PREGUNTA_ESTUDIANTE
+  PREGUNTA_ESTUDIANTE,
+  PROFESOR_CREAR_PREGUNTA
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

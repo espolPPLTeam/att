@@ -579,4 +579,53 @@ describe('Routes - Integration', () => {
       })
     }).timeout(10000)
   })
+
+  describe('@t8 CREAR PREGUNTA PROFESOR Y HABILITARLA', () => {
+    let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
+    let doc = {
+      nombre: 'CREAR PREGUNTA PROFESOR Y HABILITARLA',
+      metodo: 'POST',
+      url: '/api/att/profesor/preguntar',
+      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy',
+      body: [
+        { nombre: 'texto', tipo: 'String', descripcion: ' --- ' },
+        { nombre: 'paraleloId', tipo: 'String', descripcion: ' --- ' },
+        { nombre: 'creador', tipo: 'Object', descripcion: ' --- ' },
+        { nombre: '_id', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' correo', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' tipo', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' nombres', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' apellidos', margen: 'center', tipo: 'String', descripcion: ' --- '},
+      ],
+      errors: []
+    }
+    it('@t8.1 OK', (done) => {
+      co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        yield model.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paralelo['curso'],
+            codigo: paralelo['codigo']
+          },
+          profesorCorreo: profesor['correo'] })
+        let req = {
+          texto: 'Mi pregunta a estudiante', 
+          paraleloId: paraleloCreado['_id'], 
+          creador: profesorCreado
+        }
+        request(app)
+        .post(`/api/att/profesor/preguntar`)
+        .send(req)
+        .end(function(err, res) {
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          expect(ajv.validate(schema.PROFESOR_CREAR_PREGUNTA, res.body.datos)).to.equal(true)
+          generatorDocs.OK({ docs, doc, res, req })
+          done()
+        })
+      })
+    })
+  })
 })

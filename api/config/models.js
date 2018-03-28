@@ -53,9 +53,9 @@ const ParaleloSchema = new mongoose.Schema({
   curso: { type: String, required: true },
   anio: { type: String, required: true },
   termino: { type: String, enum: ['1', '2'], required: true },
-  habilitado: {
-    type: Boolean,
-    'default': false
+  preguntaActual: { // nostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan
+    type: String,
+    ref: 'preguntaProfesor'
   },
   profesores: [{
     type: String,
@@ -99,7 +99,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
   }
 },{timestamps: true, versionKey: false, collection: 'preguntasEstudiante'})
 
-const PreguntaProfesorSchema = mongoose.Schema({
+const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de createdAt y updateAt podemos sacar el timepo que se habilito la pregunta
   _id: {
     type: String,
 	  'default': shortid.generate
@@ -118,6 +118,10 @@ const PreguntaProfesorSchema = mongoose.Schema({
       type: String,
       enum: ['titular', 'peer']
     }
+  },
+  paralelo: {
+    type: String,
+    ref: 'Paralelo'
   },
   numeroEstudiantesPresentes: { type: Number },
   respuestas: [{
@@ -141,6 +145,10 @@ const RespuestaSchema = mongoose.Schema({
   destacada: {
     type: Boolean,
     'default': false
+  },
+  pregunta: {
+    type: String,
+    ref: 'PreguntaProfesor'
   }
 },{timestamps: true, versionKey: false, collection: 'respuestas'})
 
@@ -170,6 +178,15 @@ ProfesorSchema.methods = {
 }
 
 PreguntaEstudianteSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
+}
+
+PreguntaProfesorSchema.methods = {
   crear() {
     let self = this
     return new Promise(function(resolve) {
@@ -213,7 +230,15 @@ ProfesorSchema.statics = {
     return new Promise(function(resolve) {
       resolve(self.findOne({ correo }))
     })
-  }
+  },
+  anadirPregunta({ correo, preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ correo }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
 }
 
 ParaleloSchema.statics = {
@@ -272,6 +297,22 @@ ParaleloSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  anadirPreguntaProfesor({ paraleloId, preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: paraleloId }, {$addToSet: {'preguntasProfesor': preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
+  anadirPreguntaActual({ paraleloId, preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: paraleloId }, {$set: { preguntaActual: preguntaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
   }
 }
 
@@ -305,6 +346,15 @@ PreguntaEstudianteSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.find({$and: [{ 'creador.correo': correo }, {createdAt: {$gte: start, $lt: end } }]}, { _id: 0 }).select(' texto createdAt'))
+    })
+  }
+}
+
+PreguntaProfesorSchema.statics = {
+  obtenerPorId({ _id }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id }))
     })
   }
 }

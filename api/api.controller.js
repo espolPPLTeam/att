@@ -1,3 +1,4 @@
+const _ = require('lodash')
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
     async Login({ correo }) {
@@ -110,7 +111,22 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
+    async CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } }) {
+      try {
+        let pregunta = await model.crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } })
+        if (pregunta) {
+          let preguntaLimpiada = _.pick(pregunta, ['_id', 'texto', 'creador'])
+          return responses.OK({ datos: preguntaLimpiada })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
+        }
+      } catch (err) {
+
+      }
+    },
     URL_NO_VALIDO: responses.URL_NO_VALIDO
   }
   return Object.assign(Object.create(proto), {})
 }
+
+// _.map(columns, _.partialRight(_.pick, 'key'))

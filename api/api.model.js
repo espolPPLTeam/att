@@ -1,8 +1,10 @@
+const _ = require('lodash')
 module.exports = ({ db, logger, messages }) => {
   let PreguntaEstudiante = db.PreguntaEstudiante
   let Estudiante = db.Estudiante
   let Profesor = db.Profesor
   let Paralelo = db.Paralelo
+  let PreguntaProfesor = db.PreguntaProfesor
   const proto = {
     crearEstudiante({ correo, matricula, nombres, apellidos }) {
       return new Promise((resolve, reject) => {
@@ -199,10 +201,31 @@ module.exports = ({ db, logger, messages }) => {
           reject(messages.ERROR_AL_OBTENER)
         })
       })
+    },
+    crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } }) {
+      return new Promise((resolve) => {
+        // La pregunta se habilita por si sola porque esta como default true
+        let pregunta = new PreguntaProfesor({ texto, paralelo: paraleloId, 'creador': { _id, correo, tipo, nombres, apellidos } })
+        pregunta.crear()
+          .then(preguntaCreda => {
+            Promise.all([
+              Paralelo.anadirPreguntaActual({ paraleloId, preguntaId: pregunta['_id'] }),
+              Profesor.anadirPregunta({ correo, preguntaId: pregunta['_id'] }),
+              Paralelo.anadirPreguntaProfesor({ paraleloId, preguntaId: pregunta['_id'] })
+              ])
+              .then((values) => {
+                if (_.every(values)) {
+                  resolve(pregunta)
+                } else {
+                  resolve(null)
+                }
+            }).catch((err) => {
+              logger.error(err)
+              reject(messages.ERROR_AL_CREAR)
+            })
+        })
+      })
     }
-    // crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
-
-    // },
     // crearRespuestaEstudiante({ text, preguntaId, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
 
     // }

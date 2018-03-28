@@ -71,6 +71,41 @@ module.exports = ({ app, controller, logger }) => {
         })
     })
 
+  // RESPONDER ESTUDIANTE Y PREGUNTAR PROFESOR
+  app
+  .route('/profesor/preguntar')
+    .post((req, res) => {
+      let { texto, paraleloId } = req.body
+      let creador = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/estudiante/responder')
+    .post((req, res) => {
+      let { texto, paraleloId } = req.body
+      let { _id, correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
+    })
+
+  app
+  .route('/profesor/destacarRespuesta')
+    .put((req, res) => {
+      let { respuestaId, destacadaEstado } = req.body
+    })
+
+  app
+  .route('/profesor/terminarPregunta')
+    .put((req, res) => {
+      let { preguntaId, paraleloId } = req.body
+    })
+
   app
   .route('/profesor/respuestasPregunta/:preguntaId')
     .get((req, res) => {
@@ -81,18 +116,6 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/misPreguntasHoy/:paraleloId')
     .get((req, res) => {
       let { paraleloId } = req.params
-    })
-
-  app
-  .route('/profesor/preguntar')
-    .post((req, res) => {
-      let { texto, paraleloId } = req.body
-    })
-
-  app
-  .route('/profesor/terminarPregunta')
-    .put((req, res) => {
-      let { preguntaId, paraleloId } = req.body
     })
 
   app
