@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "S1epVDeI9G",
+        "_id": "H1tdaI_9f",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -152,7 +152,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "r11SwgL9z",
+  "preguntaId": "rkls_TIu5f",
   "destacadaEstado": true
 }
 ```
@@ -213,31 +213,31 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "r1lkHPeUcM",
+        "_id": "SkZod6Ld5f",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "SJbJBPgU5f",
+      "_id": "ByMjdTUuqz",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "r1lkHPeUcM",
-      "createdAt": "2018-03-26T04:29:43.201Z",
-      "updatedAt": "2018-03-26T04:29:43.201Z"
+      "paralelo": "SkZod6Ld5f",
+      "createdAt": "2018-03-28T00:10:27.236Z",
+      "updatedAt": "2018-03-28T00:10:27.236Z"
     },
     {
       "creador": {
-        "_id": "r1lkHPeUcM",
+        "_id": "SkZod6Ld5f",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "BkM1HPxI9G",
+      "_id": "B17odTLu9M",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "r1lkHPeUcM",
-      "createdAt": "2018-03-26T04:29:43.382Z",
-      "updatedAt": "2018-03-26T04:29:43.382Z"
+      "paralelo": "SkZod6Ld5f",
+      "createdAt": "2018-03-28T00:10:27.240Z",
+      "updatedAt": "2018-03-28T00:10:27.240Z"
     }
   ],
   "codigoEstado": 200
@@ -250,7 +250,7 @@ _response_
 {% endapi%}
 
 
-{% api "Preguntas Estudiantes Hoy", method="GET", url="/api/att/estudiante/misPreguntasHoy/:correo"  %}Obtiene las preguntas que ha hecho el estudiante el dia de hoy
+{% api "Estudiante preguntas hechas", method="GET", url="/api/att/estudiante/misPreguntasHoy/:correo"  %}Obtiene las preguntas que ha hecho el estudiante el dia de hoy
 ### Params:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------|
@@ -265,11 +265,11 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-03-26T04:29:43.893Z"
+      "createdAt": "2018-03-28T00:10:27.634Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-03-26T04:29:44.118Z"
+      "createdAt": "2018-03-28T00:10:27.637Z"
     }
   ],
   "codigoEstado": 200

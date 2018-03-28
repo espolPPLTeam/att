@@ -366,24 +366,28 @@ describe('Routes - Integration', () => {
           done()
         })
       })
-      // let texto = 'Mi primera pregunta'
-      // let paraleloId = 'aaaa'
-      // let req = {
-      //   texto,
-      //   paraleloId,
-      //   creador: estudiante
-      // }
-      // request(app)
-      // .post(``)
-      // .send(req)
-      // .end(function(err, res) {
-      //   generatorDocs.OK({ docs, doc, res, req })
-      //   expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
-      //   expect(res.body.estado).to.equal(true)
-      //   expect(res.status).to.equal(200)
-      //   done()
-      // })
     }).timeout(5000)
+  })
+
+  describe('@t7 LOGIN', () => {
+    let estudiante_1 = data.estudiantes[0]
+    let estudiante_2 = data.estudiantes[1]
+    let profesor_1 = data.profesores[0]
+    let profesor_2 = data.profesores[1]
+    it('@t7.1 OK', (done) => {
+      co(function *() {
+        // let profesorCreado_1 = yield model.crearProfesor(profesor_1)
+        // let profesorCreado_2 = yield model.crearProfesor(profesor_2)
+        // let estudianteCreado_1 = yield model.crearEstudiante(estudiante_1)
+        // let estudianteCreado_2 = yield model.crearEstudiante(estudiante_2)
+        // let logueado = yield controller.Login({ correo: profesorCreado_1['correo']})
+        // let profesorDatos_1 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_1['correo'] })
+        // let profesorDatos_2 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_2['correo'] })
+        // let estudianteDatos_1 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_2['correo'] })
+        // console.log(logueado)
+        done()
+      })
+    }).timeout(10000)
   })
 })
 

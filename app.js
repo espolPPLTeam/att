@@ -15,6 +15,8 @@ app.use(session({
   resave: true,
   expire: 1 * 24 * 60 * 60 ,
   saveUninitialized: true,
+  name: 'SID',
+  unset: 'destroy',
   store: new MongoStore({
       url: process.env.MONGO_URL_ATT,
       ttl: 12 * 60 * 60
