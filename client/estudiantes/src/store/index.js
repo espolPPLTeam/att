@@ -7,6 +7,7 @@ Vue.use(VueResource)
 
 export const store = new Vuex.Store({
   state: {
+    loggedIn: false,
     usuario: {
       _id: '1',
       correo: 'edanmora@espol.edu.ec',
@@ -17,19 +18,40 @@ export const store = new Vuex.Store({
     preguntas: []
   },
   mutations: {
+    login (state) {
+      state.loggedIn = true
+    },
     anadirPregunta (state, payload) {
       state.preguntas.push(payload)
     },
+    preguntaEnviada (state, payload) {
+      let pregunta = state.preguntas.find((pregunta) => {
+        return pregunta.createdAt === payload.createdAt && pregunta.texto === payload.texto
+      })
+      pregunta.estado = 'enviada'
+    },
+    preguntaNoEnviada (state, payload) {
+      let pregunta = state.preguntas.find((pregunta) => {
+        return pregunta.createdAt === payload.createdAt && pregunta.texto === payload.texto
+      })
+      pregunta.estado = 'no enviada'
+    },
     obtenerPreguntas (state, preguntas) {
+      for (let i = 0; i < preguntas.length; i++) {
+        preguntas[i].estado = 'enviada'
+      }
       state.preguntas = preguntas
     }
   },
   actions: {
+    login ({commit}, payload) {
+      // Autenticación
+      commit('login')
+    },
     anadirPregunta ({commit, state}, payload) {
-      const pregunta = {
-        texto: payload.texto,
-        createdAt: payload.createdAt
-      }
+      // Primero se añade la pregunta al array. Con estado 'enviando'
+      commit('anadirPregunta', payload)
+      // Se envía la pregunta a la base de datos
       const data = {
         texto: payload.texto,
         paraleloId: '5ab97b42fc38f06297506ae9',
@@ -37,9 +59,11 @@ export const store = new Vuex.Store({
       }
       Vue.http.post('/api/att/estudiante/preguntar', data)
         .then((response) => {
-          commit('anadirPregunta', pregunta)
+          commit('preguntaEnviada', payload)
+          // Luego se debe enviar por sockets al profesor
         }, (err) => {
           console.log('err:', err)
+          commit('preguntaNoEnviada', payload)
         })
     },
     obtenerPreguntas ({commit, state}) {
@@ -60,6 +84,9 @@ export const store = new Vuex.Store({
     },
     estudiante (state) {
       return state.estudiante
+    },
+    loggedIn (state) {
+      return state.loggedIn
     }
   }
 })

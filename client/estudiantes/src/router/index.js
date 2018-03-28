@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from '@/components/Login'
 import Preguntar from '@/components/Preguntar'
 import Responder from '@/components/Responder'
 
@@ -9,8 +10,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Preguntar',
-      component: Preguntar
+      name: 'Login',
+      component: Login
     },
     {
       path: '/preguntar',

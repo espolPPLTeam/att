@@ -1,22 +1,27 @@
 <template id="AppPreguntar">
   <main id="main">
-    <v-layout row>
-      <v-flex xs12>
-        <v-card>
-          <v-list three-line>
-            <div v-for="(pregunta, i) in preguntas" :key="i">
-              <v-divider></v-divider>
-              <v-list-tile>
-                <v-list-tile-content>
-                  <v-list-tile-title v-html="pregunta.texto"></v-list-tile-title>
-                  <v-list-tile-sub-title class="caption text-xs-right">{{pregunta.createdAt | moment}}</v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-            </div>
-          </v-list>
-        </v-card>
-      </v-flex>
-    </v-layout>
+    <section>
+      <v-layout row wrap>
+        <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
+          <v-card>
+            <v-card-text class="text-xs-left">
+              <p v-html="pregunta.texto" class="pa-2"></p>
+            </v-card-text>
+            <v-card-text class="caption text-xs-right">
+              {{pregunta.createdAt | timeFromDate}}
+              <v-icon v-if="pregunta.estado=='enviando'" class="ml-2">access_time</v-icon>
+              <v-icon v-if="pregunta.estado=='enviada'" class="ml-2" color="green">check_circle</v-icon>
+              <v-icon v-if="pregunta.estado=='no enviada'" class="ml-2" color="red">error</v-icon>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+      <v-layout>
+        <v-flex xs2 lg1 id="div-icon">
+          <v-btn class="mt-3" @click="sesionIniciada=!sesionIniciada">Iniciar Sesión</v-btn>
+        </v-flex>
+      </v-layout>
+    </section>
     <v-footer id="footer" class="pa-3" app>
       <v-layout row>
         <v-flex xs12>
@@ -26,7 +31,7 @@
                 <v-text-field name="pregunta" label="Pregunta" id="pregunta" v-model="pregunta"></v-text-field>
               </v-flex>
               <v-flex xs2 lg1 id="div-icon">
-                <v-btn icon class="mt-3" @click="preguntar"><v-icon>send</v-icon></v-btn>
+                <v-btn icon class="mt-3" @click="preguntar" :disabled="!habilitado"><v-icon>send</v-icon></v-btn>
               </v-flex>
             </v-layout>
           </v-card>
@@ -41,29 +46,34 @@ export default {
   computed: {
     preguntas () {
       return this.$store.getters.preguntas
+    },
+    habilitado () {
+      return this.pregunta !== '' && this.pregunta !== undefined && this.sesionIniciada
     }
   },
   data () {
     return {
-      pregunta: ''
+      pregunta: '',
+      sesionIniciada: false
     }
   },
   methods: {
     preguntar () {
+      if (!this.habilitado) {
+        return
+      }
       const pregunta = {
         createdAt: new Date(),
-        texto: this.pregunta
+        texto: this.pregunta,
+        estado: 'enviando'
       }
       this.$store.dispatch('anadirPregunta', pregunta)
       this.pregunta = ''
     }
-  },
-  mounted () {
-    console.log('Preguntar Mounted')
   }
 }
 </script>
-<style>
+<style scoped>
   #main{
     height: 100vh;
   }
@@ -73,5 +83,11 @@ export default {
   }
   #div-pregunta{
     padding-left: 2%
+  }
+  p{
+    text-align: justify;
+  }
+  section{
+    margin-bottom: 15vh !important;
   }
 </style>
