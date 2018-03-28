@@ -18,6 +18,11 @@ Vue.filter('moment', (value) => {
     return moment(value).format('LTS')
   }
 })
+Vue.filter('timeFromDate', (value) => {
+  if (value) {
+    return moment(value).locale('es').fromNow()
+  }
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
