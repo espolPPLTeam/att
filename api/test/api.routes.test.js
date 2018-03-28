@@ -370,26 +370,89 @@ describe('Routes - Integration', () => {
   })
 
   describe('@t7 LOGIN', () => {
-    let estudiante_1 = data.estudiantes[0]
-    let estudiante_2 = data.estudiantes[1]
-    let profesor_1 = data.profesores[0]
-    let profesor_2 = data.profesores[1]
-    it('@t7.1 OK', (done) => {
+    let estudiante = data.estudiantes[0]
+    let profesor = data.profesores[0]
+    it('@t7.1 PROFESOR LOGGEADO', (done) => {
+      const agent = request.agent(app)
       co(function *() {
-        // let profesorCreado_1 = yield model.crearProfesor(profesor_1)
-        // let profesorCreado_2 = yield model.crearProfesor(profesor_2)
-        // let estudianteCreado_1 = yield model.crearEstudiante(estudiante_1)
-        // let estudianteCreado_2 = yield model.crearEstudiante(estudiante_2)
-        // let logueado = yield controller.Login({ correo: profesorCreado_1['correo']})
-        // let profesorDatos_1 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_1['correo'] })
-        // let profesorDatos_2 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_2['correo'] })
-        // let estudianteDatos_1 = yield controller.ObtenerParalelosProfesor({ profesorCorreo: profesorCreado_2['correo'] })
-        // console.log(logueado)
-        done()
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let correoProfesor = profesorCreado['correo']
+        let req = {
+          correo: correoProfesor
+        }
+        agent
+        .post(`/api/att/login`)
+        .send(req)
+        .end(function(err, resp) {
+          let correo = resp.body['datos']['correo']
+          expect(correo).to.equal(correoProfesor)
+          agent
+          .get('/api/att/datosUsuarioLogueado')
+          .end(function(err, resp) {
+            let correo = resp.body['datos']['correo']
+            expect(correo).to.equal(correoProfesor)
+            done()
+          })
+        })
+      })
+    }).timeout(10000)
+    it('@t7.2 ESTUDIANTE LOGGEADO', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let estudianteCorreo = estudiante['correo']
+        let req = {
+          correo: estudianteCorreo
+        }
+        agent
+        .post(`/api/att/login`)
+        .send(req)
+        .end(function(err, resp) {
+          let correo = resp.body['datos']['correo']
+          expect(correo).to.equal(estudianteCorreo)
+          agent
+          .get('/api/att/datosUsuarioLogueado')
+          .end(function(err, resp) {
+            let correo = resp.body['datos']['correo']
+            expect(correo).to.equal(estudianteCorreo)
+            done()
+          })
+        })
+      })
+    }).timeout(10000)
+    it('@t7.3 PROFESOR NO LOGGEADO', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let correoProfesor = profesorCreado['correo']
+        let req = {
+          correo: correoProfesor
+        }
+        agent
+        .get('/api/att/datosUsuarioLogueado')
+        .end(function(err, resp) {
+          expect(resp.body['estado']).to.equal(false)
+          expect(resp.body['mensaje']).to.equal('No esta loggeado')
+          done()
+        })
+      })
+    }).timeout(10000)
+    it('@t7.4 PROFESOR NO EXISTE', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let correoProfesor = profesor['correo']
+        let req = {
+          correo: correoProfesor
+        }
+        agent
+        .post('/api/att/login')
+        .send(req)
+        .end(function(err, resp) {
+          expect(resp.body['estado']).to.equal(false)
+          expect(resp.body['mensaje']).to.equal('El usuario no existe')
+          done()
+        })
       })
     }).timeout(10000)
   })
 })
-
-
-// .send({ profesorCorreo: profesor['correo'] })

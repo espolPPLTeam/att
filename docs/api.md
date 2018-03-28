@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "H1tdaI_9f",
+        "_id": "H1eZE_K_9G",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -152,7 +152,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "rkls_TIu5f",
+  "preguntaId": "B1ZzNdYOcG",
   "destacadaEstado": true
 }
 ```
@@ -213,31 +213,31 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "SkZod6Ld5f",
+        "_id": "S1MMNOYdqM",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "ByMjdTUuqz",
+      "_id": "SkmNuKO9f",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "SkZod6Ld5f",
-      "createdAt": "2018-03-28T00:10:27.236Z",
-      "updatedAt": "2018-03-28T00:10:27.236Z"
+      "paralelo": "S1MMNOYdqM",
+      "createdAt": "2018-03-28T03:12:42.632Z",
+      "updatedAt": "2018-03-28T03:12:42.632Z"
     },
     {
       "creador": {
-        "_id": "SkZod6Ld5f",
+        "_id": "S1MMNOYdqM",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "B17odTLu9M",
+      "_id": "HJeQ4ut_cz",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "SkZod6Ld5f",
-      "createdAt": "2018-03-28T00:10:27.240Z",
-      "updatedAt": "2018-03-28T00:10:27.240Z"
+      "paralelo": "S1MMNOYdqM",
+      "createdAt": "2018-03-28T03:12:42.890Z",
+      "updatedAt": "2018-03-28T03:12:42.890Z"
     }
   ],
   "codigoEstado": 200
@@ -265,11 +265,11 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-03-28T00:10:27.634Z"
+      "createdAt": "2018-03-28T03:12:43.340Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-03-28T00:10:27.637Z"
+      "createdAt": "2018-03-28T03:12:43.542Z"
     }
   ],
   "codigoEstado": 200

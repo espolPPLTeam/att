@@ -105,14 +105,14 @@ module.exports = ({ app, controller, logger }) => {
   // ENDPOINTS DE PRUEBA PARA LOGIN
   app
   .route('/login')
-    .get((req, res) => {
-      let { correo } = req.params //req.params
+    .post((req, res) => {
+      let { correo } = req.body
       controller.Login({ correo })
         .then((resp) => {
           if (resp) {
             let datos = resp.datos
             req.session.correo = datos['correo']
-            res.status(200).json(resp)
+            res.send(resp)
           } else {
             res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
           }
@@ -140,11 +140,15 @@ module.exports = ({ app, controller, logger }) => {
   .route('/datosUsuarioLogueado')
     .get((req, res) => {
       const sessionDatos = req.session
-      if (!_.isEmpty(sessionDatos)) {
+      if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
         let correo = req.session.correo
         controller.Login({ correo })
           .then((resp) => {
-            res.status(resp.codigoEstado).json(resp)
+            if (resp) {
+              res.status(resp.codigoEstado).json(resp)
+            } else {
+              res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
+            }
           })
           .catch((err, resp) => {
             console.error(err)
