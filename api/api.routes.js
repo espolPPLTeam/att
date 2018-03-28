@@ -137,7 +137,7 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
-  .route('/datosUsuarioLogueado')
+  .route('/datosUsuario')
     .get((req, res) => {
       const sessionDatos = req.session
       if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {

@@ -36,7 +36,7 @@ function crearStub(tipo, metodo, response) {
   return modelStub
 }
 
-const model = modelRequire({ db, logger })
+const model = modelRequire({ db, logger, messages })
 const controller = controllerRequire({ responses, messages, model, logger, validator })
 
 async function ConectarMongo() {
@@ -370,6 +370,35 @@ describe('Routes - Integration', () => {
   })
 
   describe('@t7 LOGIN', () => {
+    let docLogin = {
+      nombre: 'Login',
+      metodo: 'POST',
+      url: '/api/att/login',
+      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy',
+      params: [
+        {
+          nombre: 'correo',
+          tipo: 'String',
+          descripcion: ' -- '
+        }
+      ],
+      errors: []
+    }
+    let docLogout = {
+      nombre: 'Logout',
+      metodo: 'GET',
+      url: '/api/att/logout',
+      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy'
+    }
+    let docDatos = {
+      nombre: 'Datos de usuario logeado',
+      metodo: 'GET',
+      url: '/api/att/datosUsuario',
+      descripcion: 'Obtiene los datos del usuario',
+      errors: []
+    }
+    // generatorDocs.ERROR({ nombre: 'PREGUNTA ID NO EXISTE', docs, doc, res, req })
+    // generatorDocs.OK({ docs, doc, res })
     let estudiante = data.estudiantes[0]
     let profesor = data.profesores[0]
     it('@t7.1 PROFESOR LOGGEADO', (done) => {
@@ -383,13 +412,15 @@ describe('Routes - Integration', () => {
         agent
         .post(`/api/att/login`)
         .send(req)
-        .end(function(err, resp) {
-          let correo = resp.body['datos']['correo']
+        .end(function(err, res) {
+          generatorDocs.OK({ docs, doc: docLogin, req, res })
+          let correo = res.body['datos']['correo']
           expect(correo).to.equal(correoProfesor)
           agent
-          .get('/api/att/datosUsuarioLogueado')
-          .end(function(err, resp) {
-            let correo = resp.body['datos']['correo']
+          .get('/api/att/datosUsuario')
+          .end(function(err, res) {
+            generatorDocs.OK({ docs, doc: docDatos, res })
+            let correo = res.body['datos']['correo']
             expect(correo).to.equal(correoProfesor)
             done()
           })
@@ -411,7 +442,7 @@ describe('Routes - Integration', () => {
           let correo = resp.body['datos']['correo']
           expect(correo).to.equal(estudianteCorreo)
           agent
-          .get('/api/att/datosUsuarioLogueado')
+          .get('/api/att/datosUsuario')
           .end(function(err, resp) {
             let correo = resp.body['datos']['correo']
             expect(correo).to.equal(estudianteCorreo)
@@ -429,7 +460,25 @@ describe('Routes - Integration', () => {
           correo: correoProfesor
         }
         agent
-        .get('/api/att/datosUsuarioLogueado')
+        .get('/api/att/datosUsuario')
+        .end(function(err, res) {
+          generatorDocs.ERROR({ nombre: 'NO LOGEADO', docs, doc: docDatos, res })
+          expect(res.body['estado']).to.equal(false)
+          expect(res.body['mensaje']).to.equal('No esta loggeado')
+          done()
+        })
+      })
+    }).timeout(10000)
+    it('@t7.4 ESTUDIANTE NO LOGGEADO', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let estudianteCorreo = estudianteCreado['correo']
+        let req = {
+          correo: estudianteCorreo
+        }
+        agent
+        .get('/api/att/datosUsuario')
         .end(function(err, resp) {
           expect(resp.body['estado']).to.equal(false)
           expect(resp.body['mensaje']).to.equal('No esta loggeado')
@@ -437,7 +486,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.4 PROFESOR NO EXISTE', (done) => {
+    it('@t7.5 PROFESOR NO EXISTE', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let correoProfesor = profesor['correo']
@@ -447,10 +496,85 @@ describe('Routes - Integration', () => {
         agent
         .post('/api/att/login')
         .send(req)
+        .end(function(err, res) {
+          generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc: docLogin, res, req })
+          expect(res.body['estado']).to.equal(false)
+          expect(res.body['mensaje']).to.equal('El usuario no existe')
+          done()
+        })
+      })
+    }).timeout(10000)
+    it('@t7.6 ESTUDIANTE NO EXISTE', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let estudianteCorreo = estudiante['correo']
+        let req = {
+          correo: estudianteCorreo
+        }
+        agent
+        .post('/api/att/login')
+        .send(req)
         .end(function(err, resp) {
           expect(resp.body['estado']).to.equal(false)
           expect(resp.body['mensaje']).to.equal('El usuario no existe')
           done()
+        })
+      })
+    }).timeout(10000)
+    it('@t7.7 PROFESOR LOGOUT', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let correoProfesor = profesorCreado['correo']
+        let req = {
+          correo: correoProfesor
+        }
+        agent
+        .post(`/api/att/login`)
+        .send(req)
+        .end(function(err, resp) {
+          let correo = resp.body['datos']['correo']
+          expect(correo).to.equal(correoProfesor)
+          agent
+          .get('/api/att/logout')
+          .end(function(err, res) {
+             generatorDocs.OK({ docs, doc: docLogout, res })
+            agent
+            .get('/api/att/datosUsuario')
+            .end(function(err, res) {
+              expect(res.body['estado']).to.equal(false)
+              expect(res.body['mensaje']).to.equal('No esta loggeado')
+              done()
+            })
+          })
+        })
+      })
+    }).timeout(10000)
+    it('@t7.8 PROFESOR LOGOUT', (done) => {
+      const agent = request.agent(app)
+      co(function *() {
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let estudianteCorreo = estudianteCreado['correo']
+        let req = {
+          correo: estudianteCorreo
+        }
+        agent
+        .post(`/api/att/login`)
+        .send(req)
+        .end(function(err, resp) {
+          let correo = resp.body['datos']['correo']
+          expect(correo).to.equal(estudianteCorreo)
+          agent
+          .get('/api/att/logout')
+          .end(function(err, resp) {
+            agent
+            .get('/api/att/datosUsuario')
+            .end(function(err, resp) {
+              expect(resp.body['estado']).to.equal(false)
+              expect(resp.body['mensaje']).to.equal('No esta loggeado')
+              done()
+            })
+          })
         })
       })
     }).timeout(10000)

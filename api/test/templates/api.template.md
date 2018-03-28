@@ -37,8 +37,8 @@
 {% endif %}
 
 
-### ERRORS:
 {%- if doc.errors %}
+### ERRORS:
 	{%- for error in doc.errors %}
 __{{ error.nombre }}__
 

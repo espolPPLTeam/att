@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "H1eZE_K_9G",
+        "_id": "rJeI663d9G",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -28,8 +28,6 @@
   "codigoEstado": 200
 }
 ```
-
-
 
 ### ERRORS:
 __NO ES EMAIL__
@@ -105,8 +103,6 @@ _response_
 }
 ```
 
-
-
 ### ERRORS:
 __PARALELOID ES CAMPO OBLIGATORIO__
 
@@ -152,7 +148,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "B1ZzNdYOcG",
+  "preguntaId": "ByzDpphd9G",
   "destacadaEstado": true
 }
 ```
@@ -166,8 +162,6 @@ _response_
   "codigoEstado": 200
 }
 ```
-
-
 
 ### ERRORS:
 __PREGUNTA ID NO EXISTE__
@@ -213,38 +207,36 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "S1MMNOYdqM",
+        "_id": "rkuap3u9z",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "SkmNuKO9f",
+      "_id": "SJgupa2dqf",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "S1MMNOYdqM",
-      "createdAt": "2018-03-28T03:12:42.632Z",
-      "updatedAt": "2018-03-28T03:12:42.632Z"
+      "paralelo": "rkuap3u9z",
+      "createdAt": "2018-03-28T07:01:19.755Z",
+      "updatedAt": "2018-03-28T07:01:19.755Z"
     },
     {
       "creador": {
-        "_id": "S1MMNOYdqM",
+        "_id": "rkuap3u9z",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "HJeQ4ut_cz",
+      "_id": "Bk-d662d9f",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "S1MMNOYdqM",
-      "createdAt": "2018-03-28T03:12:42.890Z",
-      "updatedAt": "2018-03-28T03:12:42.890Z"
+      "paralelo": "rkuap3u9z",
+      "createdAt": "2018-03-28T07:01:19.955Z",
+      "updatedAt": "2018-03-28T07:01:19.955Z"
     }
   ],
   "codigoEstado": 200
 }
 ```
-
-
 
 ### ERRORS:
 {% endapi%}
@@ -265,20 +257,123 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-03-28T03:12:43.340Z"
+      "createdAt": "2018-03-28T07:01:20.458Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-03-28T03:12:43.542Z"
+      "createdAt": "2018-03-28T07:01:20.687Z"
     }
   ],
   "codigoEstado": 200
 }
 ```
 
+### ERRORS:
+{% endapi%}
 
+
+{% api "Login", method="POST", url="/api/att/login"  %}Obtiene las preguntas que ha hecho el estudiante el dia de hoy
+### Params:
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------|
+| correo | String |   --   | 
+	
+
+### Request:
+
+```json
+{
+  "correo": "mheredia@espol.edu.ec"
+}
+```
+
+### Response:
+
+```json
+{
+  "estado": true,
+  "datos": {
+    "correo": "mheredia@espol.edu.ec",
+    "tipo": "titular",
+    "nombres": "TAMARA",
+    "apellidos": "HEREDIA",
+    "paralelos": []
+  },
+  "codigoEstado": 200
+}
+```
 
 ### ERRORS:
+__NO EXISTE__
+
+
+
+
+_request_
+
+```js
+{
+  "correo": "mheredia@espol.edu.ec"
+}
+```
+
+_response_
+
+```js
+{
+  "estado": false,
+  "mensaje": "El usuario no existe"
+}
+```
+	
+	
+{% endapi%}
+
+
+{% api "Datos de usuario logeado", method="GET", url="/api/att/datosUsuario"  %}Obtiene los datos del usuario
+### Response:
+
+```json
+{
+  "estado": true,
+  "datos": {
+    "correo": "mheredia@espol.edu.ec",
+    "tipo": "titular",
+    "nombres": "TAMARA",
+    "apellidos": "HEREDIA",
+    "paralelos": []
+  },
+  "codigoEstado": 200
+}
+```
+
+### ERRORS:
+__NO LOGEADO__
+
+
+
+
+_response_
+
+```js
+{
+  "estado": false,
+  "mensaje": "No esta loggeado"
+}
+```
+	
+	
+{% endapi%}
+
+
+{% api "Logout", method="GET", url="/api/att/logout"  %}Obtiene las preguntas que ha hecho el estudiante el dia de hoy
+### Response:
+
+```json
+{
+  "estado": true
+}
+```
 {% endapi%}
 
 
