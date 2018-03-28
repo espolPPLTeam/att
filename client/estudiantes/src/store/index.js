@@ -7,6 +7,7 @@ Vue.use(VueResource)
 
 export const store = new Vuex.Store({
   state: {
+    loggedIn: false,
     usuario: {
       _id: '1',
       correo: 'edanmora@espol.edu.ec',
@@ -17,6 +18,9 @@ export const store = new Vuex.Store({
     preguntas: []
   },
   mutations: {
+    login (state) {
+      state.loggedIn = true
+    },
     anadirPregunta (state, payload) {
       state.preguntas.push(payload)
     },
@@ -40,6 +44,10 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    login ({commit}, payload) {
+      // Autenticación
+      commit('login')
+    },
     anadirPregunta ({commit, state}, payload) {
       // Primero se añade la pregunta al array. Con estado 'enviando'
       commit('anadirPregunta', payload)
@@ -76,6 +84,9 @@ export const store = new Vuex.Store({
     },
     estudiante (state) {
       return state.estudiante
+    },
+    loggedIn (state) {
+      return state.loggedIn
     }
   }
 })
