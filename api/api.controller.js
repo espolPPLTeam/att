@@ -1,5 +1,23 @@
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
+    async Login({ correo }) {
+      try {
+        let profesor = await this.ObtenerParalelosProfesor({ profesorCorreo: correo })
+        let estudiante = await this.ObtenerDatosEstudiante({ correo })
+        let esProfesor = profesor['estado']
+        let esEstudiante = estudiante['estado']
+        if (esProfesor) {
+          return responses.OK({ datos: profesor['datos'] })
+        } else if (esEstudiante) {
+          return responses.OK({ datos: estudiante['datos'] })
+        } else {
+          return null
+        }
+      } catch (err) {
+        logger.error(err)
+        return null
+      }
+    },
     async ObtenerParalelosProfesor({ profesorCorreo }) {
       if (profesorCorreo && validator.isEmail(profesorCorreo)) {
       	try {
@@ -21,6 +39,20 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       	}
       } else {
     	  return responses.OK_ERROR({ mensaje: messages.CORREO_INVALIDO })
+      }
+    },
+    async ObtenerDatosEstudiante({ correo }) {
+      try {
+        let estudiante = await model.obtenerDatosEstudiantePorCorreo({ correo })
+        if (estudiante) {
+          let estudiante_filtrado = (({ correo, matricula, nombres, apellidos }) => ({ correo, matricula, nombres, apellidos }))(estudiante)
+          return responses.OK({ datos: estudiante_filtrado })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.ESTUDIANTE_NO_EXISTE })
+        }
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
       }
     },
     async PreguntasEstudianteHoy({ paraleloId }) {

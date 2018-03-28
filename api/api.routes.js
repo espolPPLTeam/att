@@ -1,3 +1,4 @@
+const _ = require('lodash')
 module.exports = ({ app, controller, logger }) => {
   app
   .route('/profesor/datosProfesor/:profesorCorreo')
@@ -100,8 +101,63 @@ module.exports = ({ app, controller, logger }) => {
       let { paraleloId } = req.params
     })
 
+
+  // ENDPOINTS DE PRUEBA PARA LOGIN
+  app
+  .route('/login')
+    .get((req, res) => {
+      let { correo } = req.params //req.params
+      controller.Login({ correo })
+        .then((resp) => {
+          if (resp) {
+            let datos = resp.datos
+            req.session.correo = datos['correo']
+            res.status(200).json(resp)
+          } else {
+            res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
+          }
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/logout')
+    .get((req, res) => {
+      req.session.destroy(function( err ) {
+        if ( err ) {
+          console.error(err)
+          res.status(401).json({ estado: false })
+        } else {
+          res.status(200).json({ estado: true })
+        }
+      })
+    })
+
+  app
+  .route('/datosUsuarioLogueado')
+    .get((req, res) => {
+      const sessionDatos = req.session
+      if (!_.isEmpty(sessionDatos)) {
+        let correo = req.session.correo
+        controller.Login({ correo })
+          .then((resp) => {
+            res.status(resp.codigoEstado).json(resp)
+          })
+          .catch((err, resp) => {
+            console.error(err)
+            res.status(resp.codigoEstado).json(resp)
+          })
+      } else {
+        res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
+      }
+    })
+
   app
   .use((req, res) => {
     res.status(controller.URL_NO_VALIDO.codigoEstado).json(controller.URL_NO_VALIDO)
   })
+
 }
