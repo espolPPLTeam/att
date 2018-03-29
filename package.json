@@ -12,13 +12,19 @@
     "predocs:s": "gitbook install .",
     "docs": "gitbook build .",
     "docs:s": "gitbook serve .",
-    "test": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.test.js --timeout 15000 --reporter spec --bail --check-leaks",
+    "test": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.test.js --timeout 15000 --reporter spec --bail --check-leaks  --exit",
     "test:c": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.controller.test.js --exit",
     "test:m": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.model.test.js --exit",
     "test:r": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.routes.test.js --exit",
-    "test:s": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/sockets.test.js --timeout 15000 --reporter spec --bail --check-leaks",
+    "test:s": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/sockets.test.js --timeout 15000 --reporter spec --bail --check-leaks  --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "nyc": {
+    "exclude": [
+      "**/docs.generator.js",
+      "build"
+    ]
   },
   "dependencies": {
     "ajv": "^6.2.1",
@@ -32,6 +38,7 @@
     "mongoose": "^5.0.9",
     "shortid": "^2.2.8",
     "socket.io": "^2.0.4",
+    "validator": "^9.4.1",
     "winston": "^3.0.0-rc0"
   },
   "devDependencies": {
@@ -52,8 +59,7 @@
     "nyc": "^11.4.1",
     "sinon": "^4.4.2",
     "socket.io-client": "^2.0.4",
-    "supertest": "^3.0.0",
-    "validator": "^9.4.1"
+    "supertest": "^3.0.0"
   },
   "husky": {
     "hooks": {
