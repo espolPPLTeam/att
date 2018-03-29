@@ -1,11 +1,21 @@
 <template>
   <v-app id="app">
+    <v-navigation-drawer temporary v-model="sideNav" app>
+      <v-list>
+        <v-list-tile @click="logout">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
     <v-toolbar app dark>
-      <v-toolbar-side-icon></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="sideNav = !sideNav"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">Ask The Teacher</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-tabs centered grow>
+      <v-tabs centered grow v-if="loggedIn">
         <v-tab :to="{name:'Preguntar'}">Preguntar</v-tab>
         <v-tab :to="{name:'Responder'}">Responder</v-tab>
       </v-tabs>
@@ -19,12 +29,25 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    loggedIn () {
+      return this.$store.getters.loggedIn
+    }
+  },
   mounted () {
     this.obtenerPreguntas()
+  },
+  data () {
+    return {
+      sideNav: false
+    }
   },
   methods: {
     obtenerPreguntas () {
       this.$store.dispatch('obtenerPreguntas')
+    },
+    logout () {
+      this.$store.dispatch('logout')
     }
   }
 }
