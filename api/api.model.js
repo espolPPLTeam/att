@@ -5,6 +5,7 @@ module.exports = ({ db, logger, messages }) => {
   let Profesor = db.Profesor
   let Paralelo = db.Paralelo
   let PreguntaProfesor = db.PreguntaProfesor
+  let Respuesta = db.Respuesta
   const proto = {
     crearEstudiante({ correo, matricula, nombres, apellidos }) {
       return new Promise((resolve, reject) => {
@@ -225,10 +226,36 @@ module.exports = ({ db, logger, messages }) => {
             })
         })
       })
+    },
+    crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } }) {
+      return new Promise((resolve, reject) => {
+        let creadorTmp =  { _id, correo, matricula, nombres, apellidos }
+        let respuesta = new Respuesta({
+          paraleloId,
+          preguntaId,
+          texto,
+          creador: creadorTmp
+        })
+        respuesta.crear()
+          .then(respuestaCreada => {
+            let respuestaId = respuesta['_id']
+            Promise.all([
+              Estudiante.anadirRespuesta({ matricula, respuestaId }),
+              PreguntaProfesor.anadirRespuesta({ preguntaId, respuestaId })
+            ])
+            .then((values) => {
+              if (_.every(values)) {
+                resolve(respuesta)
+              } else {
+                resolve(null)
+              }
+            }).catch((err) => {
+              logger.error(err)
+              reject(messages.ERROR_AL_CREAR)
+            })
+          })
+      })
     }
-    // crearRespuestaEstudiante({ text, preguntaId, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
-
-    // }
   }
   return Object.assign(Object.create(proto), {})
 }

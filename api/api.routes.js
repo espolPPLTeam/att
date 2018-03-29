@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const validator = require('validator')
 module.exports = ({ app, controller, logger }) => {
   app
   .route('/profesor/datosProfesor/:profesorCorreo')
@@ -90,8 +91,16 @@ module.exports = ({ app, controller, logger }) => {
   app
   .route('/estudiante/responder')
     .post((req, res) => {
-      let { texto, paraleloId } = req.body
-      let { _id, correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
+      let { texto, paraleloId, preguntaId } = req.body
+      let creador = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearRespuestaEstudiante({texto, paraleloId, preguntaId, creador })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
@@ -130,6 +139,9 @@ module.exports = ({ app, controller, logger }) => {
   .route('/login')
     .post((req, res) => {
       let { correo } = req.body
+      if (!validator.isEmail(correo)) {
+        correo = `${correo}@espol.edu.ec`
+      }
       controller.Login({ correo })
         .then((resp) => {
           if (resp) {

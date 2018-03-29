@@ -1,6 +1,7 @@
 const _ = require('lodash')
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
+    URL_NO_VALIDO: responses.URL_NO_VALIDO,
     async Login({ correo }) {
       try {
         let profesor = await this.ObtenerParalelosProfesor({ profesorCorreo: correo })
@@ -16,7 +17,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         }
       } catch (err) {
         logger.error(err)
-        return null
+        return responses.ERROR_SERVIDOR
       }
     },
     async ObtenerParalelosProfesor({ profesorCorreo }) {
@@ -121,10 +122,23 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
         }
       } catch (err) {
-
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
       }
     },
-    URL_NO_VALIDO: responses.URL_NO_VALIDO
+    async CrearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } }) {
+      try {
+        let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } })
+        if (respuesta) {
+          return responses.OK({ datos: respuesta })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
+        }
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    }
   }
   return Object.assign(Object.create(proto), {})
 }

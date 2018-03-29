@@ -146,7 +146,11 @@ const RespuestaSchema = mongoose.Schema({
     type: Boolean,
     'default': false
   },
-  pregunta: {
+  paraleloId: {
+    type: String,
+    ref: 'Paralelo'
+  },
+  preguntaId: {
     type: String,
     ref: 'PreguntaProfesor'
   }
@@ -195,7 +199,22 @@ PreguntaProfesorSchema.methods = {
   }
 }
 
+RespuestaSchema.methods = {
+  crear() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.save())
+    })
+  }
+}
+
 EstudianteSchema.statics = {
+  obtenerPorId({ paraleloId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id: paraleloId }))
+    })
+  },
   eliminar({ estudianteCorreo }) {
     const self = this
     return new Promise(function(resolve) {
@@ -220,6 +239,14 @@ EstudianteSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.findOne({ correo }))
+    })
+  },
+  anadirRespuesta({ matricula, respuestaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ matricula }, {$addToSet: {'respuestas': respuestaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   }
 }
@@ -351,6 +378,23 @@ PreguntaEstudianteSchema.statics = {
 }
 
 PreguntaProfesorSchema.statics = {
+  obtenerPorId({ _id }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id }))
+    })
+  },
+  anadirRespuesta({ preguntaId, respuestaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: preguntaId }, {$addToSet: {'respuestas': respuestaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  }
+}
+
+RespuestaSchema.statics = {
   obtenerPorId({ _id }) {
     const self = this
     return new Promise(function(resolve) {
