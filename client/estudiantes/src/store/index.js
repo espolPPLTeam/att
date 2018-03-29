@@ -21,6 +21,9 @@ export const store = new Vuex.Store({
     login (state) {
       state.loggedIn = true
     },
+    logout (state) {
+      state.loggedIn = false
+    },
     anadirPregunta (state, payload) {
       state.preguntas.push(payload)
     },
@@ -45,8 +48,26 @@ export const store = new Vuex.Store({
   },
   actions: {
     login ({commit}, payload) {
+      const correo = payload
       // Autenticación
-      commit('login')
+      Vue.http.post('/api/att/login', correo)
+        .then((response) => {
+          if (response.body.estado) {
+            commit('login')
+          } else {
+            return false
+          }
+        }, (err) => {
+          console.log('err', err)
+        })
+    },
+    logout ({commit}) {
+      Vue.http.get('/api/att/logout')
+        .then((response) => {
+          commit('logout')
+        }, (err) => {
+          console.log('err:', err)
+        })
     },
     anadirPregunta ({commit, state}, payload) {
       // Primero se añade la pregunta al array. Con estado 'enviando'
@@ -83,7 +104,7 @@ export const store = new Vuex.Store({
       })
     },
     estudiante (state) {
-      return state.estudiante
+      return state.usuario
     },
     loggedIn (state) {
       return state.loggedIn

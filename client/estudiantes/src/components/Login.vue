@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout row class="mt-5">
     <v-flex xs12 sm9 offset-sm1>
       <v-card>
         <v-card-text>
@@ -30,6 +30,9 @@ export default {
   computed: {
     habilitado () {
       return this.usuario !== '' && this.usuario !== undefined && this.contrasenna !== '' && this.contrasenna !== undefined
+    },
+    loggedIn () {
+      return this.$store.getters.loggedIn
     }
   },
   data () {

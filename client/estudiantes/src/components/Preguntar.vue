@@ -3,7 +3,7 @@
     <section>
       <v-layout row wrap>
         <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
-          <v-card>
+          <v-card hover>
             <v-card-text class="text-xs-left">
               <p v-html="pregunta.texto" class="pa-2"></p>
             </v-card-text>
