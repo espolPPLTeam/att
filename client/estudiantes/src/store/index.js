@@ -48,9 +48,9 @@ export const store = new Vuex.Store({
   },
   actions: {
     login ({commit}, payload) {
-      const correo = payload
+      const correo = payload.usuario
       // Autenticación
-      Vue.http.post('/api/att/login', correo)
+      Vue.http.post('/api/att/login', {correo})
         .then((response) => {
           if (response.body.estado) {
             commit('login')
