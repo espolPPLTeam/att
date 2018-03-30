@@ -169,6 +169,20 @@ const RESPUESTA_ESTUDIANTE = {
   }
 }
 
+const PREGUNTA_TERMINADA = {
+  "type": "object",
+  "minProperties": 3,
+  "additionalProperties": false,
+  "properties": {
+    "paraleloId": { "type": "string" },
+    "preguntaId": { "type": "string" },
+    "terminadoPor": { 
+      "type": "object",
+      "items" : PROFESOR_DATOS_PREGUNTA 
+    }
+  }
+}
+
 module.exports = {
   PROFESOR_DATOS,
   ERROR_SERVIDOR,
@@ -177,7 +191,8 @@ module.exports = {
   PREGUNTAS_HOY_ESTUDIANTES,
   PREGUNTA_ESTUDIANTE,
   PROFESOR_CREAR_PREGUNTA,
-  RESPUESTA_ESTUDIANTE
+  RESPUESTA_ESTUDIANTE,
+  PREGUNTA_TERMINADA
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

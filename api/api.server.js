@@ -10,7 +10,7 @@ const routes = require('./api.routes')
 const controllerRequire = require('./api.controller')
 const modelRequire = require('./api.model')
 
-const model = modelRequire({ db, logger })
+const model = modelRequire({ db, logger, messages })
 const controller = controllerRequire({ responses, messages, model, logger, validator })
 
 module.exports = (app) => {

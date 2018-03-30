@@ -138,6 +138,33 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }
+    },
+    async DestacarRespuestaEstudiante({ respuestaId, destacadaEstado }) {
+      try {
+        let fueDestacada = await model.destacarRespuestaEstudiante({ respuestaId, destacadaEstado })
+        if (fueDestacada) {
+          return responses.OK({ datos: messages.RESPUESTA_DESTACADA })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.RESPUESTA_ID_NO_EXISTE })
+        }
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async TerminarPregunta({ preguntaId, paraleloId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
+      let profesor = { _id, correo, nombres, apellidos, tipo }
+      try {
+        let fueDestacada = await model.terminarPregunta({ preguntaId, paraleloId, terminadoPor: profesor })
+        if (fueDestacada) {
+          return responses.OK({ datos: fueDestacada })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.PARALELO_NO_EXISTE })
+        }
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
     }
   }
   return Object.assign(Object.create(proto), {})

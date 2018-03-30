@@ -1,5 +1,5 @@
-const _ = require('lodash')
 module.exports = ({ db, logger, messages }) => {
+  const _ = require('lodash')
   let PreguntaEstudiante = db.PreguntaEstudiante
   let Estudiante = db.Estudiante
   let Profesor = db.Profesor
@@ -254,6 +254,37 @@ module.exports = ({ db, logger, messages }) => {
               reject(messages.ERROR_AL_CREAR)
             })
           })
+      })
+    },
+    destacarRespuestaEstudiante({ respuestaId, destacadaEstado }) {
+      return new Promise((resolve, reject) => {
+        Respuesta.destacar({ respuestaId, destacadaEstado })
+          .then((resp) => {
+            resolve(resp)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_CREAR)
+          })
+      })
+    },
+    terminarPregunta({ paraleloId, preguntaId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
+      return new Promise((resolve, reject) => {
+        let respuestaVacia = ''
+        let profesor = { _id, correo, nombres, apellidos, tipo }
+        Promise.all([
+          Paralelo.anadirPreguntaActual({ paraleloId, preguntaId: respuestaVacia }),
+          PreguntaProfesor.terminar({ preguntaId, terminadoPor: profesor })
+        ])
+        .then((values) => {
+          if (_.every(values)) {
+            resolve({ paraleloId, preguntaId, terminadoPor: profesor })
+          } else {
+            resolve(null)
+          }
+        }).catch((err) => {
+          logger.error(err)
+          reject('error')
+        })
       })
     }
   }

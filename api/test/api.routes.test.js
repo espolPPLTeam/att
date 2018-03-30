@@ -36,7 +36,7 @@ function crearStub(tipo, metodo, response) {
   return modelStub
 }
 
-const model = modelRequire({ db, logger, messages })
+const model = modelRequire({ messages, db, logger })
 const controller = controllerRequire({ responses, messages, model, logger, validator })
 
 async function ConectarMongo() {
@@ -682,6 +682,125 @@ describe('Routes - Integration', () => {
           })
         })
       }).catch((err) => console.error(err))
+    }).timeout(10000)
+  })
+  describe('@t10 DESTACAR RESPUESTA ESTUDIANTE', () => {
+    let doc = {
+      nombre: 'Destacar Respuesta',
+      metodo: 'POST',
+      url: '/api/att/profesor/destacarRespuesta',
+      descripcion: 'Profesor escoge una pregunta para destacarla',
+      body: [
+        { nombre: 'respuestaId', tipo: 'String', descripcion: ' --- ' },
+        { nombre: 'destacadaEstado', tipo: 'Boolean', descripcion: ' --- ' }
+      ],
+      errors: []
+    }
+    it('@t10.1 OK', (done) => {
+      let respuesta = new db.Respuesta({
+          texto: 'Mi respuesta'
+        })
+      respuesta.crear()
+        .then((respuestaCreada) => {
+          let req = { 
+            respuestaId: respuestaCreada['_id'],
+            destacadaEstado: true 
+          }
+          request(app)
+          .put(`/api/att/profesor/destacarRespuesta`)
+          .send(req)
+          .end(function(err, res) {
+            expect(res.body.estado).to.equal(true)
+            expect(res.status).to.equal(200)
+            expect(res.body.codigoEstado).to.equal(200)
+            expect(res.body.datos).to.equal(messages.RESPUESTA_DESTACADA)
+            generatorDocs.OK({ docs, doc, res, req })
+            done()
+          })
+        })
+    }).timeout(10000)
+    it('@t10.2 ID RESPUESTA NO EXISTE', (done) => {
+      let req = { 
+        respuestaId: 'noexisto',
+        destacadaEstado: true 
+      }
+      request(app)
+      .put(`/api/att/profesor/destacarRespuesta`)
+      .send(req)
+      .end(function(err, res) {
+        expect(res.body.estado).to.equal(false)
+        expect(res.status).to.equal(200)
+        expect(res.body.codigoEstado).to.equal(200)
+        expect(res.body.datos).to.equal(messages.RESPUESTA_ID_NO_EXISTE)
+        generatorDocs.ERROR({ nombre: 'NO EXISTE RESPUESTA', docs, doc, res })
+        done()
+      })
+    }).timeout(10000)
+  })
+  describe('@t11 TERMINAR PREGUNTA', () => {
+    let doc = {
+      nombre: 'Terminar Pregunta',
+      metodo: 'POST',
+      url: '/api/att/profesor/terminarPregunta',
+      descripcion: 'La pregunta es desabilitada a que los estudiantes puedan responder',
+      body: [
+        { nombre: 'paraleloId', tipo: 'String', descripcion: ' --- ' },
+        { nombre: 'preguntaId', tipo: 'String', descripcion: ' --- ' },
+        { nombre: 'terminadoPor', tipo: 'Object', descripcion: ' --- ' },
+        { nombre: '_id', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' correo', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' tipo', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' nombres', margen: 'center', tipo: 'String', descripcion: ' --- ' },
+        { nombre: ' apellidos', margen: 'center', tipo: 'String', descripcion: ' --- '},
+      ],
+      errors: []
+    }
+    it('@t11.1 OK', (done) => {
+      co(function *() {
+        let paralelo = data.paralelos[0]
+        const paraleloCreado = yield model.crearParalelo(paralelo)
+        let profesor = data.profesores[0]
+        const profesorCreado = yield model.crearProfesor(profesor)
+        let pregunta = new db.PreguntaProfesor({
+          texto: 'Mi pregunta'
+        })
+        pregunta.crear()
+          .then((preguntaCreada) => {
+            let req = {
+              preguntaId: preguntaCreada['_id'], 
+              paraleloId: paraleloCreado['_id'],
+              terminadoPor: profesorCreado
+            }
+            request(app)
+            .put(`/api/att/profesor/terminarPregunta`)
+            .send(req)
+            .end(function(err, res) {
+              expect(res.body.estado).to.equal(true)
+              expect(res.status).to.equal(200)
+              expect(res.body.codigoEstado).to.equal(200)
+              expect(ajv.validate(schema.PREGUNTA_TERMINADA, res.body.datos)).to.equal(true)
+              generatorDocs.OK({ docs, doc, res, req })
+              done()
+            })
+          })
+      })
+    }).timeout(10000)
+    it('@t11.2 PREGUNTA O PARALELO NO EXISTE', (done) => {
+      let req = {
+        preguntaId: 'no existe', 
+        paraleloId: 'no existe',
+        terminadoPor: {}
+      }
+      request(app)
+      .put(`/api/att/profesor/terminarPregunta`)
+      .send(req)
+      .end(function(err, res) {
+        expect(res.body.estado).to.equal(false)
+        expect(res.status).to.equal(200)
+        expect(res.body.codigoEstado).to.equal(200)
+        generatorDocs.ERROR({ nombre: 'NO EXISTE RESPUESTA', docs, doc, res })
+        done()
+      })
     }).timeout(10000)
   })
 })

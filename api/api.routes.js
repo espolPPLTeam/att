@@ -107,12 +107,30 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/destacarRespuesta')
     .put((req, res) => {
       let { respuestaId, destacadaEstado } = req.body
+      controller.DestacarRespuestaEstudiante({ respuestaId, destacadaEstado })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
   .route('/profesor/terminarPregunta')
     .put((req, res) => {
       let { preguntaId, paraleloId } = req.body
+      let { terminadoPor } = req.body
+      controller.TerminarPregunta({ preguntaId, paraleloId, terminadoPor })
+        .then((resp) => {
+            res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          console.log(err)
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
@@ -127,11 +145,11 @@ module.exports = ({ app, controller, logger }) => {
       let { paraleloId } = req.params
     })
 
-  app
-  .route('/profesor/preguntasHistorial/:paraleloId')
-    .get((req, res) => {
-      let { paraleloId } = req.params
-    })
+  // app
+  // .route('/profesor/preguntasHistorial/:paraleloId')
+  //   .get((req, res) => {
+  //     let { paraleloId } = req.params
+  //   })
 
 
   // ENDPOINTS DE PRUEBA PARA LOGIN

@@ -53,7 +53,7 @@ const ParaleloSchema = new mongoose.Schema({
   curso: { type: String, required: true },
   anio: { type: String, required: true },
   termino: { type: String, enum: ['1', '2'], required: true },
-  preguntaActual: { // nostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan
+  preguntaActual: { // mostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan
     type: String,
     ref: 'preguntaProfesor'
   },
@@ -110,6 +110,16 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     'default': true
   },
   creador: {
+    _id: { type: String },
+    correo: { type: String },
+    nombres: { type: String },
+    apellidos: { type: String },
+    tipo: {
+      type: String,
+      enum: ['titular', 'peer']
+    }
+  },
+  terminadoPor: {
     _id: { type: String },
     correo: { type: String },
     nombres: { type: String },
@@ -336,7 +346,7 @@ ParaleloSchema.statics = {
   anadirPreguntaActual({ paraleloId, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      self.update({ _id: paraleloId }, {$set: { preguntaActual: preguntaId }}).then((accionEstado) => {
+      self.update({ _id: paraleloId }, {$set: { 'preguntaActual': preguntaId }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
@@ -391,6 +401,15 @@ PreguntaProfesorSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  terminar({ preguntaId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
+    const self = this
+    let profesorQueLaTermino = { _id, correo, nombres, apellidos, tipo }
+    return new Promise(function(resolve) {
+      self.update({ _id: preguntaId }, {$set: { habilitada: false, terminadoPor: profesorQueLaTermino }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
   }
 }
 
@@ -399,6 +418,14 @@ RespuestaSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.findOne({ _id }))
+    })
+  },
+  destacar({ respuestaId, destacadaEstado }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: respuestaId }, {$set: { hablitado: false }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
     })
   }
 }
