@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "r1fvmH_oqf",
+        "_id": "rJCSUuiqf",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -148,7 +148,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "rJGuXBOi9z",
+  "preguntaId": "Syy88uscf",
   "destacadaEstado": true
 }
 ```
@@ -207,31 +207,31 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "BkXu7BOicM",
+        "_id": "B1xy8L_iqM",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "S1FXH_oqz",
+      "_id": "HJb1UUOocf",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "BkXu7BOicM",
-      "createdAt": "2018-03-30T08:28:16.590Z",
-      "updatedAt": "2018-03-30T08:28:16.590Z"
+      "paralelo": "B1xy8L_iqM",
+      "createdAt": "2018-03-30T08:33:11.211Z",
+      "updatedAt": "2018-03-30T08:33:11.211Z"
     },
     {
       "creador": {
-        "_id": "BkXu7BOicM",
+        "_id": "B1xy8L_iqM",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "HJxKmHujqG",
+      "_id": "SyGJ8IuoqM",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "BkXu7BOicM",
-      "createdAt": "2018-03-30T08:28:16.781Z",
-      "updatedAt": "2018-03-30T08:28:16.781Z"
+      "paralelo": "B1xy8L_iqM",
+      "createdAt": "2018-03-30T08:33:11.452Z",
+      "updatedAt": "2018-03-30T08:33:11.452Z"
     }
   ],
   "codigoEstado": 200
@@ -257,11 +257,11 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-03-30T08:28:17.343Z"
+      "createdAt": "2018-03-30T08:33:11.965Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-03-30T08:28:17.544Z"
+      "createdAt": "2018-03-30T08:33:12.208Z"
     }
   ],
   "codigoEstado": 200
@@ -395,13 +395,13 @@ _response_
 ```json
 {
   "texto": "Mi pregunta a estudiante",
-  "paraleloId": "H1GsQHOj9z",
+  "paraleloId": "Hk-MIUOi9G",
   "creador": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "rkWjmr_i5M",
+    "_id": "B1gMLUuo9M",
     "preguntas": []
   }
 }
@@ -413,10 +413,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "_id": "Syh7ruo9G",
+    "_id": "r1MzI8_jqM",
     "texto": "Mi pregunta a estudiante",
     "creador": {
-      "_id": "rkWjmr_i5M",
+      "_id": "B1gMLUuo9M",
       "correo": "mheredia@espol.edu.ec",
       "tipo": "titular",
       "nombres": "TAMARA",
@@ -431,7 +431,7 @@ _response_
 {% endapi%}
 
 
-{% api "Crear pregunta y habilitarla", method="POST", url="/api/att/profesor/preguntar"  %}El profesor crea la pregunta y ademas queda habilitada para que los estudiantes respondan
+{% api "Responder Estudiante", method="POST", url="/api/att/estudiante/responder"  %}
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| 
@@ -449,15 +449,15 @@ _response_
 
 ```json
 {
-  "paraleloId": "HJx3Qrdocz",
-  "preguntaId": "H1mh7S_o9M",
+  "paraleloId": "BJXUIdjqf",
+  "preguntaId": "SyM788uoqG",
   "texto": "Esta pregunta no tiene sentido",
   "creador": {
     "correo": "kenjoale@espol.edu.ec",
     "matricula": "201602281",
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
-    "_id": "S1Z27r_sqM",
+    "_id": "Syx7ULdjqz",
     "preguntas": [],
     "respuestas": []
   }
@@ -471,18 +471,18 @@ _response_
   "estado": true,
   "datos": {
     "creador": {
-      "_id": "S1Z27r_sqM",
+      "_id": "Syx7ULdjqz",
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
       "apellidos": "ALEJANDRO SOLORZANO"
     },
-    "paraleloId": "HJx3Qrdocz",
-    "preguntaId": "H1mh7S_o9M",
+    "paraleloId": "BJXUIdjqf",
+    "preguntaId": "SyM788uoqG",
     "texto": "Esta pregunta no tiene sentido",
-    "_id": "r1aQS_oqz",
+    "_id": "HJX788dj5z",
     "destacada": false,
-    "createdAt": "2018-03-30T08:28:20.637Z",
-    "updatedAt": "2018-03-30T08:28:20.637Z"
+    "createdAt": "2018-03-30T08:33:15.462Z",
+    "updatedAt": "2018-03-30T08:33:15.462Z"
   },
   "codigoEstado": 200
 }
@@ -490,7 +490,7 @@ _response_
 {% endapi%}
 
 
-{% api "Destacar Respuesta", method="POST", url="/api/att/profesor/destacarRespuesta"  %}Profesor escoge una pregunta para destacarla
+{% api "Destacar Respuesta", method="PUT", url="/api/att/profesor/destacarRespuesta"  %}Profesor escoge una pregunta para destacarla
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| 
@@ -501,7 +501,7 @@ _response_
 
 ```json
 {
-  "respuestaId": "H1gamruscG",
+  "respuestaId": "SJV88uj9M",
   "destacadaEstado": true
 }
 ```
@@ -536,7 +536,7 @@ _response_
 {% endapi%}
 
 
-{% api "Terminar Pregunta", method="POST", url="/api/att/profesor/terminarPregunta"  %}La pregunta es desabilitada a que los estudiantes puedan responder
+{% api "Terminar Pregunta", method="PUT", url="/api/att/profesor/terminarPregunta"  %}La pregunta es desabilitada a que los estudiantes puedan responder
 ### Body:
 | Name       | Type    | Desc |
 | :--------- | :------ | :-------| 
@@ -553,14 +553,14 @@ _response_
 
 ```json
 {
-  "preguntaId": "ryAmH_o5M",
-  "paraleloId": "HyW6mBdi5z",
+  "preguntaId": "S1HU8_ocz",
+  "paraleloId": "Hyg48Ids5f",
   "terminadoPor": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "SkMTmruiqf",
+    "_id": "r1b48Iujqf",
     "preguntas": []
   }
 }
@@ -572,10 +572,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "paraleloId": "HyW6mBdi5z",
-    "preguntaId": "ryAmH_o5M",
+    "paraleloId": "Hyg48Ids5f",
+    "preguntaId": "S1HU8_ocz",
     "terminadoPor": {
-      "_id": "SkMTmruiqf",
+      "_id": "r1b48Iujqf",
       "correo": "mheredia@espol.edu.ec",
       "nombres": "TAMARA",
       "apellidos": "HEREDIA",

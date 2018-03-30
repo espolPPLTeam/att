@@ -630,10 +630,10 @@ describe('Routes - Integration', () => {
   })
   describe('@t9 RESPONDER ESTUDIANTE', () => {
     let doc = {
-      nombre: 'Crear pregunta y habilitarla',
+      nombre: 'Responder Estudiante',
       metodo: 'POST',
-      url: '/api/att/profesor/preguntar',
-      descripcion: 'El profesor crea la pregunta y ademas queda habilitada para que los estudiantes respondan',
+      url: '/api/att/estudiante/responder',
+      descripcion: '',
       body: [
         { nombre: 'texto', tipo: 'String', descripcion: ' --- ' },
         { nombre: 'paraleloId', tipo: 'String', descripcion: ' --- ' },
@@ -687,7 +687,7 @@ describe('Routes - Integration', () => {
   describe('@t10 DESTACAR RESPUESTA ESTUDIANTE', () => {
     let doc = {
       nombre: 'Destacar Respuesta',
-      metodo: 'POST',
+      metodo: 'PUT',
       url: '/api/att/profesor/destacarRespuesta',
       descripcion: 'Profesor escoge una pregunta para destacarla',
       body: [
@@ -740,7 +740,7 @@ describe('Routes - Integration', () => {
   describe('@t11 TERMINAR PREGUNTA', () => {
     let doc = {
       nombre: 'Terminar Pregunta',
-      metodo: 'POST',
+      metodo: 'PUT',
       url: '/api/att/profesor/terminarPregunta',
       descripcion: 'La pregunta es desabilitada a que los estudiantes puedan responder',
       body: [

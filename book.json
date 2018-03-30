@@ -10,7 +10,6 @@
     "glossary": "GLOSSARY.md"
   },
   "plugins" : [
-     "copy-code-button",
      "api"
   ],
   "pluginsConfig": {
