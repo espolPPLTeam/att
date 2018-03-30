@@ -6,12 +6,12 @@
           <v-form @submit.prevent="login">
             <v-layout row wrap>
               <v-flex xs12>
-                <v-text-field label="Usuario" name="usuario" id="usuario" type="text" v-model="usuario" required></v-text-field>
+                <v-text-field prepend-icon="person" label="Usuario" name="usuario" id="usuario" type="text" v-model="usuario" required></v-text-field>
               </v-flex>
             </v-layout>
             <v-layout row wrap>
               <v-flex xs12>
-                <v-text-field label="Contraseña" name="contrasenna" id="contrasenna" type="password" v-model="contrasenna" required></v-text-field>
+                <v-text-field prepend-icon="lock" label="Contraseña" name="contrasenna" id="contrasenna" type="password" v-model="contrasenna" required></v-text-field>
               </v-flex>
             </v-layout>
             <v-layout row wrap>

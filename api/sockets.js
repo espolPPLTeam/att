@@ -7,9 +7,24 @@ module.exports = function({ io, shortid, logger }) {
     socket.on('unirse-a-paralelo', function({ paraleloId }) {
       socket.join(`${paraleloId}`)
     })
-    socket.on('pregunta-estudiante', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    socket.on('preguntaEstudiante', function({ preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } }) {
       socket.join(`${paraleloId}`)
-      Socket.in(`${paraleloId}`).emit('pregunta-estudiante', { preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
+      const data = {
+        preguntaId,
+        texto,
+        paraleloId,
+        createdAt,
+        destacada: false,
+        creador: {
+          _id,
+          correo,
+          matricula,
+          nombres,
+          apellidos
+        }
+      }
+      // Socket.in(`${paraleloId}`).emit('TEST', { preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
+      Socket.emit('PREGUNTA_ESTUDIANTE', data)
     })
     socket.on('disconnect', function() {
       const CANTIDAD_CONECTADOS = Object.keys(io.sockets.connected).length

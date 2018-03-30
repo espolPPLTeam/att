@@ -7,6 +7,7 @@ Vue.use(VueResource)
 
 export const store = new Vuex.Store({
   state: {
+    io: {},
     loggedIn: false,
     usuario: {
       _id: '1',
@@ -18,6 +19,13 @@ export const store = new Vuex.Store({
     preguntas: []
   },
   mutations: {
+    setSocket (state, socket) {
+      state.io = socket
+      state.loggedIn = true
+    },
+    SOCKET_PREGUNTA (state, data) {
+      state.io.emit('preguntaEstudiante', data)
+    },
     login (state) {
       state.loggedIn = true
     },
@@ -75,12 +83,14 @@ export const store = new Vuex.Store({
       // Se envía la pregunta a la base de datos
       const data = {
         texto: payload.texto,
+        createdAt: payload.createdAt,
         paraleloId: '5ab97b42fc38f06297506ae9',
         creador: state.usuario
       }
       Vue.http.post('/api/att/estudiante/preguntar', data)
         .then((response) => {
           commit('preguntaEnviada', payload)
+          commit('SOCKET_PREGUNTA', data)
           // Luego se debe enviar por sockets al profesor
         }, (err) => {
           console.log('err:', err)

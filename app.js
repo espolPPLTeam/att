@@ -7,6 +7,8 @@ const MongoStore = require('connect-mongo')(session)
 const server = require('http').Server(app)
 const db = require('./api/config/db')
 const PORT = process.env.PORT || '8000'
+const logger = require('./api/config/logger')
+const shortid = require('shortid')
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -42,7 +44,7 @@ require('./client/client.server')(client)
 app.use('/att', client)
 
 const realtime = express()
-require('./api/sockets')({ io })
+require('./api/sockets')({ io, shortid, logger })
 app.use('/sockets/att', realtime)
 
 app.set('port', PORT)
