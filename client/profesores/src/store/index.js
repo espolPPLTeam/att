@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 
+import router from '../router'
+
 Vue.use(Vuex)
 Vue.use(VueResource)
 
@@ -11,26 +13,33 @@ export const store = new Vuex.Store({
     conectado: false,
     loggedIn: false,
     preguntas: [],
-    preguntasMostrar: []
+    preguntasMostrar: [],
+    paraleloId: '5ab97b42fc38f06297506ae9'
   },
   mutations: {
     setSocket (state, socket) {
       state.io = socket
       state.loggedIn = true
     },
+    SOCKET_UNIRSE_PARALELO (state) {
+      state.io.emit('unirseAParalelo', { paraleloId: state.paraleloId })
+    },
+    SOCKET_UNIDO_PARALELO (state) {
+      state.loggedIn = true
+      router.push('/preguntas')
+    },
     SOCKET_PREGUNTA_ESTUDIANTE (state, data) {
+      console.log(data)
       const pregunta = {
         _id: data[0].preguntaId,
         texto: data[0].texto,
         destacada: false,
         createdAt: data[0].createdAt,
         creador: data[0].creador,
-        paralelo: data[0].paraleloId
+        paralelo: data[0].paraleloId,
+        show: false
       }
       state.preguntas.push(pregunta)
-    },
-    login (state) {
-      state.loggedIn = true
     },
     logout (state) {
       state.loggedIn = false
@@ -72,7 +81,18 @@ export const store = new Vuex.Store({
   },
   actions: {
     login ({commit, state}, payload) {
-      commit('login')
+      const correo = payload.usuario
+      Vue.http.post('/api/att/login', {correo})
+        .then((response) => {
+          console.log(response)
+          if (response.body.estado) {
+            commit('SOCKET_UNIRSE_PARALELO')
+          } else {
+            return false
+          }
+        }, (err) => {
+          console.log('err:', err)
+        })
     },
     logout ({commit}, payload) {
       commit('logout')

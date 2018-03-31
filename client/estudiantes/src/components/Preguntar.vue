@@ -23,7 +23,7 @@
           <v-card>
             <v-layout row justify-center>
               <v-flex xs10 lg11 id="div-pregunta">
-                <v-text-field name="pregunta" label="Pregunta" id="pregunta" v-model="pregunta"></v-text-field>
+                <v-text-field name="pregunta" label="Pregunta" id="pregunta" v-model="pregunta" @keypress="keypressed($event)"></v-text-field>
               </v-flex>
               <v-flex xs2 lg1 id="div-icon">
                 <v-btn icon class="mt-3" @click="preguntar" :disabled="!habilitado"><v-icon>send</v-icon></v-btn>
@@ -66,6 +66,12 @@ export default {
       }
       this.$store.dispatch('anadirPregunta', pregunta)
       this.pregunta = ''
+    },
+    keypressed (e) {
+      const code = (e.keyCode ? e.keyCode : e.which)
+      if (code === 13) {
+        this.preguntar()
+      }
     }
   }
 }

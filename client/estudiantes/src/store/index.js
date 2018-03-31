@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 
+import router from '../router'
+
 Vue.use(Vuex)
 Vue.use(VueResource)
 
@@ -16,20 +18,24 @@ export const store = new Vuex.Store({
       nombres: 'Edison',
       apellidos: 'Mora'
     },
+    paraleloId: '5ab97b42fc38f06297506ae9',
     preguntas: []
   },
   mutations: {
     setSocket (state, socket) {
       state.io = socket
-      state.loggedIn = true
     },
     SOCKET_PREGUNTA (state, data) {
       state.io.emit('preguntaEstudiante', data)
     },
-    login (state) {
-      state.loggedIn = true
+    SOCKET_UNIRSE_PARALELO (state) {
+      state.io.emit('unirseAParalelo', { paraleloId: state.paraleloId })
     },
-    logout (state) {
+    SOCKET_UNIDO_PARALELO (state) {
+      state.loggedIn = true
+      router.push('/preguntar')
+    },
+    SOCKET_DISCONNECT (state) {
       state.loggedIn = false
     },
     anadirPregunta (state, payload) {
@@ -61,7 +67,7 @@ export const store = new Vuex.Store({
       Vue.http.post('/api/att/login', {correo})
         .then((response) => {
           if (response.body.estado) {
-            commit('login')
+            commit('SOCKET_UNIRSE_PARALELO')
           } else {
             return false
           }
@@ -72,7 +78,8 @@ export const store = new Vuex.Store({
     logout ({commit}) {
       Vue.http.get('/api/att/logout')
         .then((response) => {
-          commit('logout')
+          commit('SOCKET_DISCONNECT')
+          router.push('/')
         }, (err) => {
           console.log('err:', err)
         })
@@ -84,7 +91,7 @@ export const store = new Vuex.Store({
       const data = {
         texto: payload.texto,
         createdAt: payload.createdAt,
-        paraleloId: '5ab97b42fc38f06297506ae9',
+        paraleloId: state.paraleloId,
         creador: state.usuario
       }
       Vue.http.post('/api/att/estudiante/preguntar', data)
