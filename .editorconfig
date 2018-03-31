@@ -38,13 +38,8 @@ trim_trailing_whitespace = true
 [*.vue]
 indent_style = space
 indent_size = 2
-<<<<<<< Updated upstream
 
 [*]
 end_of_line = lf
 insert_final_newline = true
-=======
-end_of_line = lf
-insert_final_newline = true
 trim_trailing_whitespace = true
->>>>>>> Stashed changes

@@ -410,6 +410,12 @@ PreguntaProfesorSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  obtenerRespuestas({ }) {
+    const self = this
+    return new Promise(function(resolve) {
+
+    })
   }
 }
 

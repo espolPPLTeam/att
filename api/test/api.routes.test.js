@@ -2,7 +2,6 @@ process.on('uncaughtException', function(err) {
   console.error('Caught exception: ' + err)
   console.error(err.stack)
 })
-
 const app = require('../../app').app
 const request = require('supertest')
 const sinon = require('sinon')
@@ -611,8 +610,8 @@ describe('Routes - Integration', () => {
           },
           profesorCorreo: profesor['correo'] })
         let req = {
-          texto: 'Mi pregunta a estudiante', 
-          paraleloId: paraleloCreado['_id'], 
+          texto: 'Mi pregunta a estudiante',
+          paraleloId: paraleloCreado['_id'],
           creador: profesorCreado
         }
         request(app)
@@ -659,14 +658,14 @@ describe('Routes - Integration', () => {
         let preguntaObjeto = new db.PreguntaProfesor
         preguntaObjeto.crear({
           texto,
-          paraleloId, 
-          creador: { 
-            _id: 'aaa', 
-            correo: profesor['correo'], 
-            tipo: profesor['tipo'], 
-            nombres: profesor['nombres'], 
-            apellidos: profesor['apellidos'] 
-          } 
+          paraleloId,
+          creador: {
+            _id: 'aaa',
+            correo: profesor['correo'],
+            tipo: profesor['tipo'],
+            nombres: profesor['nombres'],
+            apellidos: profesor['apellidos']
+          }
         }).then(preguntaCreada => {
           let req = { paraleloId, preguntaId: preguntaCreada['_id'], texto, creador: estudianteCreado }
           request(app)
@@ -702,9 +701,9 @@ describe('Routes - Integration', () => {
         })
       respuesta.crear()
         .then((respuestaCreada) => {
-          let req = { 
+          let req = {
             respuestaId: respuestaCreada['_id'],
-            destacadaEstado: true 
+            destacadaEstado: true
           }
           request(app)
           .put(`/api/att/profesor/destacarRespuesta`)
@@ -720,9 +719,9 @@ describe('Routes - Integration', () => {
         })
     }).timeout(10000)
     it('@t10.2 ID RESPUESTA NO EXISTE', (done) => {
-      let req = { 
+      let req = {
         respuestaId: 'noexisto',
-        destacadaEstado: true 
+        destacadaEstado: true
       }
       request(app)
       .put(`/api/att/profesor/destacarRespuesta`)
@@ -767,7 +766,7 @@ describe('Routes - Integration', () => {
         pregunta.crear()
           .then((preguntaCreada) => {
             let req = {
-              preguntaId: preguntaCreada['_id'], 
+              preguntaId: preguntaCreada['_id'],
               paraleloId: paraleloCreado['_id'],
               terminadoPor: profesorCreado
             }
@@ -787,7 +786,7 @@ describe('Routes - Integration', () => {
     }).timeout(10000)
     it('@t11.2 PREGUNTA O PARALELO NO EXISTE', (done) => {
       let req = {
-        preguntaId: 'no existe', 
+        preguntaId: 'no existe',
         paraleloId: 'no existe',
         terminadoPor: {}
       }
