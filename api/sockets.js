@@ -4,27 +4,12 @@ module.exports = function({ io, shortid, logger }) {
   Socket.on('connection', function(socket) {
     const socketId = shortid.generate()
     sockets.push({ socketId, socket })
-    socket.on('unirse-a-paralelo', function({ paraleloId }) {
+    socket.on('unirseAParalelo', function({ paraleloId }) {
       socket.join(`${paraleloId}`)
+      socket.emit('unirseAParalelo', true)
     })
     socket.on('preguntaEstudiante', function({ preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } }) {
-      socket.join(`${paraleloId}`)
-      const data = {
-        preguntaId,
-        texto,
-        paraleloId,
-        createdAt,
-        destacada: false,
-        creador: {
-          _id,
-          correo,
-          matricula,
-          nombres,
-          apellidos
-        }
-      }
-      // Socket.in(`${paraleloId}`).emit('TEST', { preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
-      Socket.emit('PREGUNTA_ESTUDIANTE', data)
+      Socket.in(`${paraleloId}`).emit('paraleloEstudiante', { preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
     })
     socket.on('disconnect', function() {
       const CANTIDAD_CONECTADOS = Object.keys(io.sockets.connected).length
@@ -36,8 +21,8 @@ module.exports = function({ io, shortid, logger }) {
         delete socketDesconectado
       }
     })
-    socket.on('ping-prueba', function(mensaje) {
-      socket.broadcast.emit('pong-prueba', mensaje)
+    socket.on('pingPrueba', function(mensaje) {
+      socket.broadcast.emit('pongPrueba', mensaje)
     })
   })
 }

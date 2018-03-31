@@ -40,15 +40,15 @@ describe('Sockets', () => {
       paraleloId,
       creador: estudianteData }
     estudiante.on('connect', function() {
-      estudiante.emit('unirse-a-paralelo', { paraleloId })
-      setTimeout(function() {
-        estudiante.emit('pregunta-estudiante', pregunta )
-      }, 500)
+      estudiante.emit('unirseAParalelo', { paraleloId })
+      estudiante.on('unirseAParalelo', function() {
+        estudiante.emit('preguntaEstudiante', pregunta )
+      })
     })
     profesor.on('connect', function() {
-      profesor.emit('unirse-a-paralelo', { paraleloId })
+      profesor.emit('unirseAParalelo', { paraleloId })
     })
-    profesor.on('pregunta-estudiante', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    profesor.on('paraleloEstudiante', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
       let preguntaRecibida = {
         preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos }
       }
