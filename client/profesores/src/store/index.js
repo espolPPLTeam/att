@@ -7,11 +7,28 @@ Vue.use(VueResource)
 
 export const store = new Vuex.Store({
   state: {
+    io: {},
+    conectado: false,
     loggedIn: false,
     preguntas: [],
     preguntasMostrar: []
   },
   mutations: {
+    setSocket (state, socket) {
+      state.io = socket
+      state.loggedIn = true
+    },
+    SOCKET_PREGUNTA_ESTUDIANTE (state, data) {
+      const pregunta = {
+        _id: data[0].preguntaId,
+        texto: data[0].texto,
+        destacada: false,
+        createdAt: data[0].createdAt,
+        creador: data[0].creador,
+        paralelo: data[0].paraleloId
+      }
+      state.preguntas.push(pregunta)
+    },
     login (state) {
       state.loggedIn = true
     },
@@ -32,7 +49,6 @@ export const store = new Vuex.Store({
       pregunta.destacada = payload.estado
     },
     filtrar (state, payload) {
-      console.log(payload)
       if (payload === 'Todas') {
         state.preguntasMostrar = state.preguntas
       } else if (payload === 'Destacadas') {

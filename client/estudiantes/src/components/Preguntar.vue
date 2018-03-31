@@ -16,11 +16,6 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout>
-        <v-flex xs2 lg1 id="div-icon">
-          <v-btn class="mt-3" @click="sesionIniciada=!sesionIniciada">Iniciar Sesión</v-btn>
-        </v-flex>
-      </v-layout>
     </section>
     <v-footer id="footer" class="pa-3" app>
       <v-layout row>
@@ -44,17 +39,19 @@
 export default {
   name: 'Preguntar',
   computed: {
+    loggedIn () {
+      return this.$store.getters.loggedIn
+    },
     preguntas () {
       return this.$store.getters.preguntas
     },
     habilitado () {
-      return this.pregunta !== '' && this.pregunta !== undefined && this.sesionIniciada
+      return this.pregunta !== '' && this.pregunta !== undefined && this.loggedIn
     }
   },
   data () {
     return {
-      pregunta: '',
-      sesionIniciada: false
+      pregunta: ''
     }
   },
   methods: {

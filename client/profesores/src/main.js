@@ -3,12 +3,21 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import moment from 'moment'
+import VueSocketio from 'vue-socket.io'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import App from './App'
 import router from './router'
 import { store } from './store'
 
+let url
+if (process.env.NODE_ENV === 'production') {
+  url = '/att'
+} else {
+  url = 'http://localhost:8000/att'
+}
+
 Vue.use(Vuetify)
+Vue.use(VueSocketio, url, store)
 
 Vue.config.productionTip = false
 
@@ -28,6 +37,11 @@ new Vue({
   el: '#app',
   router,
   store,
+  sockets: {
+    connect () {
+      store.commit('setSocket', this.$socket)
+    }
+  },
   components: { App },
   template: '<App/>'
 })
