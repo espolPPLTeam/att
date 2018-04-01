@@ -433,6 +433,12 @@ RespuestaSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  obtenerPorPreguntaId({ preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ preguntaId }))
+    })
   }
 }
 

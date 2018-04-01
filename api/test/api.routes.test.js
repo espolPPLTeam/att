@@ -47,6 +47,7 @@ async function ConectarMongo() {
   }
 }
 
+
 // NOTA: Los errores SERVER_ERROR son hechos por el api.controller.test ya que todavia
 //       no encuentro la forma de como hacerlos aqui
 
@@ -801,5 +802,41 @@ describe('Routes - Integration', () => {
         done()
       })
     }).timeout(10000)
+  })
+  describe('@t12 OBTENER RESPUESTAS PREGUNTAS ', ()=> {
+		let doc = {
+		      nombre: 'Obteners respuestas de pregunta',
+		      metodo: 'GET',
+					url: '/api/att/profesor/respuestasPregunta/:preguntaId',
+		      descripcion: ''
+		    }
+    let paraleloId = 'aqb'
+    let preguntaId = 'preguntaIdentificador'
+    let preguntaId_2 = 'preguntaIdentificador_2'
+    let texto_1 = 'Mi respuesta 1'
+    let texto_2 = 'Mi respuesta 2'
+    let texto_3 = 'Mi respuesta 3'
+    let creador = data.estudiantes[0]
+    it('@t12.1 OK ', function(done) {
+      co(function *() {
+        let respuesta_1 = new db.Respuesta({ paraleloId, preguntaId, texto: texto_1, creador })
+        let respuesta_2 = new db.Respuesta({ paraleloId, preguntaId, texto: texto_2, creador })
+        let respuesta_3 = new db.Respuesta({ paraleloId, preguntaId: preguntaId_2, texto: texto_3, creador })
+        let respuestaCreada_1 = yield respuesta_1.crear()
+        let respuestaCreada_2 = yield respuesta_2.crear()
+        let respuestaCreada_3 = yield respuesta_3.crear()
+        request(app)
+        .get(`/api/att/profesor/respuestasPregunta/${preguntaId}`)
+        .end(function(err, res) {
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          expect(res.body.codigoEstado).to.equal(200)
+          expect(res.body.datos.length).to.equal(2)
+          expect(ajv.validate(schema.RESPUESTAS_PROFESOR, res.body.datos)).to.equal(true)
+					generatorDocs.OK({ docs, doc, res })
+          done()
+        })
+      })
+    })
   })
 })

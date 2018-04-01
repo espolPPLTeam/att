@@ -10,7 +10,6 @@ module.exports = function({ io, shortid, logger }) {
     })
     socket.on('preguntaEstudiante', function({ preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } }) {
       Socket.in(`${paraleloId}`).emit('PREGUNTA_ESTUDIANTE', { preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } })
-      // Socket.emit('PREGUNTA_ESTUDIANTE', { preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } })
     })
     socket.on('disconnect', function() {
       const CANTIDAD_CONECTADOS = Object.keys(io.sockets.connected).length

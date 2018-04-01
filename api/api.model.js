@@ -283,9 +283,20 @@ module.exports = ({ db, logger, messages }) => {
           }
         }).catch((err) => {
           logger.error(err)
-          reject('error')
+          reject(messages.ERROR_AL_CREAR)
         })
       })
+    },
+    obtenerRespuestasPorPregunta({ preguntaId }) {
+			return new Promise((resolve, reject) => {
+				Respuesta.obtenerPorPreguntaId({ preguntaId })
+					.then((respuestas) => {
+						resolve(respuestas)
+					}).catch((err) => {
+						logger.error(err)
+						reject(messages.ERROR_AL_BUSCAR)
+        })
+			})
     }
   }
   return Object.assign(Object.create(proto), {})

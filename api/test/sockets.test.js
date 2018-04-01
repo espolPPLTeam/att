@@ -41,14 +41,14 @@ describe('Sockets', () => {
       creador: estudianteData }
     estudiante.on('connect', function() {
       estudiante.emit('unirseAParalelo', { paraleloId })
-      estudiante.on('unirseAParalelo', function() {
+      estudiante.on('UNIDO_PARALELO', function() {
         estudiante.emit('preguntaEstudiante', pregunta )
       })
     })
     profesor.on('connect', function() {
       profesor.emit('unirseAParalelo', { paraleloId })
     })
-    profesor.on('paraleloEstudiante', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    profesor.on('PREGUNTA_ESTUDIANTE', function({ preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
       let preguntaRecibida = {
         preguntaId, texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos }
       }
