@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <header>
-      <h1 class="">Preguntas</h1>
+      <h1 class="display-1">Preguntas</h1>
     </header>
     <v-layout row wrap>
       <v-flex xs7 sm8 md10 class="pr-5 pl-1">

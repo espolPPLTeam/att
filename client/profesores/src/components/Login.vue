@@ -50,7 +50,6 @@ export default {
         contrasenna: this.contrasenna
       }
       this.$store.dispatch('login', data)
-      this.$router.push('/preguntas')
     }
   }
 }
