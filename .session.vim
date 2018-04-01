@@ -7,22 +7,21 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1 ~/proyects/ppl/att/api/sockets.js
-badd +0 ~/proyects/ppl/att/api/test/sockets.test.js
+badd +28 ~/proyects/ppl/att/api/sockets.js
+badd +26 ~/proyects/ppl/att/api/test/sockets.test.js
+badd +804 ~/proyects/ppl/att/api/test/api.routes.test.js
+badd +1 ~/.config/nvim/init.vim
+badd +1 ~/proyects/ppl/att/api/api.controller.js
+badd +2 ~/proyects/ppl/att/.gitignore
+badd +47 ~/proyects/ppl/att/api/api.model.js
 argglobal
 silent! argdel *
-edit ~/proyects/ppl/att/api/test/sockets.test.js
+edit ~/proyects/ppl/att/.gitignore
 set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-1wincmd h
-wincmd w
 set nosplitbelow
 set nosplitright
 wincmd t
 set winminheight=1 winminwidth=1 winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 86 + 86) / 172)
-exe 'vert 2resize ' . ((&columns * 85 + 86) / 172)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -33,35 +32,13 @@ setlocal fml=1
 setlocal fdn=20
 setlocal fen
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 34) / 68)
+let s:l = 2 - ((1 * winheight(0) + 23) / 47)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
+2
 normal! 0
 lcd ~/proyects/ppl/att
-wincmd w
-argglobal
-if bufexists('~/proyects/ppl/att/api/sockets.js') | buffer ~/proyects/ppl/att/api/sockets.js | else | edit ~/proyects/ppl/att/api/sockets.js | endif
-setlocal fdm=manual
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=20
-setlocal fen
-silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 34) / 68)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-1
-normal! 0
-lcd ~/proyects/ppl/att
-wincmd w
-exe 'vert 1resize ' . ((&columns * 86 + 86) / 172)
-exe 'vert 2resize ' . ((&columns * 85 + 86) / 172)
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
