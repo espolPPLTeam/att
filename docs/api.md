@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "SkkbV205f",
+        "_id": "Hyee4lekoz",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -148,7 +148,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "SyebVn05M",
+  "preguntaId": "SkW-Nxl1iG",
   "destacadaEstado": true
 }
 ```
@@ -207,31 +207,31 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "HkxgZE3R5M",
+        "_id": "H1M-VexysG",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "HJ-eZN2A9z",
+      "_id": "ByQWNxxyiz",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "HkxgZE3R5M",
-      "createdAt": "2018-04-01T19:33:12.211Z",
-      "updatedAt": "2018-04-01T19:33:12.211Z"
+      "paralelo": "H1M-VexysG",
+      "createdAt": "2018-04-01T23:50:01.469Z",
+      "updatedAt": "2018-04-01T23:50:01.469Z"
     },
     {
       "creador": {
-        "_id": "HkxgZE3R5M",
+        "_id": "H1M-VexysG",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "rkGlZNh0qz",
+      "_id": "HyfNxeJiG",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "HkxgZE3R5M",
-      "createdAt": "2018-04-01T19:33:12.434Z",
-      "updatedAt": "2018-04-01T19:33:12.434Z"
+      "paralelo": "H1M-VexysG",
+      "createdAt": "2018-04-01T23:50:01.683Z",
+      "updatedAt": "2018-04-01T23:50:01.683Z"
     }
   ],
   "codigoEstado": 200
@@ -257,11 +257,11 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-04-01T19:33:12.908Z"
+      "createdAt": "2018-04-01T23:50:02.158Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-04-01T19:33:13.122Z"
+      "createdAt": "2018-04-01T23:50:02.348Z"
     }
   ],
   "codigoEstado": 200
@@ -395,13 +395,13 @@ _response_
 ```json
 {
   "texto": "Mi pregunta a estudiante",
-  "paraleloId": "ry-mZVhAcz",
+  "paraleloId": "HJzEVlgkof",
   "creador": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "ByxQbEnC9M",
+    "_id": "rk-NNxl1sM",
     "preguntas": []
   }
 }
@@ -413,10 +413,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "_id": "rkzQ-4hA9M",
+    "_id": "H1Q4NglJsz",
     "texto": "Mi pregunta a estudiante",
     "creador": {
-      "_id": "ByxQbEnC9M",
+      "_id": "rk-NNxl1sM",
       "correo": "mheredia@espol.edu.ec",
       "tipo": "titular",
       "nombres": "TAMARA",
@@ -449,15 +449,15 @@ _response_
 
 ```json
 {
-  "paraleloId": "HJV-VhAqG",
-  "preguntaId": "SkM4-NnAqM",
+  "paraleloId": "ByBVexkoz",
+  "preguntaId": "HkzBVxe1iG",
   "texto": "Esta pregunta no tiene sentido",
   "creador": {
     "correo": "kenjoale@espol.edu.ec",
     "matricula": "201602281",
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
-    "_id": "ryeV-42R9M",
+    "_id": "SkeB4xeJjz",
     "preguntas": [],
     "respuestas": []
   }
@@ -471,18 +471,18 @@ _response_
   "estado": true,
   "datos": {
     "creador": {
-      "_id": "ryeV-42R9M",
+      "_id": "SkeB4xeJjz",
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
       "apellidos": "ALEJANDRO SOLORZANO"
     },
-    "paraleloId": "HJV-VhAqG",
-    "preguntaId": "SkM4-NnAqM",
+    "paraleloId": "ByBVexkoz",
+    "preguntaId": "HkzBVxe1iG",
     "texto": "Esta pregunta no tiene sentido",
-    "_id": "ByBZNhR5f",
+    "_id": "B18NggJjf",
     "destacada": false,
-    "createdAt": "2018-04-01T19:33:16.714Z",
-    "updatedAt": "2018-04-01T19:33:16.714Z"
+    "createdAt": "2018-04-01T23:50:05.717Z",
+    "updatedAt": "2018-04-01T23:50:05.717Z"
   },
   "codigoEstado": 200
 }
@@ -501,7 +501,7 @@ _response_
 
 ```json
 {
-  "respuestaId": "HkxrW430cz",
+  "respuestaId": "SJgLNxgJsG",
   "destacadaEstado": true
 }
 ```
@@ -553,14 +553,14 @@ _response_
 
 ```json
 {
-  "preguntaId": "rJgUbE2A9M",
-  "paraleloId": "HyZHZVhA9f",
+  "preguntaId": "HJgvVgeyjM",
+  "paraleloId": "HkbUNgl1oz",
   "terminadoPor": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "HJ8ZE2AcM",
+    "_id": "SywNglkiG",
     "preguntas": []
   }
 }
@@ -572,10 +572,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "paraleloId": "HyZHZVhA9f",
-    "preguntaId": "rJgUbE2A9M",
+    "paraleloId": "HkbUNgl1oz",
+    "preguntaId": "HJgvVgeyjM",
     "terminadoPor": {
-      "_id": "HJ8ZE2AcM",
+      "_id": "SywNglkiG",
       "correo": "mheredia@espol.edu.ec",
       "nombres": "TAMARA",
       "apellidos": "HEREDIA",
@@ -606,7 +606,13 @@ _response_
 {% endapi%}
 
 
-{% api "Obteners respuestas de pregunta", method="GET", url="/api/att/profesor/respuestasPregunta/:preguntaId"  %}
+{% api "Obtener respuestas de pregunta", method="GET", url="/api/att/profesor/respuestasPregunta/:preguntaId"  %}
+### Params:
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------|
+| preguntaId | String |    | 
+	
+
 ### Response:
 
 ```json
@@ -620,12 +626,12 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "SybUbVnA9G",
+      "_id": "SyZDNgg1oM",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 1",
-      "createdAt": "2018-04-01T19:33:18.089Z",
-      "updatedAt": "2018-04-01T19:33:18.089Z"
+      "createdAt": "2018-04-01T23:50:07.469Z",
+      "updatedAt": "2018-04-01T23:50:07.469Z"
     },
     {
       "creador": {
@@ -634,12 +640,12 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "SkfIZ4n09z",
+      "_id": "HJzDVle1jf",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 2",
-      "createdAt": "2018-04-01T19:33:18.289Z",
-      "updatedAt": "2018-04-01T19:33:18.289Z"
+      "createdAt": "2018-04-01T23:50:07.682Z",
+      "updatedAt": "2018-04-01T23:50:07.682Z"
     }
   ],
   "codigoEstado": 200

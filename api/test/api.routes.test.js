@@ -805,10 +805,17 @@ describe('Routes - Integration', () => {
   })
   describe('@t12 OBTENER RESPUESTAS PREGUNTAS ', ()=> {
 		let doc = {
-		      nombre: 'Obteners respuestas de pregunta',
+		      nombre: 'Obtener respuestas de pregunta',
 		      metodo: 'GET',
 					url: '/api/att/profesor/respuestasPregunta/:preguntaId',
-		      descripcion: ''
+					descripcion: '',
+					params: [
+						{
+							nombre: 'preguntaId',
+							tipo: 'String',
+							descripcion: ''
+						}
+					]
 		    }
     let paraleloId = 'aqb'
     let preguntaId = 'preguntaIdentificador'
