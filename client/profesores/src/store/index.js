@@ -10,11 +10,42 @@ Vue.use(VueResource)
 export const store = new Vuex.Store({
   state: {
     io: {},
-    conectado: false,
     loggedIn: false,
-    preguntas: [],
-    preguntasMostrar: [],
-    paraleloId: '5ab97b42fc38f06297506ae9'
+    preguntas: [], // Preguntas de los estudiantes
+    preguntasMostrar: [], // Preguntas filtradas
+    paraleloId: '5ab97b42fc38f06297506ae9',
+    sesionRespuestas: 'inactivo',
+    pregunta: '', // Pregunta que el profesor envía a los estudiantes
+    respuestas: [
+      {
+        texto: 'Esta es mi respuesta',
+        creador: {
+          _id: '1',
+          correo: 'edanmora@espol.edu.ec',
+          matricula: '201304614',
+          nombres: 'Edison',
+          apellidos: 'Mora'
+        },
+        show: false,
+        createdAt: new Date(),
+        marcada: false
+      }
+    ],
+    respuestasMostrar: [
+      {
+        texto: 'Esta es mi respuesta',
+        creador: {
+          _id: '1',
+          correo: 'edanmora@espol.edu.ec',
+          matricula: '201304614',
+          nombres: 'Edison',
+          apellidos: 'Mora'
+        },
+        show: false,
+        createdAt: new Date(),
+        marcada: false
+      }
+    ]
   },
   mutations: {
     setSocket (state, socket) {
@@ -40,6 +71,13 @@ export const store = new Vuex.Store({
         show: false
       }
       state.preguntas.push(pregunta)
+    },
+    SOCKET_PREGUNTA_PROFESOR (state, pregunta) {
+      state.io.emit('', pregunta)
+      state.pregunta = pregunta
+    },
+    SOCKET_RESPUESTA_ESTUDIANTE (state, data) {
+      state.respuestas.push(data)
     },
     logout (state) {
       state.loggedIn = false
@@ -76,6 +114,30 @@ export const store = new Vuex.Store({
       }
       state.preguntasMostrar = state.preguntasMostrar.filter((pregunta) => {
         return pregunta.texto.indexOf(payload.busqueda) >= 0
+      })
+    },
+    iniciarSesionRespuestas (state) {
+      state.sesionRespuestas = 'activo'
+    },
+    filtrarRespuestas (state, payload) {
+      if (payload === 'Todas') {
+        state.respuestasMostrar = state.respuestas
+      } else if (payload === 'Marcadas') {
+        state.respuestasMostrar = state.respuestas.filter((respuesta) => {
+          return respuesta.marcada === true
+        })
+      }
+    },
+    buscarRespuestas (state, payload) {
+      if (payload.filtro === 'Todas') {
+        state.respuestasMostrar = state.respuestas
+      } else if (payload.filtro === 'Marcadas') {
+        state.respuestasMostrar = state.respuestas.filter((respuesta) => {
+          return respuesta.destacada === true
+        })
+      }
+      state.respuestasMostrar = state.respuestasMostrar.filter((respuesta) => {
+        return respuesta.texto.indexOf(payload.busqueda) >= 0
       })
     }
   },
@@ -132,6 +194,15 @@ export const store = new Vuex.Store({
     },
     preguntasMostrar (state) {
       return state.preguntasMostrar
+    },
+    sesionRespuestas (state) {
+      return state.sesionRespuestas
+    },
+    pregunta (state) {
+      return state.pregunta
+    },
+    respuestasMostrar (state) {
+      return state.respuestasMostrar
     }
   }
 })
