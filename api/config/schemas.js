@@ -75,6 +75,8 @@ const ESTUDIANTE_CON_ID = {
 
 const PREGUNTA = {
   "type": "object",
+  "minProperties": 5,
+  "additionalProperties": false,
   "properties": {
     "texto": { "type": "string" },
     "paralelo": { "type": "string" },

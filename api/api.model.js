@@ -161,7 +161,7 @@ module.exports = ({ db, logger, messages }) => {
                   if (values[0] && values[1]) {
                     resolve(pregunta)
                   } else {
-                    resolve({})
+                    resolve(null)
                   }
             }).catch((err) => {
               logger.error(err)

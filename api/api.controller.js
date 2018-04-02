@@ -71,8 +71,12 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         if (paraleloId) {
           // TODO: si paraleloId no existe
           let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } })
-          let PREGUNTA_LIMPIADA = (({ texto, paralelo, _id, destacada, creador }) => ({ texto, paralelo, _id, destacada, creador }))(pregunta)
-          return responses.OK({ datos: PREGUNTA_LIMPIADA })
+          if (pregunta) {
+            let PREGUNTA_LIMPIADA = _.pick(pregunta, ['texto', 'paralelo', '_id', 'creador', 'destacada'])
+            return responses.OK({ datos: PREGUNTA_LIMPIADA })
+          } else {
+            return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
+          }
         } else {
           return responses.OK_ERROR({ mensaje: messages.PARALELOID_VACIO })
         }

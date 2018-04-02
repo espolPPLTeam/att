@@ -151,23 +151,32 @@ describe('Routes - Integration', () => {
     }
     it('@t2.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
+      let paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
-      let paraleloId = 'aaaa'
-      let req = {
-        texto,
-        paraleloId,
-        creador: estudiante
-      }
-      request(app)
-      .post(doc['url'])
-      .send(req)
-      .end(function(err, res) {
-        generatorDocs.OK({ docs, doc, res, req })
-        expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
-        expect(res.body.estado).to.equal(true)
-        expect(res.status).to.equal(200)
-        done()
+
+      co(function *() {
+        let estudiante = data.estudiantes[0]
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let texto = 'Mi primera pregunta'
+        let paraleloId = paraleloCreado['_id']
+        let req = {
+          texto,
+          paraleloId,
+          creador: estudiante
+        }
+        request(app)
+        .post(doc['url'])
+        .send(req)
+        .end(function(err, res) {
+          generatorDocs.OK({ docs, doc, res, req })
+          expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          done()
+        })
       })
+      
     }).timeout(5000)
     it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
