@@ -174,6 +174,15 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }
+    },
+    async ObtenerPreguntasProfesor({ paraleloId }) {
+      try {
+        let preguntas = await model.obtenerPreguntasProfesorHoy({ paraleloId })
+        return responses.OK({ datos: preguntas })
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
     }
   }
   return Object.assign(Object.create(proto), {})

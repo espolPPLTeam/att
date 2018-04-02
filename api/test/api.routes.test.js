@@ -803,6 +803,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(10000)
   })
+	// TODO: comprobar estado de respuesta con ajv
   describe('@t12 OBTENER RESPUESTAS PREGUNTAS ', ()=> {
 		let doc = {
 		      nombre: 'Obtener respuestas de pregunta',
@@ -846,4 +847,57 @@ describe('Routes - Integration', () => {
       })
     })
   })
+	describe('@t13 OBTENER PREGUNTAS PROFESOR', ()=> {
+		let profesor = data.profesores[0]
+		let paraleloId = 'abc'
+		let doc = {
+		      nombre: 'Obtener Preguntas Profesor',
+		      metodo: 'GET',
+					url: '/api/att/profesores/misPreguntasHoy/:paraleloId',
+		      descripcion: '',
+		      body: [
+					{
+						nombre: 'paraleloId',
+						tipo: 'String',
+						descripcion: ''
+					}
+		      ],
+		      errors: []
+		    }
+	  it('@t13.1 OK', function(done) {
+			co(function* () {
+				let preguntaCreada_1 = new db.PreguntaProfesor({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: profesor['correo'],
+          matricula: profesor['matricula'],
+          nombres: profesor['nombres'],
+          apellidos: profesor['apellidos']
+        }})
+				let preguntaCreada_2 = new db.PreguntaProfesor({
+        texto: 'Mi primera pregunta dos',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: profesor['correo'],
+          matricula: profesor['matricula'],
+          nombres: profesor['nombres'],
+          apellidos: profesor['apellidos']
+        }})
+				let pregunta_1 = yield preguntaCreada_1.crear()
+				let pregunta_2 = yield preguntaCreada_2.crear()
+				request(app)
+					.get('/api/att/profesor/misPreguntasHoy/' + paraleloId	)
+				  .end(function(err, res) {
+				    expect(res.body.estado).to.equal(true)
+				    expect(res.status).to.equal(200)
+				    expect(res.body.codigoEstado).to.equal(200)
+						generatorDocs.OK({ docs, doc, res })
+				    done()
+				  })
+			})
+	  })
+	})
 })
