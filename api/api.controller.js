@@ -26,9 +26,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo: profesorCorreo })
           if (profesorDatos) {
             let { paralelos }= profesorDatos
-            let profesor = (({ correo, tipo, nombres, apellidos }) => ({ correo, tipo, nombres, apellidos }))(profesorDatos)
+            let profesor = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
             let paralelos_filtrados = paralelos.map(function(paralelo) {
-               return (({ codigo, _id, curso, nombre }) => ({ codigo, _id, curso, nombre }))(paralelo)
+              return _.pick(paralelo, ['codigo', '_id', 'curso', 'nombre'])
             }, [])
             profesor = { ...profesor, paralelos: paralelos_filtrados }
             return responses.OK({ datos: profesor })
@@ -47,7 +47,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let estudiante = await model.obtenerDatosEstudiantePorCorreo({ correo })
         if (estudiante) {
-          let estudiante_filtrado = (({ correo, matricula, nombres, apellidos, paraleloId }) => ({ correo, matricula, nombres, apellidos, paraleloId }))(estudiante)
+          let estudiante_filtrado = _.pick(estudiante, ['correo', 'matricula', 'nombres', 'apellidos', 'paraleloId'])
           return responses.OK({ datos: estudiante_filtrado })
         } else {
           return responses.OK_ERROR({ mensaje: messages.ESTUDIANTE_NO_EXISTE })

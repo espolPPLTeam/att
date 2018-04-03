@@ -19,7 +19,7 @@
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "rkB4kHxsG",
+        "_id": "BJg_YoqljG",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -83,7 +83,7 @@ _response_
 ```json
 {
   "texto": "Mi primera pregunta",
-  "paraleloId": "S1gU4JBloz",
+  "paraleloId": "H1gKKo9giG",
   "creador": {
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
@@ -100,8 +100,8 @@ _response_
   "estado": true,
   "datos": {
     "texto": "Mi primera pregunta",
-    "paralelo": "S1gU4JBloz",
-    "_id": "r1WI41BlsG",
+    "paralelo": "H1gKKo9giG",
+    "_id": "S1-KFs9xjM",
     "creador": {
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
@@ -158,7 +158,7 @@ _response_
 
 ```json
 {
-  "preguntaId": "BJgvEySgif",
+  "preguntaId": "BybqFo5esG",
   "destacadaEstado": true
 }
 ```
@@ -217,31 +217,31 @@ _response_
   "datos": [
     {
       "creador": {
-        "_id": "Sy-w41SesM",
+        "_id": "rkG5Fjqgjf",
         "correo": "kenjoale@espol.edu.ec",
         "nombres": "KENNETH JOSUE",
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "S1GDVJBxsz",
+      "_id": "r1Q9YoqeoG",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "Sy-w41SesM",
-      "createdAt": "2018-04-02T23:39:27.202Z",
-      "updatedAt": "2018-04-02T23:39:27.202Z"
+      "paralelo": "rkG5Fjqgjf",
+      "createdAt": "2018-04-03T06:13:22.490Z",
+      "updatedAt": "2018-04-03T06:13:22.490Z"
     },
     {
       "creador": {
-        "_id": "Sy-w41SesM",
+        "_id": "rkG5Fjqgjf",
         "correo": "johelsar@espol.edu.ec",
         "nombres": "JOHARA ELVIRA",
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "HyQwVkSesG",
+      "_id": "HJoFs9goz",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "Sy-w41SesM",
-      "createdAt": "2018-04-02T23:39:27.211Z",
-      "updatedAt": "2018-04-02T23:39:27.211Z"
+      "paralelo": "rkG5Fjqgjf",
+      "createdAt": "2018-04-03T06:13:22.694Z",
+      "updatedAt": "2018-04-03T06:13:22.694Z"
     }
   ],
   "codigoEstado": 200
@@ -267,11 +267,11 @@ _response_
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-04-02T23:39:27.611Z"
+      "createdAt": "2018-04-03T06:13:23.216Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-04-02T23:39:27.619Z"
+      "createdAt": "2018-04-03T06:13:23.424Z"
     }
   ],
   "codigoEstado": 200
@@ -405,13 +405,13 @@ _response_
 ```json
 {
   "texto": "Mi pregunta a estudiante",
-  "paraleloId": "SkhEySgjG",
+  "paraleloId": "ByM6Yi9liz",
   "creador": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "ryxo41Hxof",
+    "_id": "ByZ6Ks9gif",
     "preguntas": []
   }
 }
@@ -423,10 +423,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "_id": "S1gnEJrgoz",
+    "_id": "BJAFs5lof",
     "texto": "Mi pregunta a estudiante",
     "creador": {
-      "_id": "ryxo41Hxof",
+      "_id": "ByZ6Ks9gif",
       "correo": "mheredia@espol.edu.ec",
       "tipo": "titular",
       "nombres": "TAMARA",
@@ -459,15 +459,15 @@ _response_
 
 ```json
 {
-  "paraleloId": "rkW2NJSxif",
-  "preguntaId": "HkE241SgoG",
+  "paraleloId": "Hyx0Ysqesz",
+  "preguntaId": "r1QRYi9ljM",
   "texto": "Esta pregunta no tiene sentido",
   "creador": {
     "correo": "kenjoale@espol.edu.ec",
     "matricula": "201602281",
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
-    "_id": "SyG2NkBlsM",
+    "_id": "S1WAYs9esM",
     "preguntas": [],
     "respuestas": []
   }
@@ -481,18 +481,18 @@ _response_
   "estado": true,
   "datos": {
     "creador": {
-      "_id": "SyG2NkBlsM",
+      "_id": "S1WAYs9esM",
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
       "apellidos": "ALEJANDRO SOLORZANO"
     },
-    "paraleloId": "rkW2NJSxif",
-    "preguntaId": "HkE241SgoG",
+    "paraleloId": "Hyx0Ysqesz",
+    "preguntaId": "r1QRYi9ljM",
     "texto": "Esta pregunta no tiene sentido",
-    "_id": "rkSnEkSljG",
+    "_id": "H11qicgoG",
     "destacada": false,
-    "createdAt": "2018-04-02T23:39:32.089Z",
-    "updatedAt": "2018-04-02T23:39:32.089Z"
+    "createdAt": "2018-04-03T06:13:26.683Z",
+    "updatedAt": "2018-04-03T06:13:26.683Z"
   },
   "codigoEstado": 200
 }
@@ -511,7 +511,7 @@ _response_
 
 ```json
 {
-  "respuestaId": "rJ8h41reoM",
+  "respuestaId": "BJxycoqxsG",
   "destacadaEstado": true
 }
 ```
@@ -563,14 +563,14 @@ _response_
 
 ```json
 {
-  "preguntaId": "rJga4ySxiM",
-  "paraleloId": "ByvnN1rgof",
+  "preguntaId": "Hklqocxiz",
+  "paraleloId": "SJWk5jqejz",
   "terminadoPor": {
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "r1TN1rxif",
+    "_id": "rJzycocljG",
     "preguntas": []
   }
 }
@@ -582,10 +582,10 @@ _response_
 {
   "estado": true,
   "datos": {
-    "paraleloId": "ByvnN1rgof",
-    "preguntaId": "rJga4ySxiM",
+    "paraleloId": "SJWk5jqejz",
+    "preguntaId": "Hklqocxiz",
     "terminadoPor": {
-      "_id": "r1TN1rxif",
+      "_id": "rJzycocljG",
       "correo": "mheredia@espol.edu.ec",
       "nombres": "TAMARA",
       "apellidos": "HEREDIA",
@@ -636,12 +636,12 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "BJbpV1Sloz",
+      "_id": "BJgl9jceiM",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 1",
-      "createdAt": "2018-04-02T23:39:33.273Z",
-      "updatedAt": "2018-04-02T23:39:33.273Z"
+      "createdAt": "2018-04-03T06:13:28.005Z",
+      "updatedAt": "2018-04-03T06:13:28.005Z"
     },
     {
       "creador": {
@@ -650,12 +650,12 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "BkMaNJSliG",
+      "_id": "rJ-xqj5goG",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 2",
-      "createdAt": "2018-04-02T23:39:33.651Z",
-      "updatedAt": "2018-04-02T23:39:33.651Z"
+      "createdAt": "2018-04-03T06:13:28.224Z",
+      "updatedAt": "2018-04-03T06:13:28.224Z"
     }
   ],
   "codigoEstado": 200
@@ -685,11 +685,11 @@ _response_
       },
       "hablitado": true,
       "respuestas": [],
-      "_id": "SkC4kSeiG",
+      "_id": "BJ7l9sqxjz",
       "texto": "Mi primera pregunta",
       "paraleloId": "abc",
-      "createdAt": "2018-04-02T23:39:33.692Z",
-      "updatedAt": "2018-04-02T23:39:33.692Z"
+      "createdAt": "2018-04-03T06:13:28.291Z",
+      "updatedAt": "2018-04-03T06:13:28.291Z"
     },
     {
       "creador": {
@@ -700,11 +700,11 @@ _response_
       },
       "hablitado": true,
       "respuestas": [],
-      "_id": "r1gC4kreoG",
+      "_id": "ryVl9i9xoz",
       "texto": "Mi primera pregunta dos",
       "paraleloId": "abc",
-      "createdAt": "2018-04-02T23:39:34.058Z",
-      "updatedAt": "2018-04-02T23:39:34.058Z"
+      "createdAt": "2018-04-03T06:13:28.521Z",
+      "updatedAt": "2018-04-03T06:13:28.521Z"
     }
   ],
   "codigoEstado": 200
