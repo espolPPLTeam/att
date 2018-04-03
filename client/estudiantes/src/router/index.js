@@ -4,6 +4,8 @@ import Login from '@/components/Login'
 import Preguntar from '@/components/Preguntar'
 import Responder from '@/components/Responder'
 
+import AuthGuard from './auth-guard'
+
 Vue.use(Router)
 
 export default new Router({
@@ -16,12 +18,14 @@ export default new Router({
     {
       path: '/preguntar',
       name: 'Preguntar',
-      component: Preguntar
+      component: Preguntar,
+      beforeEnter: AuthGuard
     },
     {
       path: '/responder',
       name: 'Responder',
-      component: Responder
+      component: Responder,
+      beforeEnter: AuthGuard
     }
   ],
   mode: 'history'

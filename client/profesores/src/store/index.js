@@ -9,11 +9,10 @@ Vue.use(VueResource)
 
 export const store = new Vuex.Store({
   state: {
-    io: {},
+    io: null,
     loggedIn: false,
     preguntas: [], // Preguntas de los estudiantes
     preguntasMostrar: [], // Preguntas filtradas
-    paraleloId: '5ab97b42fc38f06297506ae9',
     sesionRespuestas: 'inactivo',
     pregunta: '', // Pregunta que el profesor envía a los estudiantes
     respuestas: [
@@ -45,22 +44,28 @@ export const store = new Vuex.Store({
         createdAt: new Date(),
         marcada: false
       }
-    ]
+    ],
+    usuario: null,
+    error: null
   },
   mutations: {
     setSocket (state, socket) {
       state.io = socket
-      state.loggedIn = true
+    },
+    disconnectSocket (state) {
+      state.io.emit('disconnect')
+      state.io = null
+      router.push('/')
     },
     SOCKET_UNIRSE_PARALELO (state) {
-      state.io.emit('unirseAParalelo', { paraleloId: state.paraleloId })
+      state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paralelos[0]._id })
     },
     SOCKET_UNIDO_PARALELO (state) {
       state.loggedIn = true
       router.push('/preguntas')
     },
     SOCKET_PREGUNTA_ESTUDIANTE (state, data) {
-      console.log(data)
+      console.log('pregunta:', data)
       const pregunta = {
         _id: data[0].preguntaId,
         texto: data[0].texto,
@@ -71,6 +76,7 @@ export const store = new Vuex.Store({
         show: false
       }
       state.preguntas.push(pregunta)
+      state.preguntasMostrar = state.preguntas
     },
     SOCKET_PREGUNTA_PROFESOR (state, pregunta) {
       state.io.emit('', pregunta)
@@ -81,6 +87,10 @@ export const store = new Vuex.Store({
     },
     logout (state) {
       state.loggedIn = false
+      state.usuario = null
+    },
+    setUsuario (state, payload) {
+      state.usuario = payload
     },
     obtenerPreguntasHoy (state, preguntas) {
       for (let i = preguntas.length - 1; i >= 0; i--) {
@@ -89,7 +99,7 @@ export const store = new Vuex.Store({
       state.preguntas = preguntas
       state.preguntasMostrar = preguntas
     },
-    destacarPregunta (state, payload) {
+    setEstadoPregunta (state, payload) {
       const pregunta = state.preguntas.find((pregunta) => {
         return pregunta._id === payload.id
       })
@@ -139,40 +149,77 @@ export const store = new Vuex.Store({
       state.respuestasMostrar = state.respuestasMostrar.filter((respuesta) => {
         return respuesta.texto.indexOf(payload.busqueda) >= 0
       })
+    },
+    setError (state, payload) {
+      state.error = payload
+    },
+    clearError (state) {
+      state.error = null
     }
   },
   actions: {
+    getLoggedUser ({commit}) {
+      commit('setError', null)
+      // Puede ser el usuario o null si no está loggeado
+      Vue.http.get('/api/att/datosUsuario')
+        .then((response) => {
+          if (response.body.estado) {
+            commit('setUsuario', response.body.datos)
+            commit('SOCKET_UNIRSE_PARALELO')
+          }
+        })
+        .catch((err) => {
+          commit('setError', err)
+          console.log(err)
+        })
+    },
     login ({commit, state}, payload) {
+      commit('setError', null)
       const correo = payload.usuario
       Vue.http.post('/api/att/login', {correo})
         .then((response) => {
           console.log(response)
           if (response.body.estado) {
+            commit('setUsuario', response.body.datos)
             commit('SOCKET_UNIRSE_PARALELO')
           } else {
-            return false
+            commit('setError', response.body)
           }
         }, (err) => {
           console.log('err:', err)
+          commit('setError', err)
         })
     },
     logout ({commit}, payload) {
-      commit('logout')
+      Vue.http.get('/api/att/logout')
+        .then((response) => {
+          if (response.body.estado) {
+            commit('logout')
+            commit('disconnectSocket')
+          } else {
+            console.log('ERROR LOGOUT')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
-    obtenerPreguntasHoy ({commit}) {
-      const paraleloId = '5ab97b42fc38f06297506ae9'
-      const urlApi = '/api/att/profesor/preguntasEstudianteHoy/' + paraleloId
+    obtenerPreguntasHoy ({commit, state}) {
+      const urlApi = '/api/att/profesor/preguntasEstudianteHoy/' + state.usuario.paralelos[0]._id
       Vue.http.get(urlApi)
         .then((response) => {
-          console.log('response:', response)
           if (response.body.estado) {
             commit('obtenerPreguntasHoy', response.body.datos)
-          } else {}
+          } else {
+            commit('setError', response.body)
+          }
         }, (err) => {
+          commit('setError', err)
           console.log('err:', err)
         })
     },
     destacarPregunta ({commit}, payload) {
+      commit('setError', null)
       const urlApi = '/api/att/profesor/destacarPregunta'
       const data = {
         preguntaId: payload.id,
@@ -181,9 +228,12 @@ export const store = new Vuex.Store({
       Vue.http.put(urlApi, data)
         .then((response) => {
           if (response.body.estado) {
-            commit('destacarPregunta', payload)
-          } else {}
+            commit('setEstadoPregunta', payload)
+          } else {
+            commit('setError', response.body)
+          }
         }, (err) => {
+          commit('setError', err)
           console.log('err', err)
         })
     }
@@ -203,6 +253,9 @@ export const store = new Vuex.Store({
     },
     respuestasMostrar (state) {
       return state.respuestasMostrar
+    },
+    error (state) {
+      return state.error
     }
   }
 })

@@ -47,7 +47,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let estudiante = await model.obtenerDatosEstudiantePorCorreo({ correo })
         if (estudiante) {
-          let estudiante_filtrado = (({ correo, matricula, nombres, apellidos }) => ({ correo, matricula, nombres, apellidos }))(estudiante)
+          let estudiante_filtrado = (({ correo, matricula, nombres, apellidos, paraleloId }) => ({ correo, matricula, nombres, apellidos, paraleloId }))(estudiante)
           return responses.OK({ datos: estudiante_filtrado })
         } else {
           return responses.OK_ERROR({ mensaje: messages.ESTUDIANTE_NO_EXISTE })

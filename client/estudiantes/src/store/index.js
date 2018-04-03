@@ -11,32 +11,32 @@ export const store = new Vuex.Store({
   state: {
     io: {},
     loggedIn: false,
-    usuario: {
-      _id: '1',
-      correo: 'edanmora@espol.edu.ec',
-      matricula: '201304614',
-      nombres: 'Edison',
-      apellidos: 'Mora'
-    },
-    paraleloId: '5ab97b42fc38f06297506ae9',
-    preguntas: []
+    usuario: null,
+    preguntas: [],
+    error: null
   },
   mutations: {
     setSocket (state, socket) {
       state.io = socket
     },
+    disconnectSocket (state) {
+      state.io.emit('disconnect')
+      state.io = null
+      router.push('/')
+    },
     SOCKET_PREGUNTA (state, data) {
       state.io.emit('preguntaEstudiante', data)
     },
     SOCKET_UNIRSE_PARALELO (state) {
-      state.io.emit('unirseAParalelo', { paraleloId: state.paraleloId })
+      state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paraleloId })
     },
     SOCKET_UNIDO_PARALELO (state) {
       state.loggedIn = true
       router.push('/preguntar')
     },
-    SOCKET_DISCONNECT (state) {
+    logout (state) {
       state.loggedIn = false
+      state.usuario = null
     },
     anadirPregunta (state, payload) {
       state.preguntas.push(payload)
@@ -58,28 +58,57 @@ export const store = new Vuex.Store({
         preguntas[i].estado = 'enviada'
       }
       state.preguntas = preguntas
+    },
+    setError (state, payload) {
+      state.error = payload
+    },
+    setUsuario (state, payload) {
+      state.usuario = payload
     }
   },
   actions: {
+    getLoggedUser ({commit}) {
+      commit('setError', null)
+      // Puede ser el usuario o null si no está loggeado
+      Vue.http.get('/api/att/datosUsuario')
+        .then((response) => {
+          if (response.body.estado) {
+            commit('setUsuario', response.body.datos)
+            commit('SOCKET_UNIRSE_PARALELO')
+          }
+        })
+        .catch((err) => {
+          commit('setError', err)
+          console.log(err)
+        })
+    },
     login ({commit}, payload) {
+      commit('setError', null)
       const correo = payload.usuario
       // Autenticación
       Vue.http.post('/api/att/login', {correo})
         .then((response) => {
+          console.log(response)
           if (response.body.estado) {
+            commit('setUsuario', response.body.datos)
             commit('SOCKET_UNIRSE_PARALELO')
           } else {
-            return false
+            commit('setError', response.body)
           }
         }, (err) => {
           console.log('err', err)
+          commit('setError', err)
         })
     },
     logout ({commit}) {
       Vue.http.get('/api/att/logout')
         .then((response) => {
-          commit('SOCKET_DISCONNECT')
-          router.push('/')
+          if (response.body.estado) {
+            commit('logout')
+            commit('disconnectSocket')
+          } else {
+            console.log('ERROR LOGOUT')
+          }
         }, (err) => {
           console.log('err:', err)
         })
@@ -91,14 +120,14 @@ export const store = new Vuex.Store({
       const data = {
         texto: payload.texto,
         createdAt: payload.createdAt,
-        paraleloId: state.paraleloId,
+        paraleloId: state.usuario.paraleloId,
         creador: state.usuario
       }
       Vue.http.post('/api/att/estudiante/preguntar', data)
         .then((response) => {
+          console.log(response)
           commit('preguntaEnviada', payload)
           commit('SOCKET_PREGUNTA', data)
-          // Luego se debe enviar por sockets al profesor
         }, (err) => {
           console.log('err:', err)
           commit('preguntaNoEnviada', payload)
@@ -125,6 +154,9 @@ export const store = new Vuex.Store({
     },
     loggedIn (state) {
       return state.loggedIn
+    },
+    error (state) {
+      return state.error
     }
   }
 })

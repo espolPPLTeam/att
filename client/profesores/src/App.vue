@@ -5,6 +5,9 @@
         <v-list-tile v-for="item in menuItems" :key="item.title" router :to="item.link">
           <v-list-tile-content>{{ item.title }}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile @click="logout">
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app dark>
@@ -20,6 +23,9 @@
           router :to="item.link"
           :key="item.title"
           v-if="loggedIn">{{ item.title }}</v-btn>
+          <v-btn v-if="loggedIn" @click="logout">
+            <v-icon>exit_to_app</v-icon>
+          </v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -30,8 +36,12 @@
 
 <script>
 export default {
-  mounted () {
-    this.$store.dispatch('obtenerPreguntasHoy')
+  watch: {
+    loggedIn (value) {
+      if (value === true) {
+        this.$store.dispatch('obtenerPreguntasHoy')
+      }
+    }
   },
   computed: {
     loggedIn () {
@@ -51,6 +61,11 @@ export default {
           link: '/respuestas'
         }
       ]
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
     }
   }
 }
