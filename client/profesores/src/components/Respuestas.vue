@@ -7,7 +7,7 @@
       <v-flex xs12 sm10 md6 offset-md3 offset-sm1>
         <v-card>
           <v-card-text>
-            <v-text-field label="Pregunta" name="pregunta" id="pregunta" v-model="pregunta"  @keypress="keypressed($event)"></v-text-field>
+            <v-text-field label="Pregunta" name="pregunta" id="pregunta" v-model="pregunta"  @keypress="keypressed($event)" required></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-layout row>

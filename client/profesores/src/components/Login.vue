@@ -1,6 +1,13 @@
 <template>
   <v-container>
-    <v-layout row class="mt-5">
+    <v-layout row wrap v-if="error">
+      <v-flex xs12 sm9 offset-sm1>
+        <v-alert type="error" dismissible v-model="alert" @input="onClose">
+          {{ error.mensaje }}
+        </v-alert>
+      </v-flex>
+    </v-layout>
+    <v-layout row>
       <v-flex xs12 sm9 offset-sm1>
         <v-card>
           <v-card-text>
@@ -35,12 +42,16 @@ export default {
     },
     loggedIn () {
       return this.$store.getters.loggedIn
+    },
+    error () {
+      return this.$store.getters.error
     }
   },
   data () {
     return {
       usuario: '',
-      contrasenna: ''
+      contrasenna: '',
+      alert: true
     }
   },
   methods: {
@@ -50,6 +61,9 @@ export default {
         contrasenna: this.contrasenna
       }
       this.$store.dispatch('login', data)
+    },
+    onClose () {
+      this.$store.commit('setError', null)
     }
   }
 }

@@ -34,8 +34,12 @@ export default {
       return this.$store.getters.loggedIn
     }
   },
-  mounted () {
-    this.obtenerPreguntas()
+  watch: {
+    loggedIn (value) {
+      if (value === true) {
+        this.$store.dispatch('obtenerPreguntas')
+      }
+    }
   },
   data () {
     return {
@@ -43,9 +47,6 @@ export default {
     }
   },
   methods: {
-    obtenerPreguntas () {
-      this.$store.dispatch('obtenerPreguntas')
-    },
     logout () {
       this.$store.dispatch('logout')
     }
