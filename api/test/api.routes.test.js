@@ -47,6 +47,7 @@ async function ConectarMongo() {
   }
 }
 
+
 // NOTA: Los errores SERVER_ERROR son hechos por el api.controller.test ya que todavia
 //       no encuentro la forma de como hacerlos aqui
 
@@ -150,23 +151,32 @@ describe('Routes - Integration', () => {
     }
     it('@t2.1 OK', (done) => {
       let estudiante = data.estudiantes[0]
+      let paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
-      let paraleloId = 'aaaa'
-      let req = {
-        texto,
-        paraleloId,
-        creador: estudiante
-      }
-      request(app)
-      .post(doc['url'])
-      .send(req)
-      .end(function(err, res) {
-        generatorDocs.OK({ docs, doc, res, req })
-        expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
-        expect(res.body.estado).to.equal(true)
-        expect(res.status).to.equal(200)
-        done()
+
+      co(function *() {
+        let estudiante = data.estudiantes[0]
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let texto = 'Mi primera pregunta'
+        let paraleloId = paraleloCreado['_id']
+        let req = {
+          texto,
+          paraleloId,
+          creador: estudiante
+        }
+        request(app)
+        .post(doc['url'])
+        .send(req)
+        .end(function(err, res) {
+          generatorDocs.OK({ docs, doc, res, req })
+          expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          done()
+        })
       })
+      
     }).timeout(5000)
     it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
@@ -802,4 +812,101 @@ describe('Routes - Integration', () => {
       })
     }).timeout(10000)
   })
+	// TODO: comprobar estado de respuesta con ajv
+  describe('@t12 OBTENER RESPUESTAS PREGUNTAS ', ()=> {
+		let doc = {
+		      nombre: 'Obtener respuestas de pregunta',
+		      metodo: 'GET',
+					url: '/api/att/profesor/respuestasPregunta/:preguntaId',
+					descripcion: '',
+					params: [
+						{
+							nombre: 'preguntaId',
+							tipo: 'String',
+							descripcion: ''
+						}
+					]
+		    }
+    let paraleloId = 'aqb'
+    let preguntaId = 'preguntaIdentificador'
+    let preguntaId_2 = 'preguntaIdentificador_2'
+    let texto_1 = 'Mi respuesta 1'
+    let texto_2 = 'Mi respuesta 2'
+    let texto_3 = 'Mi respuesta 3'
+    let creador = data.estudiantes[0]
+    it('@t12.1 OK ', function(done) {
+      co(function *() {
+        let respuesta_1 = new db.Respuesta({ paraleloId, preguntaId, texto: texto_1, creador })
+        let respuesta_2 = new db.Respuesta({ paraleloId, preguntaId, texto: texto_2, creador })
+        let respuesta_3 = new db.Respuesta({ paraleloId, preguntaId: preguntaId_2, texto: texto_3, creador })
+        let respuestaCreada_1 = yield respuesta_1.crear()
+        let respuestaCreada_2 = yield respuesta_2.crear()
+        let respuestaCreada_3 = yield respuesta_3.crear()
+        request(app)
+        .get(`/api/att/profesor/respuestasPregunta/${preguntaId}`)
+        .end(function(err, res) {
+          expect(res.body.estado).to.equal(true)
+          expect(res.status).to.equal(200)
+          expect(res.body.codigoEstado).to.equal(200)
+          expect(res.body.datos.length).to.equal(2)
+          expect(ajv.validate(schema.RESPUESTAS_PROFESOR, res.body.datos)).to.equal(true)
+					generatorDocs.OK({ docs, doc, res })
+          done()
+        })
+      })
+    })
+  })
+	describe('@t13 OBTENER PREGUNTAS PROFESOR', ()=> {
+		let profesor = data.profesores[0]
+		let paraleloId = 'abc'
+		let doc = {
+		      nombre: 'Obtener Preguntas Profesor',
+		      metodo: 'GET',
+					url: '/api/att/profesores/misPreguntasHoy/:paraleloId',
+		      descripcion: '',
+		      body: [
+					{
+						nombre: 'paraleloId',
+						tipo: 'String',
+						descripcion: ''
+					}
+		      ],
+		      errors: []
+		    }
+	  it('@t13.1 OK', function(done) {
+			co(function* () {
+				let preguntaCreada_1 = new db.PreguntaProfesor({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: profesor['correo'],
+          matricula: profesor['matricula'],
+          nombres: profesor['nombres'],
+          apellidos: profesor['apellidos']
+        }})
+				let preguntaCreada_2 = new db.PreguntaProfesor({
+        texto: 'Mi primera pregunta dos',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: profesor['correo'],
+          matricula: profesor['matricula'],
+          nombres: profesor['nombres'],
+          apellidos: profesor['apellidos']
+        }})
+				let pregunta_1 = yield preguntaCreada_1.crear()
+				let pregunta_2 = yield preguntaCreada_2.crear()
+				request(app)
+					.get('/api/att/profesor/misPreguntasHoy/' + paraleloId	)
+				  .end(function(err, res) {
+				    expect(res.body.estado).to.equal(true)
+				    expect(res.status).to.equal(200)
+				    expect(res.body.codigoEstado).to.equal(200)
+						generatorDocs.OK({ docs, doc, res })
+				    done()
+				  })
+			})
+	  })
+	})
 })

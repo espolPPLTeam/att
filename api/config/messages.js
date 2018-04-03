@@ -17,5 +17,6 @@ module.exports = {
   RESPUESTA_ID_NO_EXISTE: 'El id de esta respuesta no existe',
   PREGUNTA_TERMINADA: 'La pregunta fue terminada existosamente',
   PARALELO_NO_EXISTE: 'El paralelo con ese id no existe',
-  ERROR_ACTUALIZACION: 'No se pudo actualizar'
+  ERROR_ACTUALIZACION: 'No se pudo actualizar',
+  ERROR_AL_BUSCAR: 'Ocurri un error al buscar'
 }

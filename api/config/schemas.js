@@ -20,13 +20,13 @@ const PROFESOR_DATOS = {
       "type": "string",
       "format": "email"
     },
-    "tipo": { 
+    "tipo": {
       "type": "string" ,
       "enum": ["peer", "titular"]
     },
     "nombres": { "type": "string" },
     "apellidos": { "type": "string" },
-    "paralelos": { 
+    "paralelos": {
       "type": "array",
       "items" : PROFESOR_DATOS__PARALELOS
     }
@@ -75,12 +75,14 @@ const ESTUDIANTE_CON_ID = {
 
 const PREGUNTA = {
   "type": "object",
+  "minProperties": 5,
+  "additionalProperties": false,
   "properties": {
     "texto": { "type": "string" },
     "paralelo": { "type": "string" },
-    "creador": { 
+    "creador": {
       "type": "object",
-      "items" : ESTUDIANTE 
+      "items" : ESTUDIANTE
     },
     "_id": { "type": "string" },
     "destacada": { "type": "boolean" }
@@ -93,9 +95,9 @@ const PREGUNTAS_HOY_ESTUDIANTES = {
   "minProperties": 7,
   "additionalProperties": false,
   "properties": {
-    "creador": { 
+    "creador": {
       "type": "object",
-      "items" : ESTUDIANTE_CON_ID 
+      "items" : ESTUDIANTE_CON_ID
     },
     "_id": { "type": "string" },
     "destacada": { "type": "boolean" },
@@ -127,7 +129,7 @@ const PROFESOR_DATOS_PREGUNTA = {
       "type": "string",
       "format": "email"
     },
-    "tipo": { 
+    "tipo": {
       "type": "string" ,
       "enum": ["peer", "titular"]
     },
@@ -143,9 +145,9 @@ const PROFESOR_CREAR_PREGUNTA = {
   "properties": {
     "_id": { "type": "string" },
     "texto": { "type": "string" },
-    "creador": { 
+    "creador": {
       "type": "object",
-      "items" : PROFESOR_DATOS_PREGUNTA 
+      "items" : PROFESOR_DATOS_PREGUNTA
     }
   }
 }
@@ -162,9 +164,9 @@ const RESPUESTA_ESTUDIANTE = {
     "destacada": { "type": "boolean" },
     "paraleloId": { "type": "string" },
     "preguntaId": { "type": "string" },
-    "creador": { 
+    "creador": {
       "type": "object",
-      "items" : ESTUDIANTE_CON_ID 
+      "items" : ESTUDIANTE_CON_ID
     }
   }
 }
@@ -176,9 +178,28 @@ const PREGUNTA_TERMINADA = {
   "properties": {
     "paraleloId": { "type": "string" },
     "preguntaId": { "type": "string" },
-    "terminadoPor": { 
+    "terminadoPor": {
       "type": "object",
-      "items" : PROFESOR_DATOS_PREGUNTA 
+      "items" : PROFESOR_DATOS_PREGUNTA
+    }
+  }
+}
+
+const RESPUESTAS_PROFESOR = {
+  "type": "array",
+  "minProperties": 8,
+  "additionalProperties": false,
+  "properties": {
+    "_id": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "texto": { "type": "string" },
+    "destacada": { "type": "boolean" },
+    "paraleloId": { "type": "string" },
+    "preguntaId": { "type": "string" },
+    "creador": {
+      "type": "object",
+      "items" : ESTUDIANTE
     }
   }
 }
@@ -192,7 +213,8 @@ module.exports = {
   PREGUNTA_ESTUDIANTE,
   PROFESOR_CREAR_PREGUNTA,
   RESPUESTA_ESTUDIANTE,
-  PREGUNTA_TERMINADA
+  PREGUNTA_TERMINADA,
+  RESPUESTAS_PROFESOR
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

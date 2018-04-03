@@ -127,7 +127,6 @@ module.exports = ({ app, controller, logger }) => {
             res.status(resp.codigoEstado).json(resp)
         })
         .catch((err, resp) => {
-          console.log(err)
           logger.error(err)
           res.status(resp.codigoEstado).json(resp)
         })
@@ -137,12 +136,28 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/respuestasPregunta/:preguntaId')
     .get((req, res) => {
       let { preguntaId } = req.params
+      controller.ObtenerRespuestas({ preguntaId })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
   .route('/profesor/misPreguntasHoy/:paraleloId')
     .get((req, res) => {
       let { paraleloId } = req.params
+      controller.ObtenerPreguntasProfesor({ paraleloId })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   // app

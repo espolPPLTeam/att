@@ -129,7 +129,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
       enum: ['titular', 'peer']
     }
   },
-  paralelo: {
+  paraleloId: {
     type: String,
     ref: 'Paralelo'
   },
@@ -394,6 +394,12 @@ PreguntaProfesorSchema.statics = {
       resolve(self.findOne({ _id }))
     })
   },
+  obtenerTodos() {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({}))
+    })
+  },
   anadirRespuesta({ preguntaId, respuestaId }) {
     const self = this
     return new Promise(function(resolve) {
@@ -411,10 +417,12 @@ PreguntaProfesorSchema.statics = {
       })
     })
   },
-  obtenerRespuestas({ }) {
+  obtenerPreguntasProfesorHoy({ paraleloId }) {
+    let start = moment().startOf('day')
+    let end = moment().endOf('day')
     const self = this
     return new Promise(function(resolve) {
-
+      resolve(self.find({$and: [{ paraleloId }, {createdAt: {$gte: start, $lt: end } }]}))
     })
   }
 }
@@ -432,6 +440,12 @@ RespuestaSchema.statics = {
       self.update({ _id: respuestaId }, {$set: { hablitado: false }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
+    })
+  },
+  obtenerPorPreguntaId({ preguntaId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ preguntaId }))
     })
   }
 }
