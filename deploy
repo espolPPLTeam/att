@@ -1,9 +1,11 @@
 #! /bin/bash
 
 cd client/estudiantes
-npm install --production
+yarn install
+yarn build
 cd ..
 cd profesores
-npm install --production
+yarn install
+yarn build
 cd ../..
-export $(cat .env | xargs)
+# export $(cat .env | xargs)

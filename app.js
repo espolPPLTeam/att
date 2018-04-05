@@ -1,3 +1,14 @@
+let urlServidor = ''
+if (process.env.NODE_ENV === 'development') {
+  urlServidor = process.env.MONGO_URL_ATT
+} else if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
+  urlServidor = process.env.MONGO_URL_HEROKU
+} else if (process.env.NODE_ENV === 'production') {
+  urlServidor = process.env.MONGO_URL_ATT_PRODUCTION
+} else {
+  process.env.exit(1)
+}
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
@@ -20,13 +31,13 @@ app.use(session({
   name: 'SID',
   unset: 'destroy',
   store: new MongoStore({
-      url: process.env.MONGO_URL_ATT,
+      url: urlServidor,
       ttl: 12 * 60 * 60
     })
 }))
 
 if (process.env.NODE_ENV !== 'testing')
-  db.Conectar(process.env.MONGO_URL_ATT).then().catch((err) => console.log(err))
+  db.Conectar(urlServidor).then().catch((err) => console.log(err))
 
 if (process.env.NODE_ENV === 'development') {
   const morgan = require('morgan')
