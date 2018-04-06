@@ -160,6 +160,46 @@ module.exports = ({ app, controller, logger }) => {
         })
     })
 
+  app
+  .route('/profesor/perfil/:paraleloId/:correo')
+    .get((req, res) => {
+      let { paraleloId, correo } = req.params
+      controller.PerfilProfesor({ correo, paraleloId })
+      .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+      .catch((err, resp) => {
+        logger.error(err)
+        res.status(resp.codigoEstado).json(resp)
+      })
+    })
+
+  // sera usada por profesores y estudiantes
+  // cada uno devolvera diferentes resultados
+  // ver con la documentacion cuales son las salidas
+  app
+  .route('/datosUsuario')
+    .get((req, res) => {
+      const sessionDatos = req.session
+      if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
+        let correo = req.session.correo
+        controller.Login({ correo })
+          .then((resp) => {
+            if (resp) {
+              res.status(resp.codigoEstado).json(resp)
+            } else {
+              res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
+            }
+          })
+          .catch((err, resp) => {
+            console.error(err)
+            res.status(resp.codigoEstado).json(resp)
+          })
+      } else {
+        res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
+      }
+    })
+
   // app
   // .route('/profesor/preguntasHistorial/:paraleloId')
   //   .get((req, res) => {
@@ -202,29 +242,6 @@ module.exports = ({ app, controller, logger }) => {
           res.status(200).json({ estado: true })
         }
       })
-    })
-
-  app
-  .route('/datosUsuario')
-    .get((req, res) => {
-      const sessionDatos = req.session
-      if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
-        let correo = req.session.correo
-        controller.Login({ correo })
-          .then((resp) => {
-            if (resp) {
-              res.status(resp.codigoEstado).json(resp)
-            } else {
-              res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
-            }
-          })
-          .catch((err, resp) => {
-            console.error(err)
-            res.status(resp.codigoEstado).json(resp)
-          })
-      } else {
-        res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
-      }
     })
 
   app

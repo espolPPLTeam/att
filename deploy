@@ -8,4 +8,5 @@ cd profesores
 yarn install
 yarn build
 cd ../..
+# npm install --production
 # export $(cat .env | xargs)

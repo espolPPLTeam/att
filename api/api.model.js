@@ -7,6 +7,17 @@ module.exports = ({ db, logger, messages }) => {
   let PreguntaProfesor = db.PreguntaProfesor
   let Respuesta = db.Respuesta
   const proto = {
+    PreguntaHabilitadaParalelo({ paraleloId }) {
+      return new Promise((resolve, reject) => {
+        Paralelo.obtenerPreguntaHabilitada({ paraleloId })
+        .then((pregunta) => {
+          resolve(pregunta)
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_OBTENER)
+        })
+      })
+    },
     crearEstudiante({ correo, matricula, nombres, apellidos }) {
       return new Promise((resolve, reject) => {
         let estudiante = new Estudiante({ correo, matricula, nombres, apellidos })
@@ -269,7 +280,7 @@ module.exports = ({ db, logger, messages }) => {
     },
     terminarPregunta({ paraleloId, preguntaId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
       return new Promise((resolve, reject) => {
-        let respuestaVacia = ''
+        let respuestaVacia = null
         let profesor = { _id, correo, nombres, apellidos, tipo }
         Promise.all([
           Paralelo.anadirPreguntaActual({ paraleloId, preguntaId: respuestaVacia }),
@@ -308,7 +319,29 @@ module.exports = ({ db, logger, messages }) => {
 						reject(messages.ERROR_AL_BUSCAR)
 					})
 			})
-		}
+		},
+    obtenerPreguntaProfesorPorId({ preguntaId }) {
+      return new Promise((resolve, reject) => {
+        PreguntaProfesor.obtenerPorId({ _id: preguntaId })
+          .then((pregunta) => {
+            resolve(pregunta)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
+    },
+    obtenerRespuestaCreador({ correo }) {
+      return new Promise((resolve, reject) => {
+        Respuesta.obtenerRespuestaCreador({ correo })
+          .then((respuesta) => {
+            resolve(respuesta)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
+    }
   }
   return Object.assign(Object.create(proto), {})
 }

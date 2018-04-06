@@ -2,14 +2,14 @@
 {%- for doc in docs %}
 {{blockInicio}} api "{{ doc.nombre }}", method="{{ doc.metodo }}", url="{{ doc.url }}"  {{blockFin}}
 
-{{- doc.descripcion }}
+{{ doc.descripcion }}
 
 {%- if doc.params %}
 ### Params:
 | Name       | Type    | Desc |
-| :--------- | :------ | :-------| 
+| :--------- | :------ | :-------|
 	{%- for params in doc.params %}
-| {{params.nombre}} | {{params.tipo}} |  {{params.descripcion}}  | 
+| {{params.nombre}} | {{params.tipo}} |  {{params.descripcion}}  |
 	{% endfor %}
 {% endif %}
 
@@ -37,7 +37,7 @@
 {% endif %}
 
 
-{%- if doc.errors %}
+{%- if doc.errors and doc.errors != 0 %}
 ### ERRORS:
 	{%- for error in doc.errors %}
 __{{ error.nombre }}__

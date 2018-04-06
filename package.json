@@ -7,6 +7,7 @@
   "author": "Joel Rodriguez <joelerll@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "heroku-prebuild": "./deploy",
     "dev": "cross-env NODE_ENV=development  env-cmd .env nodemon server.js --config nodemon.json",
     "predocs": "gitbook install .",
     "predocs:s": "gitbook install .",
@@ -29,6 +30,7 @@
     ]
   },
   "engines": {
+    "node": "9.3.0",
     "yarn": "1.5.1"
   },
   "dependencies": {

@@ -1,12 +1,14 @@
 let urlServidor = ''
 if (process.env.NODE_ENV === 'development') {
-  urlServidor = process.env.MONGO_URL_ATT
+  urlServidor = process.env.MONGO_URL_ATT_DEVELOPMENT
 } else if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
   urlServidor = process.env.MONGO_URL_HEROKU
 } else if (process.env.NODE_ENV === 'production') {
   urlServidor = process.env.MONGO_URL_ATT_PRODUCTION
+} else if (process.env.NODE_ENV === 'testing'){
+  urlServidor = process.env.MONGO_URL_ATT_TEST
 } else {
-  process.env.exit(1)
+  process.exit(1)
 }
 
 const express = require('express')

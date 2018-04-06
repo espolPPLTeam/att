@@ -53,9 +53,10 @@ const ParaleloSchema = new mongoose.Schema({
   curso: { type: String, required: true },
   anio: { type: String, required: true },
   termino: { type: String, enum: ['1', '2'], required: true },
-  preguntaActual: { // mostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan
+  preguntaActual: { // mostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan, si se quiere desabilitar debe estar vacio ''
     type: String,
-    ref: 'preguntaProfesor'
+    ref: 'PreguntaProfesor',
+    'default': ''
   },
   profesores: [{
     type: String,
@@ -350,6 +351,15 @@ ParaleloSchema.statics = {
         resolve(accionEstado.nModified ? true : false)
       })
     })
+  },
+  obtenerPreguntaHabilitada({ paraleloId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({_id: paraleloId}).populate({
+        path: 'preguntaActual',
+        populate: { path: 'respuestas' }
+      }))
+    })
   }
 }
 
@@ -446,6 +456,12 @@ RespuestaSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.find({ preguntaId }))
+    })
+  },
+  obtenerRespuestaCreador({ correo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ 'creador.correo': correo }))
     })
   }
 }

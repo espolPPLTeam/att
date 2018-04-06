@@ -27,6 +27,6 @@ export default new Router({
       component: Respuestas,
       beforeEnter: AuthGuard
     }
-  ],
-  mode: 'history'
+  ]
+  //  mode: 'history'
 })

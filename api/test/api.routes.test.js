@@ -176,7 +176,7 @@ describe('Routes - Integration', () => {
           done()
         })
       })
-      
+
     }).timeout(5000)
     it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
@@ -377,13 +377,13 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-
+  // TODO: login que devuelve estudiantes y profesores. Ademas de mostrar los errores
   describe('@t7 LOGIN', () => {
     let docLogin = {
       nombre: 'Login',
       metodo: 'POST',
       url: '/api/att/login',
-      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy',
+      descripcion: 'Valido para profesor o estudiante',
       params: [
         {
           nombre: 'correo',
@@ -397,23 +397,48 @@ describe('Routes - Integration', () => {
       nombre: 'Logout',
       metodo: 'GET',
       url: '/api/att/logout',
-      descripcion: 'Obtiene las preguntas que ha hecho el estudiante el dia de hoy'
+      descripcion: ''
     }
-    let docDatos = {
-      nombre: 'Datos de usuario logeado',
+
+    let docDatosProfesor = {
+      nombre: 'Datos de profesor para primera pagina',
       metodo: 'GET',
       url: '/api/att/datosUsuario',
-      descripcion: 'Obtiene los datos del usuario',
+      descripcion: 'Obtiene los datos del profesor que esta conectado, usa cookies para saber quien esta conectado',
+      errors: []
+    }
+
+    let docDatos = {
+      nombre: 'Datos usuario',
+      metodo: 'GET',
+      url: '/api/att/datosUsuario',
+      descripcion: '',
+      errors: []
+    }
+
+    let docDatosEstudiante = {
+      nombre: 'Datos de usuario estudiante',
+      metodo: 'GET',
+      url: '/api/att/datosUsuario',
+      descripcion: 'Obtiene los datos del estudiante. Si no hay Pregunta Profesor activa devuelve {}. Si el estudiante no respondio devuelve ""',
       errors: []
     }
     // generatorDocs.ERROR({ nombre: 'PREGUNTA ID NO EXISTE', docs, doc, res, req })
     // generatorDocs.OK({ docs, doc, res })
     let estudiante = data.estudiantes[0]
     let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
     it('@t7.1 PROFESOR LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        yield model.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paraleloCreado['curso'],
+            codigo: paraleloCreado['codigo']
+          },
+          profesorCorreo: profesorCreado['correo'] })
         let correoProfesor = profesorCreado['correo']
         let req = {
           correo: correoProfesor
@@ -428,9 +453,8 @@ describe('Routes - Integration', () => {
           agent
           .get('/api/att/datosUsuario')
           .end(function(err, res) {
-            generatorDocs.OK({ docs, doc: docDatos, res })
-            let correo = res.body['datos']['correo']
-            expect(correo).to.equal(correoProfesor)
+            generatorDocs.OK({ docs, doc: docDatosProfesor, res })
+            expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
             done()
           })
         })
@@ -439,11 +463,32 @@ describe('Routes - Integration', () => {
     it('@t7.2 ESTUDIANTE LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
         let estudianteCreado = yield model.crearEstudiante(estudiante)
-        let estudianteCorreo = estudiante['correo']
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let paraleloId = paraleloCreado['_id']
+        yield model.anadirEstudianteAParalelo({
+          paralelo: {
+            curso: paraleloCreado['curso'],
+            codigo: paraleloCreado['codigo']
+          },
+          estudianteCorreo: estudianteCreado['correo'] })
+        let estudianteCorreo = estudianteCreado['correo']
         let req = {
           correo: estudianteCorreo
         }
+        yield model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: {
+          _id: paraleloId,
+          correo: estudianteCreado['correo'],
+          matricula: estudianteCreado['matricula'],
+          nombres: estudianteCreado['nombres'],
+          apellidos: estudianteCreado['apellidos']
+        }})
+        let preguntaCreada = yield model.crearPreguntaProfesorYHabilitarla({ texto: 'Pregunta Profesor', paraleloId, creador: profesorCreado })
+        yield model.crearRespuestaEstudiante({ paraleloId, preguntaId: preguntaCreada['_id'], texto: 'Mi respuesta', creador: estudianteCreado })
         agent
         .post(`/api/att/login`)
         .send(req)
@@ -452,9 +497,9 @@ describe('Routes - Integration', () => {
           expect(correo).to.equal(estudianteCorreo)
           agent
           .get('/api/att/datosUsuario')
-          .end(function(err, resp) {
-            let correo = resp.body['datos']['correo']
-            expect(correo).to.equal(estudianteCorreo)
+          .end(function(err, res) {
+            generatorDocs.OK({ docs, doc: docDatosEstudiante, res })
+            expect(ajv.validate(schema.ESTUDIANTE_PERFIL, res.body.datos)).to.equal(true)
             done()
           })
         })
@@ -547,7 +592,7 @@ describe('Routes - Integration', () => {
           agent
           .get('/api/att/logout')
           .end(function(err, res) {
-             generatorDocs.OK({ docs, doc: docLogout, res })
+            generatorDocs.OK({ docs, doc: docLogout, res })
             agent
             .get('/api/att/datosUsuario')
             .end(function(err, res) {
@@ -559,7 +604,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.8 PROFESOR LOGOUT', (done) => {
+    it('@t7.8 ESTUDIANTE LOGOUT', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let estudianteCreado = yield model.crearEstudiante(estudiante)
@@ -909,4 +954,72 @@ describe('Routes - Integration', () => {
 			})
 	  })
 	})
+  describe('@t14 PROFESOR PREFIL', ()=> {
+    let doc = {
+      nombre: 'Obtener datos del perfil profesor',
+      metodo: 'GET',
+      url: '/api/att/profesor/perfil/:paraleloId/:correo',
+      descripcion: '',
+      params: [
+        {
+          nombre: 'paraleloId',
+          tipo: 'String',
+          descripcion: ''
+        },
+        {
+          nombre: 'correo',
+          tipo: 'String',
+          descripcion: ''
+        }
+      ],
+      errors: []
+    }
+    it('@t14.1 OK', function(done) {
+      let estudiante = data.estudiantes[0]
+      let profesor = data.profesores[0]
+      let paralelo = data.paralelos[0]
+      co(function *() {
+        let profesorCreado = yield model.crearProfesor(profesor)
+        let paraleloCreado = yield model.crearParalelo(paralelo)
+        let paraleloId = paraleloCreado['_id']
+        yield model.anadirProfesorAParalelo({
+          paralelo: {
+            curso: paraleloCreado['curso'],
+            codigo: paraleloCreado['codigo']
+          },
+          profesorCorreo: profesorCreado['correo'] })
+        let estudianteCreado = yield model.crearEstudiante(estudiante)
+        yield model.anadirEstudianteAParalelo({
+          paralelo: {
+            curso: paraleloCreado['curso'],
+            codigo: paraleloCreado['codigo']
+          },
+          estudianteCorreo: estudianteCreado['correo']
+        })
+        yield model.crearPreguntaEstudiante({
+          texto: 'Mi primera pregunta',
+          paraleloId,
+          creador: {
+            _id: paraleloId,
+            correo: estudianteCreado['correo'],
+            matricula: estudianteCreado['matricula'],
+            nombres: estudianteCreado['nombres'],
+            apellidos: estudianteCreado['apellidos']
+        }})
+        let preguntaCreada = yield model.crearPreguntaProfesorYHabilitarla({ texto: 'Pregunta Profesor', paraleloId, creador: profesorCreado })
+        yield model.crearRespuestaEstudiante({ paraleloId, preguntaId: preguntaCreada['_id'], texto: 'Mi respuesta', creador: estudianteCreado })
+        let correo = profesorCreado['correo']
+        request(app)
+          .get(`/api/att/profesor/perfil/${paraleloId}/${correo}`)
+          .end(function(err, res) {
+            expect(ajv.validate(schema.PROFESOR_PERFIL, res.body.datos)).to.equal(true)
+            expect(res.body.estado).to.equal(true)
+            expect(res.status).to.equal(200)
+            expect(res.body.codigoEstado).to.equal(200)
+            generatorDocs.OK({ docs, doc, res })
+            done()
+          })
+      })
+    }).timeout(10000)
+  })
 })

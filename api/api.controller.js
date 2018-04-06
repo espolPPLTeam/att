@@ -6,16 +6,31 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let profesor = await this.ObtenerParalelosProfesor({ profesorCorreo: correo })
         let estudiante = await this.ObtenerDatosEstudiante({ correo })
-        let esProfesor = profesor['estado']
-        let esEstudiante = estudiante['estado']
+        let esProfesor = profesor ? profesor['estado'] : false
+        let esEstudiante = estudiante ? estudiante['estado'] : false
         if (esProfesor) {
           return responses.OK({ datos: profesor['datos'] })
         } else if (esEstudiante) {
-          return responses.OK({ datos: estudiante['datos'] })
+          let estudianteDatos = estudiante['datos']
+          let paraleloId = estudianteDatos['paraleloId']
+          let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ correo })
+          let paralelo = await model.PreguntaHabilitadaParalelo({ paraleloId })
+          let pregunta = paralelo ? paralelo['preguntaActual'] : null
+          estudianteDatos['misPreguntasHoy'] = preguntas
+          if (pregunta) {
+            pregunta =  _.pick(pregunta, ['texto', '_id', 'createdAt'])
+            let respuesta = await model.obtenerRespuestaCreador({ correo: estudianteDatos['correo'] })
+            if (respuesta) {
+              pregunta['respuesta'] = respuesta['texto']
+            }
+            estudianteDatos['preguntaProfesor'] = pregunta
+          }
+          return responses.OK({ datos: estudianteDatos })
         } else {
           return null
         }
       } catch (err) {
+        console.log(err)
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }
@@ -183,6 +198,21 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let preguntas = await model.obtenerPreguntasProfesorHoy({ paraleloId })
         return responses.OK({ datos: preguntas })
+      } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async PerfilProfesor({ correo, paraleloId }) {
+      try {
+        let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo })
+        profesorDatos = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
+        let preguntasEstudiantesHoy = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
+        profesorDatos['preguntasEstudiantesHoy'] = preguntasEstudiantesHoy
+        let preguntaHabilitada = await model.PreguntaHabilitadaParalelo({ paraleloId })
+        let pregunta = _.pick(preguntaHabilitada['preguntaActual'], ['creador', 'createdAt', 'texto', 'respuestas'])
+        profesorDatos['preguntaProfesor'] = pregunta
+        return responses.OK({ datos: profesorDatos })
       } catch (err) {
         logger.error(err)
         return responses.ERROR_SERVIDOR

@@ -204,6 +204,79 @@ const RESPUESTAS_PROFESOR = {
   }
 }
 
+const PREGUNTA_PROFESOR_FORMATO_ESTUDIANTE = {
+  "type": "object",
+  "minProperties": 4,
+  "properties": {
+    "texto": { "type": "string" },
+    "_id": { "type": "string" },
+    "respuesta": { "type": "string" },
+    "createdAt": { "type": "string" }
+  }
+}
+
+const ESTUDIANTE_PERFIL = {
+  "type": "object",
+  "minProperties": 7,
+  "additionalProperties": false,
+  "properties": {
+    "nombres": { "type": "string" },
+    "apellidos": { "type": "string" },
+    "correo": { "type": "string", "format": "email" },
+    "matricula": { "type": "string" },
+    "paraleloId": { "type": "string" },
+    "misPreguntasHoy": {
+      "type": "array",
+      "items": PREGUNTA_ESTUDIANTE
+    },
+    "preguntaProfesor": {
+      "type": "object",
+      "items": PREGUNTA_PROFESOR_FORMATO_ESTUDIANTE
+    }
+  }
+}
+
+const PREGUNTA_PROFESOR_FORMATO_PROFESOR = {
+  "type": "object",
+  "minProperties": 4,
+  "properties": {
+    "creador": { "type": "object", "items": PROFESOR_DATOS_PREGUNTA  },
+    "createdAt": { "type": "string" },
+    "texto": { "type": "string" },
+    "respuestas": {
+      "type": "array",
+      "items": RESPUESTA_ESTUDIANTE
+    },
+  }
+}
+
+const PROFESOR_PERFIL = {
+ "type": "object",
+  "minProperties": 6,
+  "additionalProperties": false,
+  "properties": {
+    "correo": {
+      "type": "string",
+      "format": "email"
+    },
+    "tipo": {
+      "type": "string" ,
+      "enum": ["peer", "titular"]
+    },
+    "nombres": { "type": "string" },
+    "apellidos": { "type": "string" },
+    "preguntasEstudiantesHoy": {
+      "type": "array",
+      "items": PREGUNTAS_HOY_ESTUDIANTES
+    },
+    "preguntaProfesor": {
+      "type": "object",
+      "items": PREGUNTA_PROFESOR_FORMATO_PROFESOR
+    }
+  }
+}
+
+
 module.exports = {
   PROFESOR_DATOS,
   ERROR_SERVIDOR,
@@ -214,7 +287,9 @@ module.exports = {
   PROFESOR_CREAR_PREGUNTA,
   RESPUESTA_ESTUDIANTE,
   PREGUNTA_TERMINADA,
-  RESPUESTAS_PROFESOR
+  RESPUESTAS_PROFESOR,
+  ESTUDIANTE_PERFIL,
+  PROFESOR_PERFIL
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }
