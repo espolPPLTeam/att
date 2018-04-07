@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>ATT</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 </head>
 <body style="text-align: center;">
-  <div style="margin: 20px">
-    <button onclick="location.href = '/att/profesores';" id="myButton" class="float-left submit-button" >Profesores</button>
-  </div>
-  <div  style="margin: 20px">
-    <button onclick="location.href = '/att/estudiantes';" id="myButton" class="float-left submit-button" >Estudiantes</button>
+  <div class="row">
+    <div class="card-panel ">
+      <div style="margin: 20px; ">
+        <a class="waves-effect waves-light btn-large" onclick="location.href = '/att/profesores';"><i class="material-icons left">cloud</i>Profesores</a>
+      </div>
+      <div  style="margin: 20px">
+        <a class="waves-effect waves-light btn-large" onclick="location.href = '/att/estudiantes';"><i class="material-icons left">cloud</i>Estudiantes</a>
+      </div>
+    </div>
   </div>
 </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
 </html>
