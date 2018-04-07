@@ -1,0 +1,56 @@
+[
+  {
+    "nombres": "MIGUEL ANGEL",
+    "apellidos": "RUMIPAMBA GUACHO",
+    "matricula": "200713089",
+    "correo": "mrumipam@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  },
+  {
+    "nombres": "JAVIER DAVID",
+    "apellidos": "CHIQUITO MONTOYA",
+    "matricula": "200818714",
+    "correo": "jdchiqui@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  },
+  {
+    "nombres": "LISSETTE ALEXANDRA",
+    "apellidos": "PEÑALOZA PIN",
+    "matricula": "200907459",
+    "correo": "lisalpen@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  },
+  {
+    "nombres": "JOSUE JOB",
+    "apellidos": "VAQUE SOTO",
+    "matricula": "201016391",
+    "correo": "jvaque@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  },
+  {
+    "nombres": "FELIX HUMBERTO",
+    "apellidos": "GUERRA AYALA",
+    "matricula": "201102091",
+    "correo": "fehuguer@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  },
+  {
+    "nombres": "JASHMAR WILLIAM",
+    "apellidos": "GARAYCOA ALBUJA",
+    "matricula": "201107232",
+    "correo": "jaswgara@espol.edu.ec",
+    "paralelo": "1",
+    "codigoMateria": "FISG1002",
+    "nombreMateria": "FÍSICA II"
+  }
+]

@@ -20,6 +20,7 @@
     "test:s": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/sockets.test.js --timeout 15000 --reporter spec --bail  --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "db:init": "env-cmd .env node scripts/initDB.js",
     "cel": "browser-sync start --proxy 'http://localhost:8000' --ws --port 5000 --no-open --no-ui",
     "heroku-prebuild": "./deploy"
   },
