@@ -1,20 +1,22 @@
 <template>
   <main id="main">
     <section>
-      <v-layout row>
+      <!-- Card pregunta profesor -->
+      <v-layout row wrap v-if="preguntaProfesor">
         <v-flex xs12>
           <v-card>
             <v-card-title>
               <h4>Pregunta</h4>
             </v-card-title>
             <v-card-text>
-              <p v-html="pregunta" id="pregunta-content"></p>
+              <p v-html="preguntaProfesor.texto" id="pregunta-content"></p>
             </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
-      <v-layout row v-if="respondio">
-        <v-flex>
+      <!-- Card respuesta estudiante -->
+      <v-layout row wrap v-if="respondio">
+        <v-flex xs12>
           <v-card>
             <v-card-title>
               <h4>Respuesta</h4>
@@ -27,8 +29,9 @@
         </v-flex>
       </v-layout>
     </section>
+    <!-- Input respuesta -->
     <v-footer id="footer" class="pa-3" app>
-      <v-layout row>
+      <v-layout row wrap>
         <v-flex xs12>
           <v-card>
             <v-layout row justify-center>
@@ -53,7 +56,10 @@ export default {
       return this.$store.getters.loggedIn
     },
     habilitado () {
-      return this.pregunta !== '' && this.pregunta !== undefined && this.loggedIn
+      return this.preguntaProfesor !== '' && this.preguntaProfesor !== undefined && this.loggedIn && this.inputRespuesta !== '' && this.inputRespuesta !== undefined
+    },
+    preguntaProfesor () {
+      return this.$store.getters.preguntaProfesor
     }
   },
   data () {
@@ -61,8 +67,7 @@ export default {
       respondio: false,
       inputRespuesta: '',
       respuesta: '',
-      fecha: '',
-      pregunta: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum rhoncus massa nisl, vitae congue erat aliquet vel. Nulla mi mi, convallis a molestie sit amet, tempus eget eros. Proin pharetra ligula ut velit tincidunt, nec porttitor ex imperdiet'
+      fecha: ''
     }
   },
   methods: {
@@ -71,6 +76,7 @@ export default {
       this.inputRespuesta = ''
       this.respondio = true
       this.fecha = new Date()
+      this.$store.dispatch('responder', this.respuesta)
     }
   }
 }

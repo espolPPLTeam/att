@@ -15,36 +15,8 @@ export const store = new Vuex.Store({
     preguntasMostrar: [], // Preguntas filtradas
     sesionRespuestas: 'inactivo',
     pregunta: '', // Pregunta que el profesor envía a los estudiantes
-    respuestas: [
-      {
-        texto: 'Esta es mi respuesta',
-        creador: {
-          _id: '1',
-          correo: 'edanmora@espol.edu.ec',
-          matricula: '201304614',
-          nombres: 'Edison',
-          apellidos: 'Mora'
-        },
-        show: false,
-        createdAt: new Date(),
-        marcada: false
-      }
-    ],
-    respuestasMostrar: [
-      {
-        texto: 'Esta es mi respuesta',
-        creador: {
-          _id: '1',
-          correo: 'edanmora@espol.edu.ec',
-          matricula: '201304614',
-          nombres: 'Edison',
-          apellidos: 'Mora'
-        },
-        show: false,
-        createdAt: new Date(),
-        marcada: false
-      }
-    ],
+    respuestas: [],
+    respuestasMostrar: [],
     usuario: null,
     error: null
   },
@@ -57,8 +29,12 @@ export const store = new Vuex.Store({
       state.io = null
       router.push('/')
     },
-    SOCKET_UNIRSE_PARALELO (state) {
+    SOCKET_unirseAParalelo (state) {
       state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paralelos[0]._id })
+    },
+    SOCKET_preguntaProfesor (state, payload) {
+      state.io.emit('preguntaProfesor', payload)
+      state.pregunta = payload
     },
     SOCKET_UNIDO_PARALELO (state) {
       state.loggedIn = true
@@ -78,12 +54,10 @@ export const store = new Vuex.Store({
       state.preguntas.push(pregunta)
       state.preguntasMostrar = state.preguntas
     },
-    SOCKET_PREGUNTA_PROFESOR (state, pregunta) {
-      state.io.emit('', pregunta)
-      state.pregunta = pregunta
-    },
     SOCKET_RESPUESTA_ESTUDIANTE (state, data) {
-      state.respuestas.push(data)
+      data[0].show = false
+      state.respuestas.push(data[0])
+      state.respuestasMostrar = state.respuestas
     },
     logout (state) {
       state.loggedIn = false
@@ -126,9 +100,6 @@ export const store = new Vuex.Store({
         return pregunta.texto.indexOf(payload.busqueda) >= 0
       })
     },
-    iniciarSesionRespuestas (state) {
-      state.sesionRespuestas = 'activo'
-    },
     filtrarRespuestas (state, payload) {
       if (payload === 'Todas') {
         state.respuestasMostrar = state.respuestas
@@ -155,20 +126,23 @@ export const store = new Vuex.Store({
     },
     clearError (state) {
       state.error = null
+    },
+    setSesionRespuestas (state, payload) {
+      state.sesionRespuestas = payload
     }
   },
   actions: {
     getLoggedUser ({commit}) {
       commit('setError', null)
-      // Puede ser el usuario o null si no está loggeado
       Vue.http.get('/api/att/datosUsuario')
         .then((response) => {
           if (response.body.estado) {
             commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
+            commit('SOCKET_unirseAParalelo')
+          } else {
+            commit('setError', response)
           }
-        })
-        .catch((err) => {
+        }, (err) => {
           commit('setError', err)
           console.log(err)
         })
@@ -181,7 +155,7 @@ export const store = new Vuex.Store({
           console.log(response)
           if (response.body.estado) {
             commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
+            commit('SOCKET_unirseAParalelo')
           } else {
             commit('setError', response.body)
           }
@@ -235,6 +209,24 @@ export const store = new Vuex.Store({
         }, (err) => {
           commit('setError', err)
           console.log('err', err)
+        })
+    },
+    enviarPregunta ({commit, state}, payload) {
+      commit('setError', null)
+      const data = {
+        paraleloId: state.usuario.paralelos[0]._id,
+        preguntaId: '',
+        texto: payload,
+        creador: state.usuario
+      }
+      Vue.http.post('/api/att/profesor/preguntar', data)
+        .then((response) => {
+          data.preguntaId = response.body.datos._id
+          commit('SOCKET_preguntaProfesor', data)
+          commit('setSesionRespuestas', 'activo')
+        }, (err) => {
+          console.log(err)
+          commit('setError', err)
         })
     }
   },

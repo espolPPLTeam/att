@@ -3,6 +3,7 @@
     <header class="mb-5">
       <h3 class="display-1">Respuestas</h3>
     </header>
+    <!-- Ingreso de pregunta -->
     <v-layout row v-if="sesionRespuestas === 'inactivo'">
       <v-flex xs12 sm10 md6 offset-md3 offset-sm1>
         <v-card>
@@ -25,7 +26,9 @@
         {{snackbar.text}}
       </v-snackbar>
     </v-layout>
+    <!-- Respuestas -->
     <v-layout row v-if="sesionRespuestas === 'activo'" wrap>
+      <!-- Pregunta enviada -->
       <v-flex xs12 class="mb-5">
         <v-card>
           <v-card-title>
@@ -36,6 +39,7 @@
           </v-card-text>
         </v-card>
       </v-flex>
+      <!-- Búsqueda y filtros -->
       <v-flex xs12>
         <v-layout row wrap>
           <v-flex xs7 sm8 md10 class="pr-5 pl-1">
@@ -49,6 +53,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
+      <!-- Respuestas estudiantes -->
       <v-flex xs12 v-for="(respuesta, i) in respuestas" :key="i" class="mb-1">
         <v-card hover>
           <v-layout row wrap>
@@ -134,8 +139,7 @@ export default {
     preguntarEstudiantes () {
       if (this.pregunta !== undefined && this.pregunta !== '') {
         this.snackbar.estado = false
-        this.$store.commit('iniciarSesionRespuestas')
-        this.$store.commit('SOCKET_PREGUNTA_PROFESOR', this.pregunta)
+        this.$store.dispatch('enviarPregunta', this.pregunta)
       } else {
         this.snackbar.estado = true
       }

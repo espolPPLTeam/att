@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
     loggedIn: false,
     usuario: null,
     preguntas: [],
+    preguntaProfesor: null,
     error: null
   },
   mutations: {
@@ -24,15 +25,21 @@ export const store = new Vuex.Store({
       state.io = null
       router.push('/')
     },
-    SOCKET_PREGUNTA (state, data) {
+    SOCKET_preguntaEstudiante (state, data) {
       state.io.emit('preguntaEstudiante', data)
     },
-    SOCKET_UNIRSE_PARALELO (state) {
+    SOCKET_unirseAParalelo (state) {
       state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paraleloId })
+    },
+    SOCKET_responder (state, payload) {
+      state.io.emit('responder', payload)
     },
     SOCKET_UNIDO_PARALELO (state) {
       state.loggedIn = true
       router.push('/preguntar')
+    },
+    SOCKET_PREGUNTA_PROFESOR (state, payload) {
+      state.preguntaProfesor = payload[0]
     },
     logout (state) {
       state.loggedIn = false
@@ -74,7 +81,7 @@ export const store = new Vuex.Store({
         .then((response) => {
           if (response.body.estado) {
             commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
+            commit('SOCKET_unirseAParalelo')
           }
         })
         .catch((err) => {
@@ -91,7 +98,7 @@ export const store = new Vuex.Store({
           console.log(response)
           if (response.body.estado) {
             commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
+            commit('SOCKET_unirseAParalelo')
           } else {
             commit('setError', response.body)
           }
@@ -127,7 +134,7 @@ export const store = new Vuex.Store({
         .then((response) => {
           console.log(response)
           commit('preguntaEnviada', payload)
-          commit('SOCKET_PREGUNTA', data)
+          commit('SOCKET_preguntaEstudiante', data)
         }, (err) => {
           console.log('err:', err)
           commit('preguntaNoEnviada', payload)
@@ -140,6 +147,34 @@ export const store = new Vuex.Store({
           commit('obtenerPreguntas', response.body.datos)
         }, (err) => {
           console.log('err:', err)
+        })
+    },
+    responder ({commit, state}, payload) {
+      commit('setError', null)
+      const data = {
+        paraleloId: state.usuario.paraleloId,
+        preguntaId: state.preguntaProfesor.preguntaId,
+        texto: payload,
+        creador: {
+          correo: state.usuario.correo,
+          matricula: state.usuario.matricula,
+          nombres: state.usuario.nombres,
+          apellidos: state.usuario.apellidos,
+          _id: state.usuario._id
+        }
+      }
+      const urlApi = '/api/att/estudiante/responder'
+      Vue.http.post(urlApi, data)
+        .then((response) => {
+          if (response.body.estado) {
+            data.createdAt = response.body.datos.createdAt
+            commit('SOCKET_responder', data)
+          } else {
+            commit('setError', response)
+          }
+        }, (err) => {
+          console.log(err)
+          commit('setError', err)
         })
     }
   },
@@ -157,6 +192,9 @@ export const store = new Vuex.Store({
     },
     error (state) {
       return state.error
+    },
+    preguntaProfesor (state) {
+      return state.preguntaProfesor
     }
   }
 })
