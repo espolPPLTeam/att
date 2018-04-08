@@ -160,9 +160,9 @@ module.exports = ({ db, logger, messages }) => {
       })
     },
     // Preguntas
-    crearPreguntaEstudiante({ texto, paraleloId, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    crearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } }) {
       return new Promise((resolve, reject) => {
-        let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { _id, correo, nombres, apellidos } })
+        let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { correo, nombres, matricula, apellidos } })
         pregunta.crear()
           .then(preguntaCreda => {
             Promise.all([

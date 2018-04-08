@@ -84,7 +84,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
 	  'default': shortid.generate
   },
   creador: {
-    _id: { type: String },
+    matricula: { type: String },
     correo: { type: String },
     nombres: { type: String },
     apellidos: { type: String }
