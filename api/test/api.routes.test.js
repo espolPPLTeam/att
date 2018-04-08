@@ -141,7 +141,6 @@ describe('Routes - Integration', () => {
         { nombre: 'texto', tipo: 'String', descripcion: ' --- ' },
         { nombre: 'paraleloId', tipo: 'String', descripcion: ' --- ' },
         { nombre: 'creador', tipo: 'Object', descripcion: ' --- ' },
-        { nombre: '_id', margen: 'center', tipo: 'String', descripcion: ' --- ' },
         { nombre: ' correo', margen: 'center', tipo: 'String', descripcion: ' --- ' },
         { nombre: ' matricula', margen: 'center', tipo: 'String', descripcion: ' --- ' },
         { nombre: ' nombres', margen: 'center', tipo: 'String', descripcion: ' --- ' },
