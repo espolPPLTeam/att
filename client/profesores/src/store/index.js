@@ -36,6 +36,9 @@ export const store = new Vuex.Store({
       state.io.emit('preguntaProfesor', payload)
       state.pregunta = payload
     },
+    SOCKET_terminarPregunta (state, payload) {
+      state.io.emit('terminarPregunta', payload)
+    },
     SOCKET_UNIDO_PARALELO (state) {
       state.loggedIn = true
       router.push('/preguntas')
@@ -58,6 +61,12 @@ export const store = new Vuex.Store({
       data[0].show = false
       state.respuestas.push(data[0])
       state.respuestasMostrar = state.respuestas
+    },
+    SOCKET_TERMINAR_PREGUNTA (state, payload) {
+      state.respuestas = []
+      state.respuestasMostrar = []
+      state.pregunta = ''
+      state.sesionRespuestas = 'inactivo'
     },
     logout (state) {
       state.loggedIn = false
@@ -227,6 +236,29 @@ export const store = new Vuex.Store({
         }, (err) => {
           console.log(err)
           commit('setError', err)
+        })
+    },
+    terminarSesionRespuestas ({commit, state}) {
+      commit('setError', null)
+      const urlApi = '/api/att/profesor/terminarPregunta'
+      const data = {
+        preguntaId: state.pregunta.preguntaId,
+        paraleloId: state.usuario.paralelos[0]._id,
+        terminadoPor: {
+          nombres: state.usuario.nombres,
+          apellidos: state.usuario.apellidos,
+          tipo: state.usuario.tipo,
+          correo: state.usuario.correo
+        }
+      }
+      Vue.http.put(urlApi, data)
+        .then((response) => {
+          console.log(response)
+          if (response.body.estado) {
+            commit('SOCKET_terminarPregunta', data)
+          } else {
+            commit('setError', response)
+          }
         })
     }
   },

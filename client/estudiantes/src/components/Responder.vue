@@ -15,15 +15,20 @@
         </v-flex>
       </v-layout>
       <!-- Card respuesta estudiante -->
-      <v-layout row wrap v-if="respondio">
+      <v-layout row wrap v-if="respuesta">
         <v-flex xs12>
           <v-card>
             <v-card-title>
               <h4>Respuesta</h4>
             </v-card-title>
             <v-card-text>
-              <p>{{respuesta}}</p>
-              <span class="caption text-xs-right">{{fecha | moment}}</span>
+              <p>{{respuesta.texto}}</p>
+            </v-card-text>
+            <v-card-text class="caption text-xs-right">
+              {{respuesta.createdAt | timeFromDate}}
+              <v-icon v-if="respuesta.estado=='enviando'" class="ml-2">access_time</v-icon>
+              <v-icon v-if="respuesta.estado=='enviada'" class="ml-2" color="green">check_circle</v-icon>
+              <v-icon v-if="respuesta.estado=='no enviada'" class="ml-2" color="red">error</v-icon>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -60,23 +65,20 @@ export default {
     },
     preguntaProfesor () {
       return this.$store.getters.preguntaProfesor
+    },
+    respuesta () {
+      return this.$store.getters.respuesta
     }
   },
   data () {
     return {
-      respondio: false,
-      inputRespuesta: '',
-      respuesta: '',
-      fecha: ''
+      inputRespuesta: ''
     }
   },
   methods: {
     responder () {
-      this.respuesta = this.inputRespuesta
+      this.$store.dispatch('responder', this.inputRespuesta)
       this.inputRespuesta = ''
-      this.respondio = true
-      this.fecha = new Date()
-      this.$store.dispatch('responder', this.respuesta)
     }
   }
 }

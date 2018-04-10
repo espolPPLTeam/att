@@ -14,6 +14,7 @@ export const store = new Vuex.Store({
     usuario: null,
     preguntas: [],
     preguntaProfesor: null,
+    respuesta: null,
     error: null
   },
   mutations: {
@@ -41,6 +42,10 @@ export const store = new Vuex.Store({
     SOCKET_PREGUNTA_PROFESOR (state, payload) {
       state.preguntaProfesor = payload[0]
     },
+    SOCKET_TERMINAR_PREGUNTA (state, payload) {
+      state.preguntaProfesor = null
+      state.respuesta = null
+    },
     logout (state) {
       state.loggedIn = false
       state.usuario = null
@@ -65,6 +70,13 @@ export const store = new Vuex.Store({
         preguntas[i].estado = 'enviada'
       }
       state.preguntas = preguntas
+    },
+    anadirRespuesta (state, payload) {
+      payload.estado = 'enviando'
+      state.respuesta = payload
+    },
+    setEstadoRespuesta (state, payload) {
+      state.respuesta.estado = payload
     },
     setError (state, payload) {
       state.error = payload
@@ -161,20 +173,24 @@ export const store = new Vuex.Store({
           nombres: state.usuario.nombres,
           apellidos: state.usuario.apellidos,
           _id: state.usuario._id
-        }
+        },
+        createdAt: new Date()
       }
+      commit('anadirRespuesta', data)
       const urlApi = '/api/att/estudiante/responder'
       Vue.http.post(urlApi, data)
         .then((response) => {
           if (response.body.estado) {
-            data.createdAt = response.body.datos.createdAt
+            commit('setEstadoRespuesta', 'enviada')
             commit('SOCKET_responder', data)
           } else {
             commit('setError', response)
+            commit('setEstadoRespuesta', 'no enviada')
           }
         }, (err) => {
           console.log(err)
           commit('setError', err)
+          commit('setEstadoRespuesta', 'no enviada')
         })
     }
   },
@@ -195,6 +211,9 @@ export const store = new Vuex.Store({
     },
     preguntaProfesor (state) {
       return state.preguntaProfesor
+    },
+    respuesta (state) {
+      return state.respuesta
     }
   }
 })
