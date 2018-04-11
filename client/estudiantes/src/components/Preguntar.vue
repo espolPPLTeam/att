@@ -1,13 +1,13 @@
 <template id="AppPreguntar">
   <main id="main">
-    <section>
+    <section id="section-preguntas">
       <v-layout row wrap>
         <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
           <v-card hover>
-            <v-card-text class="text-xs-left">
-              <p v-html="pregunta.texto" class="pa-2"></p>
+            <v-card-text class="text-xs-left px-3 pb-1 text-container">
+              <p v-html="pregunta.texto"></p>
             </v-card-text>
-            <v-card-text class="caption text-xs-right">
+            <v-card-text class="caption text-xs-right pt-1 pb-2 px-3">
               {{pregunta.createdAt | timeFromDate}}
               <v-icon v-if="pregunta.estado=='enviando'" class="ml-2">access_time</v-icon>
               <v-icon v-if="pregunta.estado=='enviada'" class="ml-2" color="green">check_circle</v-icon>
@@ -17,7 +17,7 @@
         </v-flex>
       </v-layout>
     </section>
-    <v-footer id="footer" class="pa-3" app>
+    <v-footer id="footer" class="py-3 px-2" app>
       <v-layout row>
         <v-flex xs12>
           <v-card>
@@ -90,7 +90,10 @@ export default {
   p{
     text-align: justify;
   }
-  section{
-    margin-bottom: 15vh !important;
+  #section-preguntas{
+    margin-bottom: 30vh !important;
+  }
+  .caption{
+    color: grey;
   }
 </style>

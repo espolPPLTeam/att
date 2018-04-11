@@ -10,16 +10,20 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app dark>
+    <v-toolbar app dark class="hidden-xs-only">
       <v-toolbar-side-icon @click="sideNav = !sideNav"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">Ask The Teacher</v-toolbar-title>
+    </v-toolbar>
+    <v-toolbar app dark scroll-off-screen class="hidden-sm-and-up">
+      <v-toolbar-side-icon @click="sideNav = !sideNav"></v-toolbar-side-icon>
+      <v-toolbar-title class="white--text">ATT</v-toolbar-title>
     </v-toolbar>
     <v-content>
       <v-tabs centered grow v-if="loggedIn">
         <v-tab :to="{name:'Preguntar'}">Preguntar</v-tab>
         <v-tab :to="{name:'Responder'}">Responder</v-tab>
       </v-tabs>
-      <v-container>
+      <v-container class="px-2 pt-2">
         <router-view/>
       </v-container>
     </v-content>
@@ -29,16 +33,16 @@
 <script>
 export default {
   name: 'App',
+  created () {
+    this.$store.commit('setSocket', this.$socket)
+  },
+  mounted () {
+    this.$store.dispatch('getLoggedUser')
+    console.log('Mounted loggedIn:', this.loggedIn)
+  },
   computed: {
     loggedIn () {
       return this.$store.getters.loggedIn
-    }
-  },
-  watch: {
-    loggedIn (value) {
-      if (value === true) {
-        this.$store.dispatch('obtenerPreguntas')
-      }
     }
   },
   data () {
@@ -61,5 +65,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.text-container{
+  word-wrap: break-word !important;
 }
 </style>
