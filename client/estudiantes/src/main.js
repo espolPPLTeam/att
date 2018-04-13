@@ -37,12 +37,6 @@ new Vue({
   el: '#app',
   router,
   store,
-  sockets: {
-    connect () {
-      store.commit('setSocket', this.$socket)
-      store.dispatch('getLoggedUser')
-    }
-  },
   components: { App },
   template: '<App/>'
 })

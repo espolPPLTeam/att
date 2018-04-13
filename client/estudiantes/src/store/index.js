@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 
-import router from '../router'
+import mutations from './mutations'
+import actions from './actions'
+import getters from './getters'
 
 Vue.use(Vuex)
 Vue.use(VueResource)
@@ -13,150 +15,11 @@ export const store = new Vuex.Store({
     loggedIn: false,
     usuario: null,
     preguntas: [],
+    preguntaProfesor: null,
+    respuesta: null,
     error: null
   },
-  mutations: {
-    setSocket (state, socket) {
-      state.io = socket
-    },
-    disconnectSocket (state) {
-      state.io.emit('disconnect')
-      state.io = null
-      router.push('/')
-    },
-    SOCKET_PREGUNTA (state, data) {
-      state.io.emit('preguntaEstudiante', data)
-    },
-    SOCKET_UNIRSE_PARALELO (state) {
-      state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paraleloId })
-    },
-    SOCKET_UNIDO_PARALELO (state) {
-      state.loggedIn = true
-      router.push('/preguntar')
-    },
-    logout (state) {
-      state.loggedIn = false
-      state.usuario = null
-    },
-    anadirPregunta (state, payload) {
-      state.preguntas.push(payload)
-    },
-    preguntaEnviada (state, payload) {
-      let pregunta = state.preguntas.find((pregunta) => {
-        return pregunta.createdAt === payload.createdAt && pregunta.texto === payload.texto
-      })
-      pregunta.estado = 'enviada'
-    },
-    preguntaNoEnviada (state, payload) {
-      let pregunta = state.preguntas.find((pregunta) => {
-        return pregunta.createdAt === payload.createdAt && pregunta.texto === payload.texto
-      })
-      pregunta.estado = 'no enviada'
-    },
-    obtenerPreguntas (state, preguntas) {
-      for (let i = 0; i < preguntas.length; i++) {
-        preguntas[i].estado = 'enviada'
-      }
-      state.preguntas = preguntas
-    },
-    setError (state, payload) {
-      state.error = payload
-    },
-    setUsuario (state, payload) {
-      state.usuario = payload
-    }
-  },
-  actions: {
-    getLoggedUser ({commit}) {
-      commit('setError', null)
-      // Puede ser el usuario o null si no está loggeado
-      Vue.http.get('/api/att/datosUsuario')
-        .then((response) => {
-          if (response.body.estado) {
-            commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
-          }
-        })
-        .catch((err) => {
-          commit('setError', err)
-          console.log(err)
-        })
-    },
-    login ({commit}, payload) {
-      commit('setError', null)
-      const correo = payload.usuario
-      // Autenticación
-      Vue.http.post('/api/att/login', {correo})
-        .then((response) => {
-          console.log(response)
-          if (response.body.estado) {
-            commit('setUsuario', response.body.datos)
-            commit('SOCKET_UNIRSE_PARALELO')
-          } else {
-            commit('setError', response.body)
-          }
-        }, (err) => {
-          console.log('err', err)
-          commit('setError', err)
-        })
-    },
-    logout ({commit}) {
-      Vue.http.get('/api/att/logout')
-        .then((response) => {
-          if (response.body.estado) {
-            commit('logout')
-            commit('disconnectSocket')
-          } else {
-            console.log('ERROR LOGOUT')
-          }
-        }, (err) => {
-          console.log('err:', err)
-        })
-    },
-    anadirPregunta ({commit, state}, payload) {
-      // Primero se añade la pregunta al array. Con estado 'enviando'
-      commit('anadirPregunta', payload)
-      // Se envía la pregunta a la base de datos
-      const data = {
-        texto: payload.texto,
-        createdAt: payload.createdAt,
-        paraleloId: state.usuario.paraleloId,
-        creador: state.usuario
-      }
-      Vue.http.post('/api/att/estudiante/preguntar', data)
-        .then((response) => {
-          console.log(response)
-          commit('preguntaEnviada', payload)
-          commit('SOCKET_PREGUNTA', data)
-        }, (err) => {
-          console.log('err:', err)
-          commit('preguntaNoEnviada', payload)
-        })
-    },
-    obtenerPreguntas ({commit, state}) {
-      const urlApi = '/api/att/estudiante/misPreguntasHoy/' + state.usuario.correo
-      Vue.http.get(urlApi)
-        .then((response) => {
-          commit('obtenerPreguntas', response.body.datos)
-        }, (err) => {
-          console.log('err:', err)
-        })
-    }
-  },
-  getters: {
-    preguntas (state) {
-      return state.preguntas.sort((preguntaA, preguntaB) => {
-        return preguntaA.createdAt > preguntaB.createdAt
-      })
-    },
-    estudiante (state) {
-      return state.usuario
-    },
-    loggedIn (state) {
-      return state.loggedIn
-    },
-    error (state) {
-      return state.error
-    }
-  }
+  mutations,
+  actions,
+  getters
 })

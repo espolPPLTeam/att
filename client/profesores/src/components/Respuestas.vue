@@ -3,6 +3,7 @@
     <header class="mb-5">
       <h3 class="display-1">Respuestas</h3>
     </header>
+    <!-- Ingreso de pregunta -->
     <v-layout row v-if="sesionRespuestas === 'inactivo'">
       <v-flex xs12 sm10 md6 offset-md3 offset-sm1>
         <v-card>
@@ -25,7 +26,9 @@
         {{snackbar.text}}
       </v-snackbar>
     </v-layout>
+    <!-- Respuestas -->
     <v-layout row v-if="sesionRespuestas === 'activo'" wrap>
+      <!-- Pregunta enviada -->
       <v-flex xs12 class="mb-5">
         <v-card>
           <v-card-title>
@@ -36,19 +39,24 @@
           </v-card-text>
         </v-card>
       </v-flex>
+      <!-- Búsqueda y filtros -->
       <v-flex xs12>
         <v-layout row wrap>
-          <v-flex xs7 sm8 md10 class="pr-5 pl-1">
+          <v-flex xs7 sm8 md8 class="pr-5 pl-1">
             <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscarRespuestas" v-model="busqueda" @keypress="keypressedBusqueda($event)"></v-text-field>
           </v-flex>
-          <v-flex xs5 sm4 md2>
+          <v-flex xs5 sm2 md2>
             <v-select
             :items="opciones"
             v-model="filtro"
             label="Filtro"></v-select>
           </v-flex>
+          <v-flex sm2 md2 class="hidden-xs-only mt-1">
+            <v-btn class="red white--text">Terminar</v-btn>
+          </v-flex>
         </v-layout>
       </v-flex>
+      <!-- Respuestas estudiantes -->
       <v-flex xs12 v-for="(respuesta, i) in respuestas" :key="i" class="mb-1">
         <v-card hover>
           <v-layout row wrap>
@@ -83,7 +91,23 @@
           </v-slide-y-transition>
         </v-card>
       </v-flex>
+      <!-- Btn terminar -->
+      <v-footer id="footer" fixed class="mb-2 hidden-sm-and-up">
+        <v-btn icon class="mx-auto red white--text" @click.native="dialog = !dialog">
+          <v-icon>alarm</v-icon>
+        </v-btn>
+      </v-footer>
     </v-layout>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-text>¿Seguro que desea terminar la sesión de respuestas?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat @click.native="dialog = false">No</v-btn>
+          <v-btn color="green darken-1" flat @click.native="terminarSesionRespuestas">Si</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -106,6 +130,7 @@ export default {
   },
   data () {
     return {
+      dialog: false,
       pregunta: '',
       snackbar: {
         color: 'red',
@@ -134,8 +159,7 @@ export default {
     preguntarEstudiantes () {
       if (this.pregunta !== undefined && this.pregunta !== '') {
         this.snackbar.estado = false
-        this.$store.commit('iniciarSesionRespuestas')
-        this.$store.commit('SOCKET_PREGUNTA_PROFESOR', this.pregunta)
+        this.$store.dispatch('enviarPregunta', this.pregunta)
       } else {
         this.snackbar.estado = true
       }
@@ -145,6 +169,10 @@ export default {
     },
     buscarRespuestas () {
       this.$store.commit('buscarRespuestas', {busqueda: this.busqueda, filtro: this.filtro})
+    },
+    terminarSesionRespuestas () {
+      this.dialog = false
+      this.$store.dispatch('terminarSesionRespuestas')
     }
   }
 }
@@ -152,5 +180,8 @@ export default {
 <style scoped>
   .hidden-info{
     display: inline-flex;
+  }
+  #footer{
+    background: rgba(250, 250, 250, 0)
   }
 </style>

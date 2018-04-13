@@ -21,10 +21,10 @@ module.exports = function({ io, shortid, logger }) {
     })
     // lo que el estudiante envia al profesor
     socket.on('responder', function({ paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } }) {
-      Socket.in(`${paraleloId}`).emit('RESPONDER', { paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } })
+      Socket.in(`${paraleloId}`).emit('RESPUESTA_ESTUDIANTE', { paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } })
     })
-    socket.on('terminarPregunta', function({ paraleloId, preguntaId, terminadaPor: { nombres, apellidos, tipo, correo } }) {
-     Socket.in(`${paraleloId}`).emit('TERMINAR_PREGUNTA', { paraleloId, preguntaId, terminadaPor: { nombres, apellidos, tipo, correo } }) 
+    socket.on('terminarPregunta', function({ paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) {
+     Socket.in(`${paraleloId}`).emit('TERMINAR_PREGUNTA', { paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) 
     })
     socket.on('disconnect', function() {
       const CANTIDAD_CONECTADOS = Object.keys(io.sockets.connected).length
