@@ -19,8 +19,14 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           estudianteDatos['misPreguntasHoy'] = preguntas
           if (pregunta) {
             pregunta =  _.pick(pregunta, ['texto', '_id', 'createdAt'])
-            let respuesta = await model.obtenerRespuestaCreador({ correo: estudianteDatos['correo'] })
+            pregunta['preguntaId'] = pregunta['_id']
+            pregunta['fechaCreadaPregunta'] = pregunta['createdAt']
+            let preguntaId = pregunta['_id']
+            delete pregunta.createdAt
+            delete pregunta._id
+            let respuesta = await model.obtenerRespuestaCreador({ correo: estudianteDatos['correo'], preguntaId })
             if (respuesta) {
+              pregunta['fechaCreadaRepuesta'] = respuesta['createdAt']
               pregunta['respuesta'] = respuesta['texto']
             }
             estudianteDatos['preguntaProfesor'] = pregunta
@@ -174,9 +180,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async TerminarPregunta({ preguntaId, paraleloId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
       let profesor = { _id, correo, nombres, apellidos, tipo }
       try {
-        let fueDestacada = await model.terminarPregunta({ preguntaId, paraleloId, terminadoPor: profesor })
-        if (fueDestacada) {
-          return responses.OK({ datos: fueDestacada })
+        let fueTerminada = await model.terminarPregunta({ preguntaId, paraleloId, terminadoPor: profesor })
+        if (fueTerminada) {
+          return responses.OK({ datos: fueTerminada })
         } else {
           return responses.OK_ERROR({ mensaje: messages.PARALELO_NO_EXISTE })
         }

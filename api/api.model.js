@@ -331,9 +331,9 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    obtenerRespuestaCreador({ correo }) {
+    obtenerRespuestaCreador({ correo, preguntaId }) {
       return new Promise((resolve, reject) => {
-        Respuesta.obtenerRespuestaCreador({ correo })
+        Respuesta.obtenerRespuestaCreador({ correo, preguntaId })
           .then((respuesta) => {
             resolve(respuesta)
           }).catch((err) => {

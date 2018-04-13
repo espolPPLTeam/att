@@ -106,7 +106,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
 	  'default': shortid.generate
   },
   texto: { type: String },
-  hablitado: {
+  habilitada: {
     type: Boolean,
     'default': true
   },
@@ -447,7 +447,7 @@ RespuestaSchema.statics = {
   destacar({ respuestaId, destacadaEstado }) {
     const self = this
     return new Promise(function(resolve) {
-      self.update({ _id: respuestaId }, {$set: { hablitado: false }}).then((accionEstado) => {
+      self.update({ _id: respuestaId }, {$set: { destacada: destacadaEstado }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
@@ -458,10 +458,10 @@ RespuestaSchema.statics = {
       resolve(self.find({ preguntaId }))
     })
   },
-  obtenerRespuestaCreador({ correo }) {
+  obtenerRespuestaCreador({ correo, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOne({ 'creador.correo': correo }))
+      resolve(self.findOne({$and: [{ 'creador.correo': correo }, { preguntaId }]}))
     })
   }
 }

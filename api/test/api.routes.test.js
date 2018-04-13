@@ -419,7 +419,7 @@ describe('Routes - Integration', () => {
       nombre: 'Datos de usuario estudiante',
       metodo: 'GET',
       url: '/api/att/datosUsuario',
-      descripcion: 'Obtiene los datos del estudiante. Si no hay Pregunta Profesor activa devuelve {}. Si el estudiante no respondio devuelve ""',
+      descripcion: 'Obtiene los datos del estudiante. Si no hay Pregunta Profesor activa devuelve que el objeto no existe. Si el estudiante no respondido devuelve que no existe esa propiedades',
       errors: []
     }
     // generatorDocs.ERROR({ nombre: 'PREGUNTA ID NO EXISTE', docs, doc, res, req })
@@ -487,6 +487,7 @@ describe('Routes - Integration', () => {
           apellidos: estudianteCreado['apellidos']
         }})
         let preguntaCreada = yield model.crearPreguntaProfesorYHabilitarla({ texto: 'Pregunta Profesor', paraleloId, creador: profesorCreado })
+        yield model.crearRespuestaEstudiante({ paraleloId, preguntaId: 'aaaa', texto: 'Mi respuesta no debe salir', creador: estudianteCreado })
         yield model.crearRespuestaEstudiante({ paraleloId, preguntaId: preguntaCreada['_id'], texto: 'Mi respuesta', creador: estudianteCreado })
         agent
         .post(`/api/att/login`)

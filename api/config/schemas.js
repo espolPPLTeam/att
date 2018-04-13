@@ -206,12 +206,14 @@ const RESPUESTAS_PROFESOR = {
 
 const PREGUNTA_PROFESOR_FORMATO_ESTUDIANTE = {
   "type": "object",
-  "minProperties": 4,
+  "minProperties": 5,
+  "additionalProperties": false,
   "properties": {
     "texto": { "type": "string" },
-    "_id": { "type": "string" },
+    "preguntaId": { "type": "string" },
     "respuesta": { "type": "string" },
-    "createdAt": { "type": "string" }
+    "fechaCreadaPregunta": { "type": "string" },
+    "fechaCreadaRepuesta": { "type": "string" }
   }
 }
 
