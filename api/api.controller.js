@@ -26,7 +26,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
             delete pregunta._id
             let respuesta = await model.obtenerRespuestaCreador({ correo: estudianteDatos['correo'], preguntaId })
             if (respuesta) {
-              pregunta['fechaCreadaRepuesta'] = respuesta['createdAt']
+              pregunta['fechaCreadaRespuesta'] = respuesta['createdAt']
               pregunta['respuesta'] = respuesta['texto']
             }
             estudianteDatos['preguntaProfesor'] = pregunta

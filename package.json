@@ -13,16 +13,15 @@
     "predocs:s": "gitbook install .",
     "docs": "gitbook build .",
     "docs:s": "gitbook serve .",
-    "test": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.test.js --timeout 15000 --reporter spec --bail --exit",
+    "test": "cross-env NODE_ENV=testing env-cmd .env nyc mocha api/test/*.test.js --timeout 15000 --require api/test/helpers.api.routes.test.js --reporter spec --bail --exit",
     "test:c": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.controller.test.js --exit",
     "test:m": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.model.test.js --exit",
-    "test:r": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.routes.test.js --exit",
+    "test:r": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/*.routes.test.js --timeout=20000 --require api/test/helpers.api.routes.test.js --exit",
     "test:s": "cross-env NODE_ENV=testing env-cmd .env mocha api/test/sockets.test.js --timeout 15000 --reporter spec --bail  --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "db:init": "env-cmd .env node scripts/initDB.js",
-    "cel": "browser-sync start --proxy 'http://localhost:8000' --ws --port 5000 --no-open --no-ui",
-    "heroku-prebuild": "./deploy"
+    "cel": "browser-sync start --proxy 'http://localhost:8000' --ws --port 5000 --no-open --no-ui"
   },
   "nyc": {
     "exclude": [
@@ -31,7 +30,7 @@
     ]
   },
   "engines": {
-    "node": "9.3.0",
+    "node": "^9.3.0",
     "yarn": "1.5.1"
   },
   "dependencies": {
