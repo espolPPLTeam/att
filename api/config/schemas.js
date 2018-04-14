@@ -213,7 +213,7 @@ const PREGUNTA_PROFESOR_FORMATO_ESTUDIANTE = {
     "preguntaId": { "type": "string" },
     "respuesta": { "type": "string" },
     "fechaCreadaPregunta": { "type": "string" },
-    "fechaCreadaRepuesta": { "type": "string" }
+    "fechaCreadaRespuesta": { "type": "string" }
   }
 }
 

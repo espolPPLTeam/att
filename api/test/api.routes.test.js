@@ -1,77 +1,46 @@
-process.on('uncaughtException', function(err) {
-  console.error('Caught exception: ' + err)
-  console.error(err.stack)
-})
-const app = require('../../app').app
-const request = require('supertest')
-const sinon = require('sinon')
-const assert = require('assert')
-const expect = require("chai").expect
-const co = require('co')
-const moment = require('moment')
-const validator = require('validator')
-const Ajv = require('ajv')
-const ajv = new Ajv({$data: true})
-
-const schema = require('../config/schemas')
-const data = require('./database.mock')
-const controllerRequire = require('../api.controller')
-const modelRequire = require('../api.model')
-const logger = require('../config/logger')
-const responses = require('../config/responses')
-const mongo = require('../config/db')
-const messages = require('../config/messages')
-const db = require('../config/models')
-
-const generatorDocs = require('./docs.generator')
-
-function crearStub(tipo, metodo, response) {
-  let modelStub = {}
-  if (tipo === 'resolve') {
-    modelStub[metodo] = () => { return Promise.resolve(response) }
-    return modelStub
-  }
-  modelStub[metodo] = () => { return Promise.reject(response) }
-  return modelStub
-}
-
-const model = modelRequire({ messages, db, logger })
-const controller = controllerRequire({ responses, messages, model, logger, validator })
-
-async function ConectarMongo() {
-  try {
-    await mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
-  } catch (err) {
-    console.error(err)
-    exit(1)
-  }
-}
-
-
 // NOTA: Los errores SERVER_ERROR son hechos por el api.controller.test ya que todavia
 //       no encuentro la forma de como hacerlos aqui
+// https://blog.risingstack.com/getting-node-js-testing-and-tdd-right-node-js-at-scale/
+  // https://github.com/Gottwik/Enduro
+  // https://github.com/hexojs/hexo
+  // https://github.com/Automattic/wp-calypso
 
+/*
+  ENDPOINTS USADOS ESTUDIANTES
+  /api/att/datosUsuario
+  /api/att/login
+  /api/att/logout
+  /api/att/estudiante/preguntar
+  /api/att/estudiante/responder
+
+  ENDPOINTS USADOS PROFESORES
+  /api/att/datosUsuario
+  /api/att/login
+  /api/att/logout
+  /api/att/profesor/preguntasEstudianteHoy/
+  /api/att/profesor/destacarPregunta
+  /api/att/profesor/preguntar
+  /api/att/profesor/terminarPregunta
+*/
 describe('Routes - Integration', () => {
   let docs = []
-  before(function(done) {
-    co(function *() {
-      yield ConectarMongo()
-      yield mongo.Limpiar()
-      done()
-    })
+  before(async function () {
+    await ConectarMongo()
+    await mongo.Limpiar()
   })
-  after(function(done) {
+  after(function() {
     mongo.Desconectar()
     generatorDocs.generateAPI({ docs })
-    done()
   })
-  beforeEach(function(done) {
-    co(function *() {
-      yield mongo.Limpiar()
-      done()
-    })
+  beforeEach(async function() {
+    await mongo.Limpiar()
   })
-  describe('@t1 GET Profesores Obtener Datos', () => {
+
+  // TODO: BORRAR, porque es una ruta ya se envia esto al profesor
+  context('@t1 Profesores Obtener Datos', () => {
+    const profesor = data.profesores[0]
+    const paralelo = data.paralelos[0]
+    const profesorCorreo = profesor['correo']
     let doc = {
       nombre: 'Profesores Obtener Datos',
       metodo: 'GET',
@@ -86,51 +55,40 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t1.1 OK', (done) => {
-      let profesor = data.profesores[0]
-      let paralelo = data.paralelos[0]
-      co(function *() {
-        let profesorCreado = yield model.crearProfesor(profesor)
-        let paraleloCreado = yield model.crearParalelo(paralelo)
-        yield model.anadirProfesorAParalelo({
-          paralelo: {
-            curso: paralelo['curso'],
-            codigo: paralelo['codigo']
-          },
-          profesorCorreo: profesor['correo'] })
-        request(app)
-        .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
-        .end(function(err, res) {
-          generatorDocs.OK({ docs, doc, res })
-          expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
-          expect(res.status).to.equal(200)
-          done()
-        })
+    
+    it('@t1.1 OK', async function () {
+      await model.crearProfesor(profesor)
+      await model.crearParalelo(paralelo)
+      await model.anadirProfesorAParalelo({
+        paralelo: {
+          curso: paralelo['curso'],
+          codigo: paralelo['codigo']
+        },
+        profesorCorreo: profesor['correo']
       })
-    }).timeout(5000)
-    it('@t1.2 NO ES EMAIL', (done) => {
-      request(app)
-      .get('/api/att/profesor/datosProfesor/' + 'aa')
-      .end(function(err, res) {
-        generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
-        expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
-        expect(res.status).to.equal(200)
-        done()
-      })
-    }).timeout(5000)
-    it('@t1.3 NO EXISTE', (done) => {
-      let profesor = data.profesores[0]
-      request(app)
-      .get('/api/att/profesor/datosProfesor/' + profesor['correo'])
-      .end(function(err, res) {
-        generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
-        expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
-        expect(res.status).to.equal(200)
-        done()
-      })
-    }).timeout(5000)
+      const res = await request(app).get(`/api/att/profesor/datosProfesor/${profesorCorreo}`)
+      generatorDocs.OK({ docs, doc, res })
+      expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
+      expect(res.status).to.equal(200)
+    })
+
+    it('@t1.2 NO ES EMAIL', async function () {
+      const res = await request(app).get(`/api/att/profesor/datosProfesor/aa`)
+      generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
+      expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
+      expect(res.status).to.equal(200)
+    })
+
+    it('@t1.3 NO EXISTE', async function () {
+      const res = await request(app).get(`/api/att/profesor/datosProfesor/${profesorCorreo}`)
+      generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
+      expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
+      expect(res.status).to.equal(200)
+    })
+
   })
-  describe('@t2 POST Crear Pregunta Estudiante', () => {
+
+  context('@t2 POST Crear Pregunta Estudiante', () => {
     // TODO: si no se envia el campo de creador?
     let doc = {
       nombre: 'Crear pregunta estudiante',
@@ -148,11 +106,11 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t2.1 OK', (done) => {
-      let estudiante = data.estudiantes[0]
-      let paralelo = data.paralelos[0]
-      let texto = 'Mi primera pregunta'
 
+    it('@t2.1 OK', (done) => {
+      const texto = 'Mi primera pregunta'
+      const estudiante = data.estudiantes[0]
+      const paralelo = data.paralelos[0]
       co(function *() {
         let estudiante = data.estudiantes[0]
         let estudianteCreado = yield model.crearEstudiante(estudiante)
@@ -208,8 +166,8 @@ describe('Routes - Integration', () => {
       errors: []
     }
     it('@t3.1 OK', (done) => {
-      let estudiante = data.estudiantes[0]
-      let paralelo = data.paralelos[0]
+      const estudiante = data.estudiantes[0]
+      const paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
 
       co(function *() {
