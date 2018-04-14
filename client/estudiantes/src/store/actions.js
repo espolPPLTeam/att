@@ -6,16 +6,21 @@ export default {
     // Puede ser el usuario o null si no está loggeado
     Vue.http.get('/api/att/datosUsuario')
       .then((response) => {
+        console.log(response)
         if (response.body.estado) {
           commit('setUsuario', response.body.datos)
           commit('setPreguntas', response.body.datos.misPreguntasHoy)
-          commit('setPreguntaProfesor', response.body.datos.preguntaProfesor)
-          const respuesta = {
-            texto: response.body.datos.preguntaProfesor.respuesta,
-            createdAt: response.body.datos.preguntaProfesor.createdAtRespuesta,
-            estado: 'enviada'
+          if (response.body.datos.preguntaProfesor) {
+            commit('setPreguntaProfesor', response.body.datos.preguntaProfesor)
           }
-          commit('setRespuesta', respuesta)
+          if (response.body.datos.preguntaProfesor && response.body.datos.preguntaProfesor.respuesta) {
+            const respuesta = {
+              texto: response.body.datos.preguntaProfesor.respuesta,
+              createdAt: response.body.datos.preguntaProfesor.fechaCreadaRespuesta,
+              estado: 'enviada'
+            }
+            commit('setRespuesta', respuesta)
+          }
           commit('SOCKET_unirseAParalelo')
         }
       })
@@ -76,7 +81,7 @@ export default {
     commit('setError', null)
     const data = {
       paraleloId: state.usuario.paraleloId,
-      preguntaId: state.preguntaProfesor.preguntaId,
+      preguntaId: state.preguntaProfesor._id,
       texto: payload,
       creador: {
         correo: state.usuario.correo,

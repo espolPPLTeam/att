@@ -1,10 +1,7 @@
 <template>
-  <v-container>
-    <header class="mb-5">
-      <h3 class="display-1">Respuestas</h3>
-    </header>
+  <v-container class="px-2 pt-2">
     <!-- Ingreso de pregunta -->
-    <v-layout row v-if="sesionRespuestas === 'inactivo'">
+    <v-layout row v-if="sesionRespuestas === 'inactivo'" style="margin-top:25vh">
       <v-flex xs12 sm10 md6 offset-md3 offset-sm1>
         <v-card>
           <v-card-text>
@@ -29,18 +26,19 @@
     <!-- Respuestas -->
     <v-layout row v-if="sesionRespuestas === 'activo'" wrap>
       <!-- Pregunta enviada -->
-      <v-flex xs12 class="mb-5">
+      <v-flex xs12>
         <v-card>
           <v-card-title>
-            <h4 primary-title>Pregunta</h4>
+            <h4 primary-title class="mx-auto">Pregunta</h4>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="text-container">
             <p>{{ pregunta }}</p>
           </v-card-text>
         </v-card>
       </v-flex>
-      <!-- Búsqueda y filtros -->
-      <v-flex xs12>
+      <h3 class="mx-auto my-3">Respuestas</h3>
+      <!-- Búsqueda y filtros (Desktop)-->
+      <v-flex xs12 class="hidden-sm-and-down mt-5">
         <v-layout row wrap>
           <v-flex xs7 sm8 md8 class="pr-5 pl-1">
             <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscarRespuestas" v-model="busqueda" @keypress="keypressedBusqueda($event)"></v-text-field>
@@ -62,12 +60,12 @@
           <v-layout row wrap>
             <v-flex xs2>
               <v-card-actions>
-                <v-icon v-if="respuesta.marcada" class="mx-auto mt-3" color="yellow darken-2" @click="marcarRespuesta(respuesta._id, !respuesta.marcada)">bookmark</v-icon>
-                <v-icon v-else class="mx-auto mt-3" @click="marcarRespuesta(respuesta._id, !respuesta.marcada)">bookmark_border</v-icon>
+                <v-icon v-if="respuesta.destacada" class="mx-auto mt-3" color="yellow darken-2" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark</v-icon>
+                <v-icon v-else class="mx-auto mt-3" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark_border</v-icon>
               </v-card-actions>
             </v-flex>
             <v-flex xs10>
-              <v-card-text class="text-xs-left pa-1">
+              <v-card-text class="text-xs-left pa-1 text-container">
                 <p v-html="respuesta.texto" class="pa-2"></p>
               </v-card-text>
               <v-card-text class="caption text-xs-right pa-2">
@@ -84,19 +82,30 @@
           </v-card-actions>
           <v-slide-y-transition>
             <v-card-text v-show="respuesta.show" class="hidden-info">
-              <p class="text-xs-left ml-4"><v-icon class="mr-3">person</v-icon>{{ respuesta.creador.nombres }} {{ respuesta.creador.apellidos }}</p>
-              <v-spacer></v-spacer>
-              <p class="text-xs-right mr-4"><v-icon class="mr-3">email</v-icon>{{ respuesta.creador.correo }}</p>
+              <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <p class="text-xs-center text-sm-left">
+                    <v-icon class="mr-2">person</v-icon>
+                    {{ respuesta.creador.nombres }} {{ respuesta.creador.apellidos }}
+                  </p>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <p class="text-xs-center text-sm-right">
+                    <v-icon class="mr-2">email</v-icon>
+                    {{ respuesta.creador.correo }}
+                  </p>
+                </v-flex>
+              </v-layout>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
       </v-flex>
       <!-- Btn terminar -->
-      <v-footer id="footer" fixed class="mb-2 hidden-sm-and-up">
-        <v-btn icon class="mx-auto red white--text" @click.native="dialog = !dialog">
-          <v-icon>alarm</v-icon>
+      <div id="footer" class="hidden-md-and-up">
+        <v-btn large icon class="mx-auto red white--text" @click.native="dialog = !dialog">
+          <v-icon medium>alarm</v-icon>
         </v-btn>
-      </v-footer>
+      </div>
     </v-layout>
     <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
@@ -114,6 +123,7 @@
 export default {
   mounted () {
     this.pregunta = this.$store.getters.pregunta
+    this.$store.commit('setPagina', 'Respuestas')
   },
   computed: {
     sesionRespuestas () {
@@ -164,8 +174,8 @@ export default {
         this.snackbar.estado = true
       }
     },
-    marcarRespuesta (id, estado) {
-
+    destacarRespuesta (id, estado) {
+      this.$store.dispatch('destacarRespuesta', {id, estado})
     },
     buscarRespuestas () {
       this.$store.commit('buscarRespuestas', {busqueda: this.busqueda, filtro: this.filtro})
@@ -182,6 +192,10 @@ export default {
     display: inline-flex;
   }
   #footer{
-    background: rgba(250, 250, 250, 0)
+    background: rgba(250, 250, 250, 0);
+    position: fixed;
+    bottom: 20vh;
+    width: 100%;
+    height: 1px;
   }
 </style>

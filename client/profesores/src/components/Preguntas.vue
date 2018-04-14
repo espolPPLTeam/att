@@ -1,9 +1,6 @@
 <template>
-  <v-container>
-    <header>
-      <h1 class="display-1">Preguntas</h1>
-    </header>
-    <v-layout row wrap>
+  <v-container class="px-2 pt-2">
+    <v-layout row wrap class="hidden-sm-and-down mb-3">
       <v-flex xs7 sm8 md10 class="pr-5 pl-1">
         <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscar" v-model="busqueda" @keypress="keypressed($event)"></v-text-field>
       </v-flex>
@@ -14,7 +11,7 @@
         label="Filtro"></v-select>
       </v-flex>
     </v-layout>
-    <v-layout row wrap class="mt-3">
+    <v-layout row wrap>
       <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
         <v-card hover>
           <v-layout row wrap>
@@ -25,7 +22,7 @@
               </v-card-actions>
             </v-flex>
             <v-flex xs10>
-              <v-card-text class="text-xs-left pa-1">
+              <v-card-text class="text-xs-left pa-1 text-container">
                 <p v-html="pregunta.texto" class="pa-2"></p>
               </v-card-text>
               <v-card-text class="caption text-xs-right pa-2">
@@ -42,9 +39,20 @@
           </v-card-actions>
           <v-slide-y-transition>
             <v-card-text v-show="pregunta.show" class="hidden-info">
-              <p class="text-xs-left ml-4"><v-icon class="mr-3">person</v-icon>{{ pregunta.creador.nombres }} {{ pregunta.creador.apellidos }}</p>
-              <v-spacer></v-spacer>
-              <p class="text-xs-right mr-4"><v-icon class="mr-3">email</v-icon>{{ pregunta.creador.correo }}</p>
+              <v-layout row wrap>
+                <v-flex xs12 sm6>
+                  <p class="text-xs-center text-sm-left">
+                    <v-icon class="mr-2">person</v-icon>
+                    {{ pregunta.creador.nombres }} {{ pregunta.creador.apellidos }}
+                  </p>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <p class="text-xs-center text-sm-right">
+                    <v-icon class="mr-2">email</v-icon>
+                    {{ pregunta.creador.correo }}
+                  </p>
+                </v-flex>
+              </v-layout>
             </v-card-text>
           </v-slide-y-transition>
         </v-card>
@@ -70,6 +78,9 @@ export default {
       opciones: ['Todas', 'Destacadas'],
       busqueda: ''
     }
+  },
+  mounted () {
+    this.$store.commit('setPagina', 'Preguntas')
   },
   methods: {
     destacarPregunta (id, estado) {

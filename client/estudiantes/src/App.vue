@@ -38,7 +38,6 @@ export default {
   },
   mounted () {
     this.$store.dispatch('getLoggedUser')
-    console.log('Mounted loggedIn:', this.loggedIn)
   },
   computed: {
     loggedIn () {

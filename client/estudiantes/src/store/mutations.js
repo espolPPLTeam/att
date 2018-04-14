@@ -58,8 +58,8 @@ export default {
   },
   setPreguntaProfesor (state, payload) {
     state.preguntaProfesor = {
-      _id: payload._id,
-      createdAt: payload.createdAt,
+      _id: payload.preguntaId,
+      createdAt: payload.fechaCreadaPregunta,
       texto: payload.texto
     }
   },
