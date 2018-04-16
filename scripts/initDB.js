@@ -3,11 +3,9 @@
 // let estudiantes = require('./dump/estudiantes.json')
 
 let db = require('../api/config/db')
-let model = require('../api/config/models')
-let modelDB = require('../api/api.model')
 let logger = require('../api/config/logger')
 let messages = require('../api/config/messages')
-let modelMongo = modelDB({ db: model, logger, messages })
+
 const paralelo = {
   "codigo": "FISG1002",
   "nombre": "FÍSICA II",
@@ -39,7 +37,10 @@ const profesores = [
     "tipo": "titular"
   }
 ]
-db.Conectar(process.env.MONGO_URL_ATT_DEVELOPMENT).then(() => {
+db.Conectar(`mongodb://localhost/att_${process.env.NODE_ENV}`).then(() => {
+  let model = require('../api/config/models')
+  let modelDB = require('../api/api.model')
+  let modelMongo = modelDB({ db: model, logger, messages })
   async function iniciar() {
     try {
       await modelMongo.crearEstudiante(estudiantes[0])

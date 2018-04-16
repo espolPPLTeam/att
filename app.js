@@ -1,12 +1,8 @@
 let urlServidor = ''
-if (process.env.NODE_ENV === 'development') {
-  urlServidor = process.env.MONGO_URL_ATT_DEVELOPMENT
-} else if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
+if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
   urlServidor = process.env.MONGO_URL_HEROKU
-} else if (process.env.NODE_ENV === 'production') {
-  urlServidor = process.env.MONGO_URL_ATT_PRODUCTION
-} else if (process.env.NODE_ENV === 'testing'){
-  urlServidor = process.env.MONGO_URL_ATT_TEST
+} else if (process.env.NODE_ENV) {
+  urlServidor = `mongodb://localhost/att_${process.env.NODE_ENV}`
 } else {
   process.exit(1)
 }
@@ -26,6 +22,12 @@ const path = require('path')
 app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+let urlSession = ''
+if (process.env.APP == 'ppl') {
+  urlSession = `mongodb://localhost/ppl_${process.env.NODE_ENV}`
+} else {
+  urlSession = `mongodb://localhost/att_${process.env.NODE_ENV}`
+}
 app.use(session({
   secret: process.env.SECRET,
   resave: true,
@@ -34,7 +36,7 @@ app.use(session({
   name: 'SID',
   unset: 'destroy',
   store: new MongoStore({
-      url: urlServidor,
+      url: urlSession,
       ttl: 12 * 60 * 60
     })
 }))

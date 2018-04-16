@@ -1,4 +1,13 @@
-const mongoose = require('mongoose')
+let mongoose = {}
+let db = {}
+if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
+  mongoose = require('mongoose')
+  db = require('mongoose')
+} else if (process.env.NODE_ENV) {
+  db = require('./db').getDatabaseConnection()
+  mongoose = require('mongoose')
+}
+
 const shortid = require('shortid')
 const moment = require('moment')
 mongoose.Promise = global.Promise
@@ -469,10 +478,10 @@ RespuestaSchema.statics = {
 // TODO: todos los que mande a update tienen que tener confirmacion de actualizacion
 
 module.exports = {
-  Estudiante: mongoose.model('Estudiante', EstudianteSchema),
-  PreguntaEstudiante: mongoose.model('PreguntaEstudiante', PreguntaEstudianteSchema),
-  Profesor: mongoose.model('Profesor', ProfesorSchema),
-  PreguntaProfesor: mongoose.model('PreguntaProfesor', PreguntaProfesorSchema),
-  Respuesta: mongoose.model('Respuesta', RespuestaSchema),
-  Paralelo: mongoose.model('Paralelo', ParaleloSchema)
+  Estudiante: db.model('Estudiante', EstudianteSchema),
+  PreguntaEstudiante: db.model('PreguntaEstudiante', PreguntaEstudianteSchema),
+  Profesor: db.model('Profesor', ProfesorSchema),
+  PreguntaProfesor: db.model('PreguntaProfesor', PreguntaProfesorSchema),
+  Respuesta: db.model('Respuesta', RespuestaSchema),
+  Paralelo: db.model('Paralelo', ParaleloSchema)
 }
