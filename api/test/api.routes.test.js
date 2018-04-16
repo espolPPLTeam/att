@@ -27,6 +27,10 @@ describe('Routes - Integration', () => {
   before(async function () {
     await ConectarMongo()
     await mongo.Limpiar()
+    app = require('../../app').app
+    db = require('../config/models')
+    model = modelRequire({ messages, db, logger })
+    controller = controllerRequire({ responses, messages, model, logger, validator })
   })
   after(function() {
     mongo.Desconectar()
@@ -55,7 +59,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    
+
     it('@t1.1 OK', async function () {
       await model.crearProfesor(profesor)
       await model.crearParalelo(paralelo)

@@ -5,11 +5,11 @@ process.on('uncaughtException', function(err) {
 const assert = require('assert')
 const co = require('co')
 const data = require('./database.mock')
-const mongoSchema = require('../config/models')
-const mongo = require('../config/db')
+
 const messages = require('../config/messages')
 const logger = require('../config/logger')
 const sinon = require('sinon')
+const mongo = require('../config/db')
 const expect = require('chai').expect
 require('mocha-sinon')
 
@@ -23,13 +23,15 @@ function crearStub(tipo, metodo, response) {
   return modelStub
 }
 
-const apiModel = require('../api.model')({ db: mongoSchema, logger, messages })
+
 
 describe('Model', () =>  {
   before(function(done) {
     co(function *() {
-      yield mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
+      yield mongo.Conectar(`mongodb://localhost/att_${process.env.NODE_ENV}`)
       yield mongo.Limpiar()
+      mongoSchema = require('../config/models')
+      apiModel = require('../api.model')({ db: mongoSchema, logger, messages })
       done()
     }).catch((err) => {
       console.log('no se puedo conectar')

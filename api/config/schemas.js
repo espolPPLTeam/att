@@ -244,6 +244,7 @@ const PREGUNTA_PROFESOR_FORMATO_PROFESOR = {
   "properties": {
     "creador": { "type": "object", "items": PROFESOR_DATOS_PREGUNTA  },
     "createdAt": { "type": "string" },
+    "_id": { "type": "string" },
     "texto": { "type": "string" },
     "respuestas": {
       "type": "array",

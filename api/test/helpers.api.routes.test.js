@@ -13,7 +13,6 @@ validator = require('validator')
 Ajv = require('ajv')
 ajv = new Ajv({$data: true})
 
-app = require('../../app').app
 data = require('./database.mock')
 controllerRequire = require('../api.controller')
 modelRequire = require('../api.model')
@@ -22,15 +21,10 @@ schema = require('../config/schemas')
 mongo = require('../config/db')
 responses = require('../config/responses')
 messages = require('../config/messages')
-db = require('../config/models')
 generatorDocs = require('./docs.generator')
-
-model = modelRequire({ messages, db, logger })
-controller = controllerRequire({ responses, messages, model, logger, validator })
-
 ConectarMongo = async function () {
   try {
-    await mongo.Conectar(process.env.MONGO_URL_ATT_TEST)
+    await mongo.Conectar(`mongodb://localhost/att_${process.env.NODE_ENV}`)
   } catch (err) {
     console.error(err)
     exit(1)

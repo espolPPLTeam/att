@@ -216,7 +216,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         let preguntasEstudiantesHoy = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
         profesorDatos['preguntasEstudiantesHoy'] = preguntasEstudiantesHoy
         let preguntaHabilitada = await model.PreguntaHabilitadaParalelo({ paraleloId })
-        let pregunta = _.pick(preguntaHabilitada['preguntaActual'], ['creador', 'createdAt', 'texto', 'respuestas'])
+        let pregunta = _.pick(preguntaHabilitada['preguntaActual'], ['creador', 'createdAt', 'texto', 'respuestas', '_id'])
         profesorDatos['preguntaProfesor'] = pregunta
         return responses.OK({ datos: profesorDatos })
       } catch (err) {
