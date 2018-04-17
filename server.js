@@ -3,8 +3,8 @@ process.on('uncaughtException', function(err) {
   console.error(err.stack)
 })
 
-const { app, server } = require('./app')
-
+const { att } = require('./app')
+let { server, app } = att()
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error
