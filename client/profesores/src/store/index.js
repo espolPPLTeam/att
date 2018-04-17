@@ -22,7 +22,9 @@ export const store = new Vuex.Store({
     usuario: null,
     error: null,
     filtro: 'Todas',
-    pagina: ''
+    pagina: '',
+    paraleloActual: null,
+    loading: null
   },
   mutations,
   actions,
