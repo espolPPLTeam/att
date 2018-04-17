@@ -1,10 +1,9 @@
+// USADO CON PPL
 function app (ioPPL) {
   let urlServidor = ''
-  if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
-    urlServidor = process.env.MONGO_URL_HEROKU
-  } else if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV) {
     if (process.env.NODE_ENV === 'development:cas') {
-      urlServidor = `mongodb://localhost/ppl_development`
+      urlServidor = `mongodb://localhost/att_development`
     } else {
       urlServidor = `mongodb://localhost/att_${process.env.NODE_ENV}`
     }
@@ -27,29 +26,6 @@ function app (ioPPL) {
   app.use(cookieParser())
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
-  let urlSession = ''
-  if (process.env.APP == 'ppl') {
-    if (process.env.NODE_ENV === 'development:cas') {
-      urlSession = `mongodb://localhost/ppl_development`
-    } else {
-      urlSession = `mongodb://localhost/ppl_${process.env.NODE_ENV}`
-    }
-  } else {
-    urlSession = `mongodb://localhost/att_${process.env.NODE_ENV}`
-  }
-
-  app.use(session({
-    secret: process.env.SECRET,
-    resave: true,
-    expire: 1 * 24 * 60 * 60 ,
-    saveUninitialized: true,
-    name: 'SID',
-    unset: 'destroy',
-    store: new MongoStore({
-        url: urlSession,
-        ttl: 12 * 60 * 60
-      })
-  }))
 
   if (process.env.NODE_ENV !== 'testing')
     db.Conectar(urlServidor).then().catch((err) => console.log(err))
@@ -77,6 +53,7 @@ function app (ioPPL) {
   return app
 }
 
+// USADO EN DEVELOPMENT ATT
 const att = () => {
   let urlServidor = ''
   if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
