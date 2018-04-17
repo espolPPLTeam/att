@@ -27,7 +27,7 @@ describe('Routes - Integration', () => {
   before(async function () {
     await ConectarMongo()
     await mongo.Limpiar()
-    app = require('../../app').app
+    app = require('../../app').att().app
     db = require('../config/models')
     model = modelRequire({ messages, db, logger })
     controller = controllerRequire({ responses, messages, model, logger, validator })
