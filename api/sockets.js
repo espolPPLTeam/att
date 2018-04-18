@@ -26,6 +26,11 @@ module.exports = function({ io, shortid, logger }) {
     socket.on('terminarPregunta', function({ paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) {
      Socket.in(`${paraleloId}`).emit('TERMINAR_PREGUNTA', { paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) 
     })
+    socket.on('cambiarParalelo', function({paraleloAntiguo, paraleloNuevo}) {
+      socket.leave(`${paraleloAntiguo}`)
+      socket.join(`${paraleloNuevo}`)
+      socket.emit('CAMBIO_PARALELO', paraleloNuevo)
+    })
     socket.on('disconnect', function() {
       const CANTIDAD_CONECTADOS = Object.keys(io.sockets.connected).length
       logger.info(`cantidad-usuarios-conectados ${CANTIDAD_CONECTADOS}`)

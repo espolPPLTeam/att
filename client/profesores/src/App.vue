@@ -3,11 +3,41 @@
     <!-- Sidenav mobile -->
     <v-navigation-drawer temporary v-model="sideNav" app>
       <v-list>
+        <!-- Usuario -->
+        <v-list-group prepend-icon="account_circle" value="true" v-if="usuario && paralelos">
+          <v-list-tile slot="activator">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                {{ usuario.correo.split('@')[0] }}
+              </v-list-tile-title>
+              <v-list-tile-sub-title>
+                {{ paraleloActual.nombre }} - {{ paraleloActual.curso }}
+              </v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo._id)">
+            <v-list-tile-action>
+              <v-icon></v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>
+              {{ paralelo.nombre }} - {{ paralelo.curso }}
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list-group>
         <v-list-tile v-for="item in menuItems" :key="item.title" router :to="item.link">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
           <v-list-tile-content>{{ item.title }}</v-list-tile-content>
         </v-list-tile>
         <v-list-tile @click="logout">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
           <v-list-tile-content>Logout</v-list-tile-content>
+          <v-list-tile-action>
+            <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
+          </v-list-tile-action>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
@@ -95,6 +125,18 @@ export default {
     },
     pagina () {
       return this.$store.getters.pagina
+    },
+    usuario () {
+      return this.$store.getters.usuario
+    },
+    paralelos () {
+      return this.$store.getters.paralelos
+    },
+    paraleloActual () {
+      return this.$store.getters.paraleloActual
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   },
   data () {
@@ -104,11 +146,13 @@ export default {
       menuItems: [
         {
           title: 'Preguntas',
-          link: '/preguntas'
+          link: '/preguntas',
+          icon: 'fas fa-question'
         },
         {
           title: 'Respuestas',
-          link: '/respuestas'
+          link: '/respuestas',
+          icon: 'question_answer'
         }
       ]
     }
@@ -119,6 +163,10 @@ export default {
     },
     filtrar (filtro) {
       this.$store.commit('filtrar', {filtro: filtro, pagina: this.pagina})
+    },
+    cambiarParalelo (idParalelo) {
+      this.sideNav = false
+      this.$store.commit('SOCKET_cambiarParalelo', {paraleloAntiguo: this.paraleloActual._id, paraleloNuevo: idParalelo})
     }
   }
 }
@@ -151,5 +199,8 @@ button:focus{
 .subtitulo-toolbar{
   font-size: smaller;
   color: #cccdce;
+}
+.list__tile__sub-title {
+  font-size: 0.7em !important;
 }
 </style>

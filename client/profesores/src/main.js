@@ -37,6 +37,13 @@ new Vue({
   el: '#app',
   router,
   store,
+  sockets: {
+    CAMBIO_PARALELO (data) {
+      const correo = this.$store.getters.usuario.correo
+      const paralelo = data
+      this.$store.dispatch('getDatosProfesor', {paralelo, correo})
+    }
+  },
   components: { App },
   template: '<App/>'
 })

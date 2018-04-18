@@ -1,6 +1,7 @@
 import router from '../router'
 
 export default {
+  // SOCKETS ENVIAOS
   setSocket (state, socket) {
     state.io = socket
   },
@@ -8,8 +9,8 @@ export default {
     state.io.emit('disconnect')
     router.push('/')
   },
-  SOCKET_unirseAParalelo (state) {
-    state.io.emit('unirseAParalelo', { paraleloId: state.usuario.paralelos[0]._id })
+  SOCKET_unirseAParalelo (state, payload) {
+    state.io.emit('unirseAParalelo', { paraleloId: payload })
   },
   SOCKET_preguntaProfesor (state, payload) {
     state.io.emit('preguntaProfesor', payload)
@@ -18,6 +19,11 @@ export default {
   SOCKET_terminarPregunta (state, payload) {
     state.io.emit('terminarPregunta', payload)
   },
+  SOCKET_cambiarParalelo (state, payload) {
+    state.loading = true
+    state.io.emit('cambiarParalelo', payload)
+  },
+  // SOCKETS RECIBIDOS
   SOCKET_UNIDO_PARALELO (state) {
     state.loggedIn = true
     router.push('/preguntas')
@@ -47,12 +53,19 @@ export default {
     state.pregunta = ''
     state.sesionRespuestas = 'inactivo'
   },
+  SOCKET_CAMBIO_PARALELO (state, payload) {
+    state.paraleloActual = state.usuario.paralelos.find((paralelo) => {
+      return paralelo._id === payload[0]
+    })
+  },
   logout (state) {
     state.loggedIn = false
     state.usuario = null
   },
+  // SETTERS
   setUsuario (state, payload) {
     state.usuario = payload
+    state.paraleloActual = payload.paralelos[0]
   },
   setPreguntas (state, payload) {
     for (let i = payload.length - 1; i >= 0; i--) {
@@ -67,6 +80,35 @@ export default {
     })
     pregunta.destacada = payload.estado
   },
+  setError (state, payload) {
+    state.error = payload
+  },
+  setSesionRespuestas (state, payload) {
+    state.sesionRespuestas = payload
+  },
+  setRespuestas (state, payload) {
+    for (var i = 0; i < payload.length; i++) {
+      payload[i].show = false
+    }
+    state.respuestas = payload
+    state.respuestasMostrar = payload
+  },
+  setEstadoRespuesta (state, payload) {
+    const respuesta = state.respuestas.find((respuesta) => {
+      return respuesta._id === payload.id
+    })
+    respuesta.destacada = payload.estado
+  },
+  setPreguntaProfesor (state, payload) {
+    state.pregunta = payload
+  },
+  setPagina (state, payload) {
+    state.pagina = payload
+  },
+  setLoading (state, payload) {
+    state.loading = payload
+  },
+  // OTROS
   filtrar (state, payload) {
     state.filtro = payload.filtro
     if (payload.pagina === 'Preguntas') {
@@ -120,32 +162,7 @@ export default {
       return respuesta.texto.indexOf(payload.busqueda) >= 0
     })
   },
-  setError (state, payload) {
-    state.error = payload
-  },
   clearError (state) {
     state.error = null
-  },
-  setSesionRespuestas (state, payload) {
-    state.sesionRespuestas = payload
-  },
-  setRespuestas (state, payload) {
-    for (var i = 0; i < payload.length; i++) {
-      payload[i].show = false
-    }
-    state.respuestas = payload
-    state.respuestasMostrar = payload
-  },
-  setEstadoRespuesta (state, payload) {
-    const respuesta = state.respuestas.find((respuesta) => {
-      return respuesta._id === payload.id
-    })
-    respuesta.destacada = payload.estado
-  },
-  setPreguntaProfesor (state, payload) {
-    state.pregunta = payload
-  },
-  setPagina (state, payload) {
-    state.pagina = payload
   }
 }

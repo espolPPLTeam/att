@@ -5,12 +5,17 @@
       <v-flex xs12 sm10 md6 offset-md3 offset-sm1>
         <v-card>
           <v-card-text>
-            <v-text-field label="Pregunta" name="pregunta" id="pregunta" v-model="pregunta"  @keypress="keypressed($event)" required></v-text-field>
+            <v-text-field label="Pregunta" name="pregunta" id="pregunta" v-model="pregunta.texto"  @keypress="keypressed($event)" required></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-layout row>
               <v-flex xs12>
-                <v-btn class="text-xs-right red white--text" @click="preguntarEstudiantes">Enviar</v-btn>
+                <v-btn
+                class="text-xs-right red white--text"
+                @click="preguntarEstudiantes"
+                :loading="loading" :disabled="!enviarPreguntaHabilitado">
+                  Enviar
+                </v-btn>
               </v-flex>
             </v-layout>
           </v-card-actions>
@@ -32,7 +37,7 @@
             <h4 primary-title class="mx-auto">Pregunta</h4>
           </v-card-title>
           <v-card-text class="text-container">
-            <p>{{ pregunta }}</p>
+            <p>{{ pregunta.texto }}</p>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -113,7 +118,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" flat @click.native="dialog = false">No</v-btn>
-          <v-btn color="green darken-1" flat @click.native="terminarSesionRespuestas">Si</v-btn>
+          <v-btn
+            color="green darken-1"
+            flat
+            @click.native="terminarSesionRespuestas"
+            :loading="loading">
+              Si
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -131,6 +142,12 @@ export default {
     },
     respuestas () {
       return this.$store.getters.respuestasMostrar
+    },
+    loading () {
+      return this.$store.getters.loading
+    },
+    enviarPreguntaHabilitado () {
+      return this.pregunta !== '' && this.pregunta !== undefined && !this.loading
     }
   },
   watch: {
@@ -141,7 +158,7 @@ export default {
   data () {
     return {
       dialog: false,
-      pregunta: '',
+      pregunta: {texto: ''},
       snackbar: {
         color: 'red',
         timeout: 3000,
@@ -169,7 +186,7 @@ export default {
     preguntarEstudiantes () {
       if (this.pregunta !== undefined && this.pregunta !== '') {
         this.snackbar.estado = false
-        this.$store.dispatch('enviarPregunta', this.pregunta)
+        this.$store.dispatch('enviarPregunta', this.pregunta.texto)
       } else {
         this.snackbar.estado = true
       }
@@ -182,6 +199,7 @@ export default {
     },
     terminarSesionRespuestas () {
       this.dialog = false
+      this.pregunta = {texto: ''}
       this.$store.dispatch('terminarSesionRespuestas')
     }
   }

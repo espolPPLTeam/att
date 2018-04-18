@@ -1,5 +1,13 @@
 <template>
   <v-container class="px-2 pt-2">
+    <v-progress-circular
+      class="hidden-sm-and-up mb-3"
+      indeterminate
+      :size="30"
+      :width="3"
+      color="blue"
+      v-if="loading">
+    </v-progress-circular>
     <v-layout row wrap class="hidden-sm-and-down mb-3">
       <v-flex xs7 sm8 md10 class="pr-5 pl-1">
         <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscar" v-model="busqueda" @keypress="keypressed($event)"></v-text-field>
@@ -65,6 +73,9 @@ export default {
   computed: {
     preguntas () {
       return this.$store.getters.preguntasMostrar
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   },
   watch: {

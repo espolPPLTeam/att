@@ -16,13 +16,17 @@ export const store = new Vuex.Store({
     preguntas: [], // Preguntas de los estudiantes
     preguntasMostrar: [], // Preguntas filtradas
     sesionRespuestas: 'inactivo',
-    pregunta: '', // Pregunta que el profesor envía a los estudiantes
+    pregunta: {
+      texto: ''
+    }, // Pregunta que el profesor envía a los estudiantes
     respuestas: [],
     respuestasMostrar: [],
     usuario: null,
     error: null,
     filtro: 'Todas',
-    pagina: ''
+    pagina: '',
+    paraleloActual: null,
+    loading: null
   },
   mutations,
   actions,

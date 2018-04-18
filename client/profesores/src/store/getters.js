@@ -22,5 +22,25 @@ export default {
   },
   pagina (state) {
     return state.pagina
+  },
+  paralelos (state) {
+    if (state.usuario) {
+      return state.usuario.paralelos
+    } else {
+      return null
+    }
+  },
+  paraleloActual (state) {
+    if (state.paraleloActual) {
+      return state.paraleloActual
+    } else {
+      return null
+    }
+  },
+  usuario (state) {
+    return state.usuario
+  },
+  loading (state) {
+    return state.loading
   }
 }
