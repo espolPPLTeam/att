@@ -35,6 +35,9 @@
             <v-icon>exit_to_app</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>Logout</v-list-tile-content>
+          <v-list-tile-action>
+            <v-progress-circular v-if="loading" indeterminate color="primary"></v-progress-circular>
+          </v-list-tile-action>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
@@ -87,14 +90,6 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content class="pt-0">
-      <v-progress-circular
-        class="hidden-sm-and-up"
-        indeterminate
-        :size="30"
-        :width="3"
-        color="blue"
-        v-if="loading">
-      </v-progress-circular>
       <router-view></router-view>
     </v-content>
     <!-- Footer -->

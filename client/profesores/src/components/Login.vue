@@ -24,7 +24,13 @@
               </v-layout>
               <v-layout row wrap>
                 <v-flex xs12>
-                  <v-btn type="submit" class="right red white--text" :disabled="!habilitado">Login</v-btn>
+                  <v-btn
+                  type="submit"
+                  class="right red white--text"
+                  :disabled="!habilitado"
+                  :loading="loading">
+                    Login
+                  </v-btn>
                 </v-flex>
               </v-layout>
             </v-form>
@@ -38,13 +44,16 @@
 export default {
   computed: {
     habilitado () {
-      return this.usuario !== '' && this.usuario !== undefined && this.contrasenna !== '' && this.contrasenna !== undefined
+      return this.usuario !== '' && this.usuario !== undefined && this.contrasenna !== '' && this.contrasenna !== undefined && !this.loading
     },
     loggedIn () {
       return this.$store.getters.loggedIn
     },
     error () {
       return this.$store.getters.error
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   },
   data () {

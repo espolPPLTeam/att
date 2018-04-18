@@ -23,6 +23,7 @@ export default {
   },
   SOCKET_PREGUNTA_PROFESOR (state, payload) {
     state.preguntaProfesor = payload[0]
+    state.preguntaProfesor._id = state.preguntaProfesor.preguntaId
   },
   SOCKET_TERMINAR_PREGUNTA (state, payload) {
     state.preguntaProfesor = null

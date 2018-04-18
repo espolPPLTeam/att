@@ -1,7 +1,7 @@
 import router from '../router'
 
 export default {
-  // SOCKETS ENVIAR
+  // SOCKETS ENVIAOS
   setSocket (state, socket) {
     state.io = socket
   },
@@ -23,7 +23,7 @@ export default {
     state.loading = true
     state.io.emit('cambiarParalelo', payload)
   },
-  // SOCKET RECIBIR
+  // SOCKETS RECIBIDOS
   SOCKET_UNIDO_PARALELO (state) {
     state.loggedIn = true
     router.push('/preguntas')
