@@ -6,9 +6,13 @@ var db
 let Conectar = function(url) {
   return new Promise(function(resolve) {
     let options = {}
-    if (process.env.NODE_ENV === 'production')
+    if (process.env.NODE_ENV === 'production') {
       options = { autoIndex: false }
-    db = mongoose.createConnection(url, options)
+      db = mongoose.createConnection(url, options)
+    } else {
+      conn = mongoose.connect(url, options)
+      db = mongoose.connection
+    }
     // db = mongoose.connection
     db.on('error', function(err) {
       console.log(`error ${err}`)
@@ -37,7 +41,14 @@ let Desconectar = function() {
 
 let Limpiar = function() {
   return new Promise(function(resolve) {
-    resolve(mongoose.connection.dropDatabase())
+    db.dropDatabase().then((resp) => {
+      resolve(true)
+    }).catch((err) => {
+      console.log('Error en limpiar database')
+      console.log(err)
+      process.exit(1)
+      // resolve(true)
+    })
   })
 }
 

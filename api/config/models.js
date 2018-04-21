@@ -61,7 +61,7 @@ const ParaleloSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   curso: { type: String, required: true },
   anio: { type: String, required: true },
-  termino: { type: String, enum: ['1', '2'], required: true },
+  termino: { type: String, enum: ['1s', '2s'], required: true },
   preguntaActual: { // mostrara la pregunta que actualmente el profesor habilito para que los estudiante respondan, si se quiere desabilitar debe estar vacio ''
     type: String,
     ref: 'PreguntaProfesor',
@@ -74,8 +74,8 @@ const ParaleloSchema = new mongoose.Schema({
   }],
   estudiantes: [{
     type: String,
-    ref: 'Estudiante',
-    field: 'correo'
+    field: 'correo',
+    ref: 'Estudiante'
   }],
   preguntasProfesor: [{
     type: String,
@@ -85,7 +85,7 @@ const ParaleloSchema = new mongoose.Schema({
     type: String,
     ref: 'PreguntaEstudiante'
   }]
-}, {timestamps: false, versionKey: false, collection: 'paralelos'})
+}, {timestamps: false, versionKey: false, collection: 'paralelos', toJSON: { virtuals: true } })
 
 const PreguntaEstudianteSchema = mongoose.Schema({
   _id: {
@@ -264,12 +264,38 @@ EstudianteSchema.statics = {
   anadirRespuesta({ matricula, respuestaId }) {
     const self = this
     return new Promise(function(resolve) {
-      self.update({ matricula }, {$addToSet: {'respuestas': respuestaId }}).then((accionEstado) => {
+      self.update({ matricula }, {$addToSet: { 'respuestas': respuestaId }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
+  cambiarCorreo({ correo, correoNuevo }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ correo }, {$set: { correo: correoNuevo }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
+  cambiarNombres({ correo, nombres }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ correo }, {$set: { nombres }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
+  cambiarApellidos({ correo, apellidos }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ correo }, {$set: { apellidos }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
   }
 }
+
+const Estudiante = db.model('Estudiante', EstudianteSchema)
 
 ProfesorSchema.statics = {
   obtenerPorCorreo({ correo }) {
@@ -293,6 +319,31 @@ ParaleloSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.findOne({ _id: paraleloId }))
+    })
+  },
+  obtenerTodosPopulateEstudiantes() {
+    let self = this
+    return new Promise(function(resolve) {
+      resolve(self.aggregate([
+        { "$unwind": "$estudiantes" },
+        { "$lookup":
+          {
+            "from": "estudiantes",
+            "localField": "estudiantes",
+            "foreignField": "correo",
+            "as": "members",
+          },
+        },
+        { "$unwind": "$members" },
+        { "$group": {
+          "_id": "$_id",
+          "curso": { "$first": "$curso" },
+          "codigo": { "$first": "$codigo" },
+          "estudiantes": { "$push": "$estudiantes" },
+          "members": { "$push": "$members" }
+        }},
+      ]
+      ))
     })
   },
   obtenerPorCursoYCodigo({ curso, codigo }) {
@@ -371,6 +422,7 @@ ParaleloSchema.statics = {
     })
   }
 }
+const Paralelo = db.model('Paralelo', ParaleloSchema)
 
 PreguntaEstudianteSchema.statics = {
   obtenerPorId({ preguntaId }) {
@@ -478,10 +530,10 @@ RespuestaSchema.statics = {
 // TODO: todos los que mande a update tienen que tener confirmacion de actualizacion
 
 module.exports = {
-  Estudiante: db.model('Estudiante', EstudianteSchema),
+  Estudiante,
   PreguntaEstudiante: db.model('PreguntaEstudiante', PreguntaEstudianteSchema),
   Profesor: db.model('Profesor', ProfesorSchema),
   PreguntaProfesor: db.model('PreguntaProfesor', PreguntaProfesorSchema),
   Respuesta: db.model('Respuesta', RespuestaSchema),
-  Paralelo: db.model('Paralelo', ParaleloSchema)
+  Paralelo
 }

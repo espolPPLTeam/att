@@ -1,3 +1,22 @@
+https://www.npmjs.com/package/medium-zoom
+https://fengyuanchen.github.io/cropperjs/ https://agontuk.github.io/vue-cropperjs/
+
+# Formula Editor
+http://mathdox.org/formulaeditor/
+https://github.com/camdenre/equation-editor
+
+
+# Vuejs Testing
+https://vuejs.org/v2/guide/unit-testing.html
+https://medium.com/@lachlanmiller_52885/mocking-vuex-in-vue-unit-tests-b6eda1c4d301
+https://codeburst.io/a-pattern-for-mocking-and-unit-testing-vuex-actions-8f6672bdb255
+https://www.google.com.ec/search?q=testing+vuejs&oq=testing+vuejs&aqs=chrome..69i57j69i60.3247j0j7&client=ubuntu&sourceid=chrome&ie=UTF-8
+https://github.com/vuejs/vue-test-utils-jest-example
+https://alexjoverm.github.io/2017/09/25/Test-Methods-and-Mock-Dependencies-in-Vue-js-with-Jest/
+https://docs.mongodb.com/manual/reference/operator/meta/explain/
+
+
+
 // https://templecoding.com/blog/2016/02/29/how-to-stub-promises-using-sinonjs/
 // http://chaijs.com/api/bdd/
 // https://www.sitepoint.com/sinon-tutorial-javascript-testing-mocks-spies-stubs/

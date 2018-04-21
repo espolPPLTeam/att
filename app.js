@@ -27,8 +27,33 @@ function app (ioPPL) {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
 
-  if (process.env.NODE_ENV !== 'testing')
-    db.Conectar(urlServidor).then().catch((err) => console.log(err))
+  if (process.env.NODE_ENV !== 'testing') {
+    db.Conectar(urlServidor).then(() => {
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          const WSPPL = require('../web_service/index.js')
+          const dbWebService = require('./scripts/webService.db')
+          const { exec } = require('child_process')
+          const rutaScriptBackup = path.join(__dirname, 'scripts', 'mongoBackup.sh')
+          const wsPPL = WSPPL({ db: dbWebService, local: false })
+          wsPPL.inicializar().then(() => {
+            new CronJob('00 00 00 * * *', function() {
+              exec(`sh ${rutaScriptBackup}`, function (error, stdout, stderr) {
+                if (error) {
+                  console.error(error)
+                } else {
+                  wsPPL.actualizar()
+                }
+              })
+            }, null, true, 'America/Guayaquil')
+          })
+        } catch(err) {
+          console.error('No esta integrado web_service libreria')
+          console.log(err)
+        }
+      }
+    }).catch((err) => console.log(err))
+  }
 
   if (process.env.NODE_ENV === 'development') {
     const morgan = require('morgan')
@@ -70,12 +95,13 @@ const att = () => {
   const cookieParser = require('cookie-parser')
   const session = require('express-session')
   const MongoStore = require('connect-mongo')(session)
+  const shortid = require('shortid')
+  const path = require('path')
+  const CronJob = require('cron').CronJob
   const db = require('./api/config/db')
   const server = require('http').Server(app)
   const PORT = process.env.PORT || '8000'
   const logger = require('./api/config/logger')
-  const shortid = require('shortid')
-  const path = require('path')
   app.use(cookieParser())
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -93,8 +119,33 @@ const att = () => {
       })
   }))
 
-  if (process.env.NODE_ENV !== 'testing')
-    db.Conectar(urlServidor).then().catch((err) => console.log(err))
+  if (process.env.NODE_ENV !== 'testing') {
+    db.Conectar(urlServidor).then(() => {
+      try {
+        const WSPPL = require('../web_service/index.js')
+        const dbWebService = require('./scripts/webService.db')
+        const dump = require('../web_service/dump')
+        const { exec } = require('child_process')
+        const rutaScriptBackup = path.join(__dirname, 'scripts', 'mongoBackup.sh')
+        const wsPPL = WSPPL({ db: dbWebService, anio: '2017', termino: '2s', local: true, dump })
+        wsPPL.inicializar().then(() => {
+          // wsPPL.actualizar()
+          // new CronJob('00 00 23 * * *', function() {
+          //   exec(`sh ${rutaScriptBackup}`, function (error, stdout, stderr) {
+          //     if (error) {
+          //       console.error(error)
+          //     } else {
+          //       wsPPL.actualizar()
+          //     }
+          //   })
+          // }, null, true, 'America/Guayaquil')
+        })
+      } catch(err) {
+        console.error('No esta integrado web_service libreria')
+        console.log(err)
+      }
+    }).catch((err) => console.log(err))
+  }
 
   if (process.env.NODE_ENV === 'development') {
     const morgan = require('morgan')

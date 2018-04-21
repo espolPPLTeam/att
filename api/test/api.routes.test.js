@@ -36,7 +36,7 @@ describe('Routes - Integration', () => {
     mongo.Desconectar()
     generatorDocs.generateAPI({ docs })
   })
-  beforeEach(async function() {
+  afterEach(async function() {
     await mongo.Limpiar()
   })
 
@@ -136,7 +136,7 @@ describe('Routes - Integration', () => {
           expect(res.status).to.equal(200)
           done()
         })
-      })
+      }).catch((err) => { console.log(err) })
 
     }).timeout(5000)
     it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
