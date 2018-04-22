@@ -61,7 +61,7 @@ export default {
       return this.$store.getters.loggedIn
     },
     habilitado () {
-      return this.preguntaProfesor !== '' && this.preguntaProfesor !== undefined && this.loggedIn && this.inputRespuesta !== '' && this.inputRespuesta !== undefined && this.respuesta === null
+      return this.preguntaProfesor !== '' && this.preguntaProfesor !== undefined && this.preguntaProfesor !== null && this.loggedIn && this.inputRespuesta !== '' && this.inputRespuesta !== undefined && this.respuesta === null
     },
     preguntaProfesor () {
       return this.$store.getters.preguntaProfesor

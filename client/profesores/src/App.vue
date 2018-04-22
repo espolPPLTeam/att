@@ -20,7 +20,7 @@
               <v-icon></v-icon>
             </v-list-tile-action>
             <v-list-tile-title>
-              {{ paralelo.nombre }} - {{ paralelo.curso }}
+              {{ paralelo.nombre }} - P{{ paralelo.curso }}
             </v-list-tile-title>
           </v-list-tile>
         </v-list-group>
@@ -46,6 +46,17 @@
       <v-toolbar-title class="white--text">Ask The Teacher</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
+        <v-menu offset-y v-if="paralelos && paraleloActual">
+          <v-btn dark slot="activator">
+            {{ paraleloActual.nombre }} - {{ paraleloActual.curso }}
+            <v-icon dark class="ml-2">arrow_drop_down</v-icon>
+          </v-btn>
+          <v-list dark>
+            <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo._id)">
+              <v-list-tile-title>{{ paralelo.nombre }} - {{ paralelo.curso }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
         <v-btn flat
           v-for="item in menuItems"
           router :to="item.link"
@@ -60,14 +71,11 @@
     </v-toolbar>
     <!-- Toolbar mobile -->
     <v-toolbar app dark scroll-off-screen class="hidden-sm-and-up">
-      <v-toolbar-side-icon
-        @click.native="sideNav = !sideNav"
-        class="hidden-sm-and-up"
-        v-if="loggedIn">
+      <v-toolbar-side-icon @click.native="sideNav = !sideNav" class="hidden-sm-and-up" v-if="loggedIn">
       </v-toolbar-side-icon>
-      <v-toolbar-title class="white--text" style="font-size:initial;" v-if="loggedIn">
-        <h3 class="titulo-toolbar">{{ pagina }}</h3>
-        <span class="subtitulo-toolbar">{{ filtro }}</span>
+      <v-toolbar-title class="white--text" style="font-size:initial;" v-if="loggedIn && paraleloActual">
+        <h3 class="titulo-toolbar">{{ paraleloActual.nombre }}</h3>
+        <span class="subtitulo-toolbar">P{{ paraleloActual.curso }} - {{ filtro }}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="mr-2" v-if="loggedIn">
