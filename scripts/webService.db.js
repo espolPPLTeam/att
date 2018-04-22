@@ -19,8 +19,13 @@ module.exports = {
   crearProfesor({ nombres, apellidos, correo, tipo, paralelo, codigoMateria }) {
     return new Promise(function(resolve, reject) {
       co(function* () {
-        yield Model.crearProfesor({ correo, tipo, nombres, apellidos })
-        yield Model.anadirProfesorAParalelo({ paralelo: { curso: paralelo, codigo: codigoMateria }, profesorCorreo: correo })
+        let profesor = yield db.Profesor.obtenerPorCorreo({ correo })
+        if (!profesor) {
+          yield Model.crearProfesor({ correo, tipo, nombres, apellidos })
+          yield Model.anadirProfesorAParalelo({ paralelo: { curso: paralelo, codigo: codigoMateria }, profesorCorreo: correo })
+        } else {
+          yield Model.anadirProfesorAParalelo({ paralelo: { curso: paralelo, codigo: codigoMateria }, profesorCorreo: correo })
+        }
         resolve(true)
       })
 
