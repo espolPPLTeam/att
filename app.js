@@ -23,6 +23,7 @@ function app (ioPPL) {
   const logger = require('./api/config/logger')
   const shortid = require('shortid')
   const path = require('path')
+  const CronJob = require('cron').CronJob
   app.use(cookieParser())
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
