@@ -81,22 +81,9 @@ export default {
         console.log(err)
       })
   },
-  obtenerPreguntasHoy ({commit, state}) {
-    const urlApi = '/api/att/profesor/preguntasEstudianteHoy/' + state.usuario.paralelos[0]._id
-    Vue.http.get(urlApi)
-      .then((response) => {
-        if (response.body.estado) {
-          commit('obtenerPreguntasHoy', response.body.datos)
-        } else {
-          commit('setError', response.body)
-        }
-      }, (err) => {
-        commit('setError', err)
-        console.log('err:', err)
-      })
-  },
   destacarPregunta ({commit}, payload) {
     commit('setError', null)
+    commit('setEstadoPregunta', payload)
     const urlApi = '/api/att/profesor/destacarPregunta'
     const data = {
       preguntaId: payload.id,
@@ -104,14 +91,16 @@ export default {
     }
     Vue.http.put(urlApi, data)
       .then((response) => {
-        if (response.body.estado) {
-          commit('setEstadoPregunta', payload)
-        } else {
+        payload.estado = !payload.estado
+        if (!response.body.estado) {
           commit('setError', response.body)
+          commit('setEstadoPregunta', payload)
         }
       }, (err) => {
+        payload.estado = !payload.estado
         commit('setError', err)
         console.log('err', err)
+        commit('setEstadoPregunta', payload)
       })
   },
   enviarPregunta ({commit, state}, payload) {

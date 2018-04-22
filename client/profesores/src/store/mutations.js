@@ -40,7 +40,6 @@ export default {
       show: false
     }
     state.preguntas.push(pregunta)
-    state.preguntasMostrar = state.preguntas
   },
   SOCKET_RESPUESTA_ESTUDIANTE (state, data) {
     data[0].show = false
@@ -140,15 +139,6 @@ export default {
     state.preguntasMostrar = state.preguntasMostrar.filter((pregunta) => {
       return pregunta.texto.indexOf(payload.busqueda) >= 0
     })
-  },
-  filtrarRespuestas (state, payload) {
-    if (payload === 'Todas') {
-      state.respuestasMostrar = state.respuestas
-    } else if (payload === 'Marcadas') {
-      state.respuestasMostrar = state.respuestas.filter((respuesta) => {
-        return respuesta.marcada === true
-      })
-    }
   },
   buscarRespuestas (state, payload) {
     if (payload.filtro === 'Todas') {

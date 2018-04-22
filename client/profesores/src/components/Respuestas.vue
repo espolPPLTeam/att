@@ -43,19 +43,16 @@
       </v-flex>
       <h3 class="mx-auto my-3">Respuestas</h3>
       <!-- Búsqueda y filtros (Desktop)-->
-      <v-flex xs12 class="hidden-sm-and-down mt-5">
+      <v-flex xs12 class="hidden-xs-only mt-5">
         <v-layout row wrap>
           <v-flex xs7 sm8 md8 class="pr-5 pl-1">
             <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscarRespuestas" v-model="busqueda" @keypress="keypressedBusqueda($event)"></v-text-field>
           </v-flex>
           <v-flex xs5 sm2 md2>
-            <v-select
-            :items="opciones"
-            v-model="filtro"
-            label="Filtro"></v-select>
+            <v-select :items="opciones" v-model="filtro" label="Filtro"></v-select>
           </v-flex>
           <v-flex sm2 md2 class="hidden-xs-only mt-1">
-            <v-btn class="red white--text">Terminar</v-btn>
+            <v-btn class="red white--text"  @click.native="dialog = !dialog">Terminar</v-btn>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -106,7 +103,7 @@
         </v-card>
       </v-flex>
       <!-- Btn terminar -->
-      <div id="footer" class="hidden-md-and-up">
+      <div id="footer" class="hidden-sm-and-up">
         <v-btn large icon class="mx-auto red white--text" @click.native="dialog = !dialog">
           <v-icon medium>alarm</v-icon>
         </v-btn>
@@ -148,11 +145,14 @@ export default {
     },
     enviarPreguntaHabilitado () {
       return this.pregunta !== '' && this.pregunta !== undefined && !this.loading
+    },
+    pagina () {
+      return this.$store.getters.pagina
     }
   },
   watch: {
     filtro () {
-      this.$store.commit('filtrarRespuestas', this.filtro)
+      this.$store.commit('filtrar', {filtro: this.filtro, pagina: this.pagina})
     }
   },
   data () {
@@ -167,7 +167,7 @@ export default {
       },
       busqueda: '',
       filtro: 'Todas',
-      opciones: ['Todas', 'Marcadas']
+      opciones: ['Todas', 'Destacadas']
     }
   },
   methods: {
