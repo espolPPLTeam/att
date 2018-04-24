@@ -6,7 +6,7 @@ var db
 let Conectar = function(url) {
   return new Promise(function(resolve) {
     let options = {}
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development:cas') {
       options = { autoIndex: false }
       db = mongoose.createConnection(url, options)
     } else {
