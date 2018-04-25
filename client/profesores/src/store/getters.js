@@ -42,5 +42,11 @@ export default {
   },
   loading (state) {
     return state.loading
+  },
+  preguntaNueva (state) {
+    return state.preguntaNueva
+  },
+  respuestaNueva (state) {
+    return state.respuestaNueva
   }
 }

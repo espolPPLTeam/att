@@ -94,6 +94,7 @@ export default {
   },
   mounted () {
     this.$store.commit('setPagina', 'Preguntas')
+    this.$store.commit('clearPreguntaNueva')
   },
   methods: {
     destacarPregunta (id, estado) {
