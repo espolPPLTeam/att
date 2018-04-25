@@ -47,21 +47,21 @@ describe('Controller', () =>  {
     })
   })
 
-  describe('@t2 preguntasEstudianteHoy', () =>  {
-    beforeEach(function() {
-      this.sinon.stub(logger, 'error')
-    })
-    it('@t2.1 SERVER ERROR', (done) => {
-      paramsController['model'] = crearStub('reject', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
-      const controller = controllerRequire(paramsController)
-      controller.PreguntasEstudianteHoy({ paraleloId:  'aaa'})
-        .then((response) => {
-          expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
-          expect(logger.error.calledOnce).to.be.true
-          done()
-        }).catch((err) => console.error(err))
-    })
-  })
+  // describe('@t2 preguntasEstudianteHoy', () =>  {
+  //   beforeEach(function() {
+  //     this.sinon.stub(logger, 'error')
+  //   })
+  //   it('@t2.1 SERVER ERROR', (done) => {
+  //     paramsController['model'] = crearStub('reject', 'obtenerPreguntasEstudiantesPorParalelo', 'return')
+  //     const controller = controllerRequire(paramsController)
+  //     controller.PreguntasEstudianteHoy({ paraleloId:  'aaa'})
+  //       .then((response) => {
+  //         expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
+  //         expect(logger.error.calledOnce).to.be.true
+  //         done()
+  //       }).catch((err) => console.error(err))
+  //   })
+  // })
 
   describe('@t3 crearPreguntaEstudiante', () =>  {
     let estudiante = data.estudiantes[0]
@@ -71,15 +71,15 @@ describe('Controller', () =>  {
     it('@t3.1 SERVER ERROR', (done) => {
       paramsController['model'] = crearStub('reject', 'crearPreguntaEstudiante', 'return')
       const controller = controllerRequire(paramsController)
-      controller.CrearPreguntaEstudiante({ 
-        texto: 'Mi primera pregunta', 
-        paraleloId: 'aaa', 
-        creador: { 
-          _id: 'aaa', 
-          correo: estudiante['correo'], 
-          matricula: estudiante['matricula'], 
-          nombres: estudiante['nombres'], 
-          apellidos: estudiante['apellidos'] 
+      controller.CrearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId: 'aaa',
+        creador: {
+          _id: 'aaa',
+          correo: estudiante['correo'],
+          matricula: estudiante['matricula'],
+          nombres: estudiante['nombres'],
+          apellidos: estudiante['apellidos']
         } })
         .then((response) => {
           expect(response).to.deep.equal(responses.ERROR_SERVIDOR)
