@@ -109,18 +109,18 @@ module.exports = ({ app, controller, logger }) => {
       let { paraleloId } = req.params
       // envia las fechas que se hicieron en este paralelo
       // ver el mockup para ver que se enviara
-      // datos: [ { fecha, preguntas //cantidad preguntas, respuestas: { nombre, id } } ]
+      // datos: [ { fecha, preguntas// cantidad  preguntas, preguntasProfesor:  [{ nombre, id }] } ]
     })
 
   app
-  .route('/profesor/preguntasPorDia/:dia')
+  .route('/profesor/preguntasEstudiantes/:dia')
   .get((req, res) => {
       let { dia } = req.params
       // datos: [ { } ]
     })
 
   app
-  .route('/profesor/respuestas/:respuestaId')
+  .route('/profesor/preguntaProfesor/:preguntaId')
   .get((req, res) => {
       let { respuestaId } = req.params
       // datos: [ { nombre, creador, respuestas: [] } ]

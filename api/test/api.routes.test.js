@@ -5,42 +5,6 @@
   // https://github.com/hexojs/hexo
   // https://github.com/Automattic/wp-calypso
 
-/*
-  ENDPOINTS USADOS ESTUDIANTES
-  /api/att/datosUsuario
-  /api/att/login
-  /api/att/logout
-  /api/att/estudiante/preguntar
-  /api/att/estudiante/responder
-
-  ENDPOINTS USADOS PROFESORES
-  /api/att/datosUsuario
-  /api/att/login
-  /api/att/logout
-  /api/att/profesor/preguntasEstudianteHoy/
-  /api/att/profesor/destacarPregunta
-  /api/att/profesor/preguntar
-  /api/att/profesor/terminarPregunta
-*/
-
-/*
--- arreglado `/api/att/profesor/preguntar con creador._id por gusto pido el _id
-
--- arreglado /api/att/estudiante/responder por gusto pido el _id
-
-
--- arreglado /api/att/profesor/terminarPregunta por gusto pido el _id
-
-
--- arreglado  /api/att/profesor/respuestasPregunta/:preguntaId no usada en cliente
-
-
-/api/att/profesores/misPreguntasHoy/:paraleloId no usada en cliente
-
-
-/api/att/profesor/perfil/:paraleloId/:correo, todas de creador
-*/
-
 describe('Routes - Integration', () => {
   let docs = []
   before(async function () {
@@ -100,6 +64,7 @@ describe('Routes - Integration', () => {
         .send(req)
         .end(function(err, res) {
           generatorDocs.OK({ docs, doc, res, req })
+          // console.log(res.body)
           expect(ajv.validate(schema.PREGUNTA, res.body.datos)).to.equal(true)
           expect(res.body.estado).to.equal(true)
           expect(res.status).to.equal(200)

@@ -53,10 +53,12 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           if (profesorDatos) {
             let { paralelos }= profesorDatos
             let profesor = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
-            let paralelos_filtrados = paralelos.map(function(paralelo) {
-              let paraleloPick = _.pick(paralelo, ['codigo', '_id', 'curso', 'nombre'])
-              return LimpiarPropId(paraleloPick)
-            }, [])
+            let paralelos_filtrados = []
+            if (paralelos)
+              paralelos_filtrados = paralelos.map(function(paralelo) {
+                let paraleloPick = _.pick(paralelo, ['codigo', '_id', 'curso', 'nombre'])
+                return LimpiarPropId(paraleloPick)
+              }, [])
             profesor = { ...profesor, paralelos: paralelos_filtrados }
             return responses.OK({ datos: profesor })
           } else {
@@ -183,24 +185,29 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo })
         profesorDatos = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
         let preguntasEstudiantesHoy = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
-        preguntasEstudiantesHoy = preguntasEstudiantesHoy.map((preg) => {
-          let pregunta = JSON.parse(JSON.stringify(preg))
-          pregunta['id'] = pregunta['_id']
-          delete pregunta['_id']
-          return pregunta
-        })
+        if (preguntasEstudiantesHoy)
+          preguntasEstudiantesHoy = preguntasEstudiantesHoy.map((preg) => {
+            let pregunta = JSON.parse(JSON.stringify(preg))
+            pregunta['id'] = pregunta['_id']
+            delete pregunta['_id']
+            return pregunta
+          })
         profesorDatos['preguntasEstudiantesHoy'] = preguntasEstudiantesHoy
         let preguntaHabilitada = await model.PreguntaHabilitadaParalelo({ paraleloId })
         let pregunta = _.pick(preguntaHabilitada['preguntaActual'], ['creador', 'createdAt', 'texto', 'respuestas', '_id'])
         let preguntaLimpiada = JSON.parse(JSON.stringify(pregunta))
-        preguntaLimpiada['id'] = preguntaLimpiada['_id']
-        delete preguntaLimpiada['_id']
-        let respuestas = preguntaLimpiada['respuestas'].map((resp) => {
-          let respuesta = JSON.parse(JSON.stringify(resp))
-          respuesta['id'] = respuesta['_id']
-          delete respuesta['_id']
-          return respuesta
-        })
+        if (pregunta) {
+          preguntaLimpiada['id'] = preguntaLimpiada['_id']
+          delete preguntaLimpiada['_id']
+        }
+        let respuestas = []
+        if (preguntaLimpiada['respuestas'])
+          respuestas = preguntaLimpiada['respuestas'].map((resp) => {
+            let respuesta = JSON.parse(JSON.stringify(resp))
+            respuesta['id'] = respuesta['_id']
+            delete respuesta['_id']
+            return respuesta
+          })
         preguntaLimpiada['respuestas'] = respuestas
         profesorDatos['preguntaProfesor'] = preguntaLimpiada
         return responses.OK({ datos: profesorDatos })

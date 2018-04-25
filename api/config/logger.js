@@ -21,7 +21,7 @@ const logger = winston.createLogger({
   exceptionHandlers: [
     new transports.File({ filename: 'exceptions.att.log' })
   ]
-});
+})
 
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'testing') {
   logger.add(new winston.transports.Console({
@@ -29,7 +29,7 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'testing')
     timestamp(),
     myFormat
   )
-  }));
+  }))
 }
 
 module.exports = logger
