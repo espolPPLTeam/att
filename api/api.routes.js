@@ -4,17 +4,17 @@ module.exports = ({ app, controller, logger }) => {
 
   // PROFESORES
   app
-  .route('/profesor/datosProfesor/:profesorCorreo')
+  .route('/profesor/perfil/:paraleloId/:correo')
     .get((req, res) => {
-      let { profesorCorreo } = req.params
-      controller.ObtenerParalelosProfesor({ profesorCorreo })
-        .then((resp) => {
+      let { paraleloId, correo } = req.params
+      controller.PerfilProfesor({ correo, paraleloId })
+      .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
+      .catch((err, resp) => {
+        logger.error(err)
+        res.status(resp.codigoEstado).json(resp)
+      })
     })
 
   app
@@ -61,20 +61,6 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
-  .route('/profesor/perfil/:paraleloId/:correo')
-    .get((req, res) => {
-      let { paraleloId, correo } = req.params
-      controller.PerfilProfesor({ correo, paraleloId })
-      .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-      .catch((err, resp) => {
-        logger.error(err)
-        res.status(resp.codigoEstado).json(resp)
-      })
-    })
-
-  app
   .route('/profesor/preguntar')
     .post((req, res) => {
       let { texto, paraleloId } = req.body
@@ -115,6 +101,29 @@ module.exports = ({ app, controller, logger }) => {
           logger.error(err)
           res.status(resp.codigoEstado).json(resp)
         })
+    })
+
+  app
+  .route('/profesor/historialParalelo/:paraleloId')
+    .get((req, res) => {
+      let { paraleloId } = req.params
+      // envia las fechas que se hicieron en este paralelo
+      // ver el mockup para ver que se enviara
+      // datos: [ { fecha, preguntas //cantidad preguntas, respuestas: { nombre, id } } ]
+    })
+
+  app
+  .route('/profesor/preguntasPorDia/:dia')
+  .get((req, res) => {
+      let { dia } = req.params
+      // datos: [ { } ]
+    })
+
+  app
+  .route('/profesor/respuestas/:respuestaId')
+  .get((req, res) => {
+      let { respuestaId } = req.params
+      // datos: [ { nombre, creador, respuestas: [] } ]
     })
 
   // ESTUDIANTES
@@ -173,13 +182,6 @@ module.exports = ({ app, controller, logger }) => {
         res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
       }
     })
-
-  // app
-  // .route('/profesor/preguntasHistorial/:paraleloId')
-  //   .get((req, res) => {
-  //     let { paraleloId } = req.params
-  //   })
-
 
   // ENDPOINTS DE PRUEBA PARA LOGIN
   app

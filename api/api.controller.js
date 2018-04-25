@@ -84,18 +84,6 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async PreguntasEstudianteHoy({ paraleloId }) {
-      try {
-        let preguntas = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
-        preguntas = preguntas.map((preg) => {
-          return LimpiarPropId(preg)
-        })
-        return responses.OK({ datos: preguntas })
-      } catch (err) {
-        logger.error(err)
-        return responses.ERROR_SERVIDOR
-      }
-    },
     async CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } }) {
       try {
         if (paraleloId) {
@@ -125,36 +113,6 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           return responses.OK_ERROR({ mensaje: messages.PREGUNTAID_NO_EXISTE })
         }
       } catch (err) {
-        logger.error(err)
-        return responses.ERROR_SERVIDOR
-      }
-    },
-    async ObtenerPreguntasEstudiante({ paraleloId }) {
-      try {
-        let preguntas = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
-        let PREGUNTAS_FILTRADA = preguntas.map((preg) => {
-          let pregunta = JSON.parse(JSON.stringify(preg))
-          pregunta['id'] = pregunta['_id']
-          delete pregunta['_id']
-          return pregunta
-        })
-        return responses.OK({ datos: PREGUNTAS_FILTRADA })
-      } catch (e) {
-        logger.error(err)
-        return responses.ERROR_SERVIDOR
-      }
-    },
-    async PreguntasEstudiante({ correo }) {
-      try {
-        let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ correo })
-        let PREGUNTAS_FILTRADA = preguntas.map((preg) => {
-          let pregunta = JSON.parse(JSON.stringify(preg))
-          pregunta['id'] = pregunta['_id']
-          delete pregunta['_id']
-          return pregunta
-        })
-        return responses.OK({ datos: PREGUNTAS_FILTRADA })
-      } catch (e) {
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }
@@ -215,33 +173,6 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         } else {
           return responses.OK_ERROR({ mensaje: messages.PARALELO_NO_EXISTE })
         }
-      } catch (err) {
-        logger.error(err)
-        return responses.ERROR_SERVIDOR
-      }
-    },
-    async ObtenerRespuestas({ preguntaId }) {
-      try {
-        let preguntas = await model.obtenerRespuestasPorPregunta({ preguntaId })
-        preguntas = preguntas.map((preg) => {
-          return LimpiarPropId(preg)
-        })
-        return responses.OK({ datos: preguntas })
-      } catch (err) {
-        logger.error(err)
-        return responses.ERROR_SERVIDOR
-      }
-    },
-    async ObtenerPreguntasProfesor({ paraleloId }) {
-      try {
-        let preguntas = await model.obtenerPreguntasProfesorHoy({ paraleloId })
-        preguntas = preguntas.map((preg) => {
-          let pregunta = JSON.parse(JSON.stringify(preg))
-          pregunta['id'] = pregunta['_id']
-          delete pregunta['_id']
-          return pregunta
-        })
-        return responses.OK({ datos: preguntas })
       } catch (err) {
         logger.error(err)
         return responses.ERROR_SERVIDOR

@@ -298,39 +298,6 @@ module.exports = ({ db, logger, messages }) => {
         })
       })
     },
-    obtenerRespuestasPorPregunta({ preguntaId }) {
-			return new Promise((resolve, reject) => {
-				Respuesta.obtenerPorPreguntaId({ preguntaId })
-					.then((respuestas) => {
-						resolve(respuestas)
-					}).catch((err) => {
-						logger.error(err)
-						reject(messages.ERROR_AL_BUSCAR)
-					})
-				})
-		},
-		obtenerPreguntasProfesorHoy({ paraleloId }) {
-			return new Promise((resolve, reject) => {
-				PreguntaProfesor.obtenerPreguntasProfesorHoy({ paraleloId })
-					.then((preguntas) => {
-						resolve(preguntas)
-					}).catch((err) => {
-						logger.error(err)
-						reject(messages.ERROR_AL_BUSCAR)
-					})
-			})
-		},
-    obtenerPreguntaProfesorPorId({ preguntaId }) {
-      return new Promise((resolve, reject) => {
-        PreguntaProfesor.obtenerPorId({ _id: preguntaId })
-          .then((pregunta) => {
-            resolve(pregunta)
-          }).catch((err) => {
-            logger.error(err)
-            reject(messages.ERROR_AL_BUSCAR)
-          })
-      })
-    },
     obtenerRespuestaCreador({ correo, preguntaId }) {
       return new Promise((resolve, reject) => {
         Respuesta.obtenerRespuestaCreador({ correo, preguntaId })

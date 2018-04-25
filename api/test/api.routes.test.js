@@ -60,58 +60,8 @@ describe('Routes - Integration', () => {
   })
 
   // TODO: BORRAR, porque es una ruta ya se envia esto al profesor
-  context('@t1 Profesores Obtener Datos', () => {
-    const profesor = data.profesores[0]
-    const paralelo = data.paralelos[0]
-    const profesorCorreo = profesor['correo']
-    let doc = {
-      nombre: 'Profesores Obtener Datos',
-      metodo: 'GET',
-      url: '/api/att/profesor/datosProfesor/:profesorCorreo',
-      descripcion: 'Da los paralelos para que se pueda escribir en la pagina principal los paralelos',
-      params: [
-        {
-          nombre: 'profesorCorreo',
-          tipo: 'String',
-          descripcion: ' --- '
-        }
-      ],
-      errors: []
-    }
 
-    it('@t1.1 OK', async function () {
-      await model.crearProfesor(profesor)
-      await model.crearParalelo(paralelo)
-      await model.anadirProfesorAParalelo({
-        paralelo: {
-          curso: paralelo['curso'],
-          codigo: paralelo['codigo']
-        },
-        profesorCorreo: profesor['correo']
-      })
-      const res = await request(app).get(`/api/att/profesor/datosProfesor/${profesorCorreo}`)
-      generatorDocs.OK({ docs, doc, res })
-      expect(ajv.validate(schema.PROFESOR_DATOS, res.body.datos)).to.equal(true)
-      expect(res.status).to.equal(200)
-    })
-
-    it('@t1.2 NO ES EMAIL', async function () {
-      const res = await request(app).get(`/api/att/profesor/datosProfesor/aa`)
-      generatorDocs.ERROR({ nombre: 'NO ES EMAIL',  descripcion: 'Cuando el campo _profesorCorreo_ no es válido', docs, doc, res })
-      expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
-      expect(res.status).to.equal(200)
-    })
-
-    it('@t1.3 NO EXISTE', async function () {
-      const res = await request(app).get(`/api/att/profesor/datosProfesor/${profesorCorreo}`)
-      generatorDocs.ERROR({ nombre: 'NO EXISTE', docs, doc, res })
-      expect(ajv.validate(schema.OK_ERROR, res.body)).to.equal(true)
-      expect(res.status).to.equal(200)
-    })
-
-  })
-
-  context('@t2 POST Crear Pregunta Estudiante', () => {
+  context('@t1 POST Crear Pregunta Estudiante', () => {
     // TODO: si no se envia el campo de creador?
     let doc = {
       nombre: 'Crear pregunta estudiante',
@@ -130,7 +80,7 @@ describe('Routes - Integration', () => {
       errors: []
     }
 
-    it('@t2.1 OK', (done) => {
+    it('@t1.1 OK', (done) => {
       const texto = 'Mi primera pregunta'
       const estudiante = data.estudiantes[0]
       const paralelo = data.paralelos[0]
@@ -158,7 +108,7 @@ describe('Routes - Integration', () => {
       }).catch((err) => { console.log(err) })
 
     }).timeout(5000)
-    it('@t2.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
+    it('@t1.2 PARALELOID ES CAMPO OBLIGATORIO', (done) => {
       let estudiante = data.estudiantes[0]
       let req = {
         texto: 'Mi primera pregunta',
@@ -176,7 +126,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(5000)
   })
-  describe('@t3 PUT Destacar Pregunta', () => {
+  describe('@t2 PUT Destacar Pregunta', () => {
     let doc = {
       nombre: 'Descatar pregunta',
       metodo: 'PUT',
@@ -188,7 +138,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t3.1 OK', (done) => {
+    it('@t2.1 OK', (done) => {
       const estudiante = data.estudiantes[0]
       const paralelo = data.paralelos[0]
       let texto = 'Mi primera pregunta'
@@ -223,7 +173,7 @@ describe('Routes - Integration', () => {
           })
       }).catch((err) => console.error(err))
     }).timeout(5000)
-    it('@t3.2 PREGUNTA ID NO EXISTE', (done) => {
+    it('@t2.2 PREGUNTA ID NO EXISTE', (done) => {
       let estudiante = data.estudiantes[0]
       let texto = 'Mi primera pregunta'
       let paraleloId = 'aaaa'
@@ -245,8 +195,8 @@ describe('Routes - Integration', () => {
   })
 
   // TODO: error docs
-  describe('@t4 URL NO VALIDO', () => {
-    it('@t4.1 EL URL INGRESADO NO EXISTE', (done) => {
+  describe('@t3 URL NO VALIDO', () => {
+    it('@t3.1 EL URL INGRESADO NO EXISTE', (done) => {
       request(app)
         .put('/api/att/loquesea')
         .end(function(err, res) {
@@ -259,7 +209,7 @@ describe('Routes - Integration', () => {
   })
 
   // TODO: login que devuelve estudiantes y profesores. Ademas de mostrar los errores
-  describe('@t7 LOGIN', () => {
+  describe('@t4 LOGIN', () => {
     let docLogin = {
       nombre: 'Login',
       metodo: 'POST',
@@ -309,7 +259,7 @@ describe('Routes - Integration', () => {
     let estudiante = data.estudiantes[0]
     let profesor = data.profesores[0]
     let paralelo = data.paralelos[0]
-    it('@t7.1 PROFESOR LOGGEADO', (done) => {
+    it('@t4.1 PROFESOR LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
@@ -341,7 +291,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.2 ESTUDIANTE LOGGEADO', (done) => {
+    it('@t4.2 ESTUDIANTE LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
@@ -387,7 +337,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.3 PROFESOR NO LOGGEADO', (done) => {
+    it('@t4.3 PROFESOR NO LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
@@ -405,7 +355,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.4 ESTUDIANTE NO LOGGEADO', (done) => {
+    it('@t4.4 ESTUDIANTE NO LOGGEADO', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let estudianteCreado = yield model.crearEstudiante(estudiante)
@@ -422,7 +372,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.5 PROFESOR NO EXISTE', (done) => {
+    it('@t4.5 PROFESOR NO EXISTE', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let correoProfesor = profesor['correo']
@@ -440,7 +390,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.6 ESTUDIANTE NO EXISTE', (done) => {
+    it('@t4.6 ESTUDIANTE NO EXISTE', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let estudianteCorreo = estudiante['correo']
@@ -457,7 +407,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.7 PROFESOR LOGOUT', (done) => {
+    it('@t4.7 PROFESOR LOGOUT', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
@@ -486,7 +436,7 @@ describe('Routes - Integration', () => {
         })
       })
     }).timeout(10000)
-    it('@t7.8 ESTUDIANTE LOGOUT', (done) => {
+    it('@t4.8 ESTUDIANTE LOGOUT', (done) => {
       const agent = request.agent(app)
       co(function *() {
         let estudianteCreado = yield model.crearEstudiante(estudiante)
@@ -516,7 +466,7 @@ describe('Routes - Integration', () => {
     }).timeout(10000)
   })
 
-  describe('@t8 CREAR PREGUNTA PROFESOR Y HABILITARLA', () => {
+  describe('@t5 CREAR PREGUNTA PROFESOR Y HABILITARLA', () => {
     let profesor = data.profesores[0]
     let paralelo = data.paralelos[0]
     let doc = {
@@ -535,7 +485,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t8.1 OK', (done) => { // LIMPIAR ID creador
+    it('@t5.1 OK', (done) => { // LIMPIAR ID creador
       co(function *() {
         let profesorCreado = yield model.crearProfesor(profesor)
         let paraleloCreado = yield model.crearParalelo(paralelo)
@@ -563,7 +513,7 @@ describe('Routes - Integration', () => {
       })
     })
   })
-  describe('@t9 RESPONDER ESTUDIANTE', () => {
+  describe('@t6 RESPONDER ESTUDIANTE', () => {
     let doc = {
       nombre: 'Responder Estudiante',
       metodo: 'POST',
@@ -584,7 +534,7 @@ describe('Routes - Integration', () => {
     let paralelo = data.paralelos[0]
     let profesor = data.profesores[0]
     let texto = 'Esta pregunta no tiene sentido'
-    it('@t9.1 OK', (done) => {
+    it('@t6.1 OK', (done) => {
       co(function *() {
         const paraleloCreado = yield model.crearParalelo(paralelo)
         const estudianteCreado = yield model.crearEstudiante(estudiante)
@@ -617,7 +567,7 @@ describe('Routes - Integration', () => {
       }).catch((err) => console.error(err))
     }).timeout(10000)
   })
-  describe('@t10 DESTACAR RESPUESTA ESTUDIANTE', () => {
+  describe('@t7 DESTACAR RESPUESTA ESTUDIANTE', () => {
     let doc = {
       nombre: 'Destacar Respuesta',
       metodo: 'PUT',
@@ -629,7 +579,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t10.1 OK', (done) => {
+    it('@t7.1 OK', (done) => {
       let respuesta = new db.Respuesta({
           texto: 'Mi respuesta'
         })
@@ -652,7 +602,7 @@ describe('Routes - Integration', () => {
           })
         })
     }).timeout(10000)
-    it('@t10.2 ID RESPUESTA NO EXISTE', (done) => {
+    it('@t7.2 ID RESPUESTA NO EXISTE', (done) => {
       let req = {
         respuestaId: 'noexisto',
         destacadaEstado: true
@@ -670,7 +620,7 @@ describe('Routes - Integration', () => {
       })
     }).timeout(10000)
   })
-  describe('@t11 TERMINAR PREGUNTA', () => {
+  describe('@t8 TERMINAR PREGUNTA', () => {
     let doc = {
       nombre: 'Terminar Pregunta',
       metodo: 'PUT',
@@ -687,7 +637,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t11.1 OK', (done) => {
+    it('@t8.1 OK', (done) => {
       co(function *() {
         let paralelo = data.paralelos[0]
         const paraleloCreado = yield model.crearParalelo(paralelo)
@@ -717,7 +667,7 @@ describe('Routes - Integration', () => {
           })
       })
     }).timeout(10000)
-    it('@t11.2 PREGUNTA O PARALELO NO EXISTE', (done) => {
+    it('@t8.2 PREGUNTA O PARALELO NO EXISTE', (done) => {
       let req = {
         preguntaId: 'no existe',
         paraleloId: 'no existe',
@@ -736,7 +686,7 @@ describe('Routes - Integration', () => {
     }).timeout(10000)
   })
 
-  describe('@t14 PROFESOR PERFIL', ()=> {
+  describe('@t9 PROFESOR PERFIL', ()=> {
     let doc = {
       nombre: 'Obtener datos del perfil profesor',
       metodo: 'GET',
@@ -756,7 +706,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t14.1 OK', function(done) {
+    it('@t9.1 OK', function(done) {
       let estudiante = data.estudiantes[0]
       let profesor = data.profesores[0]
       let paralelo = data.paralelos[0]
@@ -805,7 +755,7 @@ describe('Routes - Integration', () => {
     }).timeout(10000)
   })
 
-  describe('@t15 PROFESOR CALIFICAR PREGUNTA ESTUDIANTE', ()=> {
+  describe('@t10 PROFESOR CALIFICAR PREGUNTA ESTUDIANTE', ()=> {
     let doc = {
       nombre: 'Profesor calificar pregunta estudiante',
       metodo: 'PUT',
@@ -825,7 +775,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t15.1 OK', async () => {
+    it('@t10.1 OK', async () => {
       let pregunta = new db.PreguntaEstudiante({
         texto: 'Mi pregunta',
         paralelo: 'idid'
@@ -841,7 +791,7 @@ describe('Routes - Integration', () => {
       expect(res.body.datos).to.equal(messages.PREGUNTA_CALIFICADA)
       generatorDocs.OK({ docs, doc, res })
     })
-    it('@t15.2 PREGUNTA CON ESE ID NO EXISTE', async () => {
+    it('@t10.2 PREGUNTA CON ESE ID NO EXISTE', async () => {
       let preguntaId = 'aaa'
       let calificacion = 1
       let res = await request(app)
@@ -853,7 +803,7 @@ describe('Routes - Integration', () => {
       generatorDocs.ERROR({ nombre: 'NO EXISTE PREGUNTA CON ESE ID', docs, doc, res })
     })
   })
-  describe('@t16 PROFESOR CALIFICAR RESPUESTA ESTUDIANTE', ()=> {
+  describe('@t11 PROFESOR CALIFICAR RESPUESTA ESTUDIANTE', ()=> {
     let doc = {
       nombre: 'Profesor calificar respuesta estudiante',
       metodo: 'PUT',
@@ -873,7 +823,7 @@ describe('Routes - Integration', () => {
       ],
       errors: []
     }
-    it('@t16.1 OK', async () => {
+    it('@t11.1 OK', async () => {
       let respuesta = new db.Respuesta({
         texto: 'Mi pregunta',
         paralelo: 'idid'
@@ -889,7 +839,7 @@ describe('Routes - Integration', () => {
       expect(res.body.datos).to.equal(messages.RESPUESTA_CALIFICADA)
       generatorDocs.OK({ docs, doc, res })
     })
-    it('@t16.2 RESPUESTA CON ESE ID NO EXISTE', async () => {
+    it('@t11.2 RESPUESTA CON ESE ID NO EXISTE', async () => {
       let respuestaId = 'aaa'
       let calificacion = 1
       let res = await request(app)
