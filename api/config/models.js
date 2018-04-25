@@ -124,7 +124,6 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     'default': true
   },
   creador: {
-    _id: { type: String },
     correo: { type: String },
     nombres: { type: String },
     apellidos: { type: String },
@@ -134,7 +133,6 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     }
   },
   terminadoPor: {
-    _id: { type: String },
     correo: { type: String },
     nombres: { type: String },
     apellidos: { type: String },
@@ -161,7 +159,6 @@ const RespuestaSchema = mongoose.Schema({
   },
   texto: { type: String },
   creador: {
-    _id: { type: String },
     correo: { type: String },
     nombres: { type: String },
     apellidos: { type: String }

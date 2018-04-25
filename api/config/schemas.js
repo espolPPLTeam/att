@@ -5,7 +5,7 @@ const PROFESOR_DATOS__PARALELOS = {
   "minProperties": 4,
   "additionalProperties": false,
   "properties": {
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "codigo": { "type": "string" },
     "curso": { "type": "string" },
     "nombre": { "type": "string" }
@@ -54,18 +54,21 @@ const OK_ERROR = {
 
 const ESTUDIANTE = {
   "type": "object",
+  "minProperties": 3,
+  "additionalProperties": false,
   "properties": {
     "correo": { "type": "string" },
     "nombres": { "type": "string" },
     "apellidos": { "type": "string" }
-  },
-  "additionalProperties": false
+  }
 }
 
 const ESTUDIANTE_CON_ID = {
   "type": "object",
+  "minProperties": 4,
+  "additionalProperties": false,
   "properties": {
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "correo": { "type": "string" },
     "nombres": { "type": "string" },
     "apellidos": { "type": "string" }
@@ -84,7 +87,7 @@ const PREGUNTA = {
       "type": "object",
       "items" : ESTUDIANTE
     },
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "destacada": { "type": "boolean" },
     "calificacion": { "type": "number"}
   },
@@ -100,7 +103,7 @@ const PREGUNTAS_HOY_ESTUDIANTES = {
       "type": "object",
       "items" : ESTUDIANTE_CON_ID
     },
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "destacada": { "type": "boolean" },
     "texto": { "type": "string" },
     "calificacion": { "type": "number" },
@@ -124,7 +127,7 @@ const PROFESOR_DATOS_PREGUNTA = {
   "minProperties": 5,
   "additionalProperties": false,
   "properties": {
-    "_id": {
+    "id": {
       "type": "string"
     },
     "correo": {
@@ -145,7 +148,7 @@ const PROFESOR_CREAR_PREGUNTA = {
   "minProperties": 3,
   "additionalProperties": false,
   "properties": {
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "texto": { "type": "string" },
     "creador": {
       "type": "object",
@@ -159,7 +162,7 @@ const RESPUESTA_ESTUDIANTE = {
   "minProperties": 9,
   "additionalProperties": false,
   "properties": {
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "updatedAt": { "type": "string" },
     "createdAt": { "type": "string" },
     "texto": { "type": "string" },
@@ -193,7 +196,7 @@ const RESPUESTAS_PROFESOR = {
   "minProperties": 8,
   "additionalProperties": false,
   "properties": {
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "updatedAt": { "type": "string" },
     "createdAt": { "type": "string" },
     "texto": { "type": "string" },
@@ -247,7 +250,7 @@ const PREGUNTA_PROFESOR_FORMATO_PROFESOR = {
   "properties": {
     "creador": { "type": "object", "items": PROFESOR_DATOS_PREGUNTA  },
     "createdAt": { "type": "string" },
-    "_id": { "type": "string" },
+    "id": { "type": "string" },
     "texto": { "type": "string" },
     "respuestas": {
       "type": "array",

@@ -32,20 +32,6 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
-  .route('/profesor/preguntasEstudianteHoy/:paraleloId')
-    .get((req, res) => {
-      let { paraleloId } = req.params
-      controller.ObtenerPreguntasEstudiante({ paraleloId })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
   .route('/profesor/destacarRespuesta')
     .put((req, res) => {
       let { respuestaId, destacadaEstado } = req.body
@@ -67,34 +53,6 @@ module.exports = ({ app, controller, logger }) => {
       controller.TerminarPregunta({ preguntaId, paraleloId, terminadoPor })
         .then((resp) => {
             res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
-  .route('/profesor/respuestasPregunta/:preguntaId')
-    .get((req, res) => {
-      let { preguntaId } = req.params
-      controller.ObtenerRespuestas({ preguntaId })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
-  .route('/profesor/misPreguntasHoy/:paraleloId')
-    .get((req, res) => {
-      let { paraleloId } = req.params
-      controller.ObtenerPreguntasProfesor({ paraleloId })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
         })
         .catch((err, resp) => {
           logger.error(err)
@@ -160,20 +118,6 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   // ESTUDIANTES
-  app
-  .route('/estudiante/misPreguntasHoy/:correo')
-    .get((req, res) => {
-      let { correo } = req.params
-      controller.PreguntasEstudiante({ correo })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
   app
   .route('/estudiante/preguntar')
     .post((req, res) => {

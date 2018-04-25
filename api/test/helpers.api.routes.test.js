@@ -11,7 +11,7 @@ co = require('co')
 moment = require('moment')
 validator = require('validator')
 Ajv = require('ajv')
-ajv = new Ajv({$data: true})
+ajv = new Ajv({$data: true, allErrors: true })
 
 data = require('./database.mock')
 controllerRequire = require('../api.controller')

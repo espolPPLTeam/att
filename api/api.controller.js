@@ -1,4 +1,9 @@
 const _ = require('lodash')
+const LimpiarPropId = (obj) => {
+  obj['id'] = obj['_id']
+  delete obj['_id']
+  return JSON.parse(JSON.stringify(obj))
+}
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
     URL_NO_VALIDO: responses.URL_NO_VALIDO,
@@ -49,7 +54,8 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
             let { paralelos }= profesorDatos
             let profesor = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
             let paralelos_filtrados = paralelos.map(function(paralelo) {
-              return _.pick(paralelo, ['codigo', '_id', 'curso', 'nombre'])
+              let paraleloPick = _.pick(paralelo, ['codigo', '_id', 'curso', 'nombre'])
+              return LimpiarPropId(paraleloPick)
             }, [])
             profesor = { ...profesor, paralelos: paralelos_filtrados }
             return responses.OK({ datos: profesor })
@@ -81,6 +87,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async PreguntasEstudianteHoy({ paraleloId }) {
       try {
         let preguntas = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
+        preguntas = preguntas.map((preg) => {
+          return LimpiarPropId(preg)
+        })
         return responses.OK({ datos: preguntas })
       } catch (err) {
         logger.error(err)
@@ -94,6 +103,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
           if (pregunta) {
             let PREGUNTA_LIMPIADA = _.pick(pregunta, ['texto', , 'calificacion', 'paralelo', '_id', 'creador', 'destacada'])
+            PREGUNTA_LIMPIADA = LimpiarPropId(PREGUNTA_LIMPIADA)
             return responses.OK({ datos: PREGUNTA_LIMPIADA })
           } else {
             return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
@@ -122,7 +132,13 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async ObtenerPreguntasEstudiante({ paraleloId }) {
       try {
         let preguntas = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
-        return responses.OK({ datos: preguntas })
+        let PREGUNTAS_FILTRADA = preguntas.map((preg) => {
+          let pregunta = JSON.parse(JSON.stringify(preg))
+          pregunta['id'] = pregunta['_id']
+          delete pregunta['_id']
+          return pregunta
+        })
+        return responses.OK({ datos: PREGUNTAS_FILTRADA })
       } catch (e) {
         logger.error(err)
         return responses.ERROR_SERVIDOR
@@ -131,7 +147,13 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async PreguntasEstudiante({ correo }) {
       try {
         let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ correo })
-        return responses.OK({ datos: preguntas })
+        let PREGUNTAS_FILTRADA = preguntas.map((preg) => {
+          let pregunta = JSON.parse(JSON.stringify(preg))
+          pregunta['id'] = pregunta['_id']
+          delete pregunta['_id']
+          return pregunta
+        })
+        return responses.OK({ datos: PREGUNTAS_FILTRADA })
       } catch (e) {
         logger.error(err)
         return responses.ERROR_SERVIDOR
@@ -142,6 +164,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         let pregunta = await model.crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } })
         if (pregunta) {
           let preguntaLimpiada = _.pick(pregunta, ['_id', 'texto', 'creador'])
+          preguntaLimpiada['id'] = preguntaLimpiada['_id']
+          delete preguntaLimpiada['_id']
+          delete preguntaLimpiada['creador']['_id']
           return responses.OK({ datos: preguntaLimpiada })
         } else {
           return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
@@ -155,7 +180,10 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } })
         if (respuesta) {
-          return responses.OK({ datos: respuesta })
+          let respuestaLimpiada = JSON.parse(JSON.stringify(respuesta))
+          respuestaLimpiada['id'] = respuestaLimpiada['_id']
+          delete respuestaLimpiada['_id']
+          return responses.OK({ datos: respuestaLimpiada })
         } else {
           return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
         }
@@ -182,6 +210,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       try {
         let fueTerminada = await model.terminarPregunta({ preguntaId, paraleloId, terminadoPor: profesor })
         if (fueTerminada) {
+          fueTerminada = LimpiarPropId(fueTerminada)
           return responses.OK({ datos: fueTerminada })
         } else {
           return responses.OK_ERROR({ mensaje: messages.PARALELO_NO_EXISTE })
@@ -194,6 +223,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async ObtenerRespuestas({ preguntaId }) {
       try {
         let preguntas = await model.obtenerRespuestasPorPregunta({ preguntaId })
+        preguntas = preguntas.map((preg) => {
+          return LimpiarPropId(preg)
+        })
         return responses.OK({ datos: preguntas })
       } catch (err) {
         logger.error(err)
@@ -203,6 +235,12 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     async ObtenerPreguntasProfesor({ paraleloId }) {
       try {
         let preguntas = await model.obtenerPreguntasProfesorHoy({ paraleloId })
+        preguntas = preguntas.map((preg) => {
+          let pregunta = JSON.parse(JSON.stringify(preg))
+          pregunta['id'] = pregunta['_id']
+          delete pregunta['_id']
+          return pregunta
+        })
         return responses.OK({ datos: preguntas })
       } catch (err) {
         logger.error(err)
@@ -214,10 +252,26 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo })
         profesorDatos = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
         let preguntasEstudiantesHoy = await model.obtenerPreguntasEstudiantesPorParalelo({ paraleloId })
+        preguntasEstudiantesHoy = preguntasEstudiantesHoy.map((preg) => {
+          let pregunta = JSON.parse(JSON.stringify(preg))
+          pregunta['id'] = pregunta['_id']
+          delete pregunta['_id']
+          return pregunta
+        })
         profesorDatos['preguntasEstudiantesHoy'] = preguntasEstudiantesHoy
         let preguntaHabilitada = await model.PreguntaHabilitadaParalelo({ paraleloId })
         let pregunta = _.pick(preguntaHabilitada['preguntaActual'], ['creador', 'createdAt', 'texto', 'respuestas', '_id'])
-        profesorDatos['preguntaProfesor'] = pregunta
+        let preguntaLimpiada = JSON.parse(JSON.stringify(pregunta))
+        preguntaLimpiada['id'] = preguntaLimpiada['_id']
+        delete preguntaLimpiada['_id']
+        let respuestas = preguntaLimpiada['respuestas'].map((resp) => {
+          let respuesta = JSON.parse(JSON.stringify(resp))
+          respuesta['id'] = respuesta['_id']
+          delete respuesta['_id']
+          return respuesta
+        })
+        preguntaLimpiada['respuestas'] = respuestas
+        profesorDatos['preguntaProfesor'] = preguntaLimpiada
         return responses.OK({ datos: profesorDatos })
       } catch (err) {
         logger.error(err)
