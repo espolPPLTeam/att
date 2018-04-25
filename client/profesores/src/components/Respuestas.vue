@@ -132,6 +132,7 @@ export default {
   mounted () {
     this.pregunta = this.$store.getters.pregunta
     this.$store.commit('setPagina', 'Respuestas')
+    this.$store.commit('clearRespuestaNueva')
   },
   computed: {
     sesionRespuestas () {

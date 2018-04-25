@@ -57,13 +57,16 @@
             </v-list-tile>
           </v-list>
         </v-menu>
-        <v-btn flat
-          v-for="item in menuItems"
-          router :to="item.link"
-          :key="item.title"
-          v-if="loggedIn">
-          {{ item.title }}
-        </v-btn>
+        <v-badge v-if="loggedIn" v-model="preguntaNueva" color="red darken-1" overlap>
+          <v-icon slot="badge">!</v-icon>
+          <v-btn flat router :to="'/preguntas'">
+            Preguntas
+          </v-btn>
+        </v-badge>
+        <v-badge v-if="loggedIn" v-model="respuestaNueva" color="red darken-1" overlap>
+          <v-icon slot="badge">!</v-icon>
+          <v-btn flat router :to="'/respuestas'">Respuestas</v-btn>
+        </v-badge>
         <v-btn v-if="loggedIn" @click="logout">
           <v-icon>exit_to_app</v-icon>
         </v-btn>
@@ -103,14 +106,20 @@
     <!-- Footer -->
     <v-footer id="footer" app color="white" class="hidden-sm-and-up" v-if="loggedIn">
       <v-bottom-nav absolute :value="true" :active.sync="e3" color="white">
-        <v-btn flat color="teal" router :to="'/preguntas'">
-          <span class="mt-1">Preguntas</span>
-          <v-icon>fas fa-question</v-icon>
-        </v-btn>
-        <v-btn flat color="teal" router :to="'/respuestas'">
-          <span>Respuestas</span>
-          <v-icon>question_answer</v-icon>
-        </v-btn>
+        <v-badge v-model="preguntaNueva" color="red darken-1" overlap>
+          <v-icon color="white" slot="badge">!</v-icon>
+          <v-btn flat color="teal" router :to="'/preguntas'">
+            <span class="mt-1">Preguntas</span>
+            <v-icon>fas fa-question</v-icon>
+          </v-btn>
+        </v-badge>
+        <v-badge v-model="respuestaNueva" color="red darken-1" overlap>
+          <v-icon color="white" slot="badge">!</v-icon>
+          <v-btn flat color="teal" router :to="'/respuestas'">
+            <span>Respuestas</span>
+            <v-icon>question_answer</v-icon>
+          </v-btn>
+        </v-badge>
       </v-bottom-nav>
     </v-footer>
   </v-app>
@@ -145,6 +154,12 @@ export default {
     },
     loading () {
       return this.$store.getters.loading
+    },
+    preguntaNueva () {
+      return this.$store.getters.preguntaNueva
+    },
+    respuestaNueva () {
+      return this.$store.getters.respuestaNueva
     }
   },
   data () {
@@ -210,5 +225,15 @@ button:focus{
 }
 .list__tile__sub-title {
   font-size: 0.7em !important;
+}
+.badge .btn {
+  height: 100%;
+}
+.badge .badge__badge{
+  margin-top: 5%;
+  margin-right: 40%;
+}
+.bottom-nav .badge{
+  width: 100%;
 }
 </style>

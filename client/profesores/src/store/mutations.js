@@ -29,7 +29,6 @@ export default {
     router.push('/preguntas')
   },
   SOCKET_PREGUNTA_ESTUDIANTE (state, data) {
-    console.log('pregunta:', data)
     const pregunta = {
       _id: data[0].preguntaId,
       texto: data[0].texto,
@@ -40,11 +39,27 @@ export default {
       show: false
     }
     state.preguntas.push(pregunta)
+    if (state.pagina !== 'Preguntas') {
+      state.preguntaNueva = true
+    }
+    state.preguntas.sort(function (a, b) {
+      a = new Date(a.createdAt)
+      b = new Date(b.createdAt)
+      return a > b ? -1 : a < b ? 1 : 0
+    })
   },
   SOCKET_RESPUESTA_ESTUDIANTE (state, data) {
     data[0].show = false
     state.respuestas.push(data[0])
     state.respuestasMostrar = state.respuestas
+    if (state.pagina !== 'Respuestas') {
+      state.respuestaNueva = true
+    }
+    state.respuestas.sort(function (a, b) {
+      a = new Date(a.createdAt)
+      b = new Date(b.createdAt)
+      return a > b ? -1 : a < b ? 1 : 0
+    })
   },
   SOCKET_TERMINAR_PREGUNTA (state, payload) {
     state.respuestas = []
@@ -70,6 +85,11 @@ export default {
     for (let i = payload.length - 1; i >= 0; i--) {
       payload[i].show = false
     }
+    payload.sort(function (a, b) {
+      a = new Date(a.createdAt)
+      b = new Date(b.createdAt)
+      return a > b ? -1 : a < b ? 1 : 0
+    })
     state.preguntas = payload
     state.preguntasMostrar = payload
   },
@@ -89,6 +109,11 @@ export default {
     for (var i = 0; i < payload.length; i++) {
       payload[i].show = false
     }
+    payload.sort(function (a, b) {
+      a = new Date(a.createdAt)
+      b = new Date(b.createdAt)
+      return a > b ? -1 : a < b ? 1 : 0
+    })
     state.respuestas = payload
     state.respuestasMostrar = payload
   },
@@ -154,5 +179,11 @@ export default {
   },
   clearError (state) {
     state.error = null
+  },
+  clearPreguntaNueva (state) {
+    state.preguntaNueva = false
+  },
+  clearRespuestaNueva (state) {
+    state.respuestaNueva = false
   }
 }

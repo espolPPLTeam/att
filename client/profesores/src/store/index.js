@@ -26,7 +26,9 @@ export const store = new Vuex.Store({
     filtro: 'Todas',
     pagina: '',
     paraleloActual: null,
-    loading: null
+    loading: null,
+    preguntaNueva: false,
+    respuestaNueva: false
   },
   mutations,
   actions,
