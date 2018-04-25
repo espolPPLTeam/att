@@ -341,6 +341,28 @@ module.exports = ({ db, logger, messages }) => {
             reject(messages.ERROR_AL_BUSCAR)
           })
       })
+    },
+    calificarPregunta({ preguntaId, calificacion }) {
+      return new Promise((resolve, reject) => {
+        PreguntaEstudiante.calificar({ preguntaId, calificacion })
+          .then((respuesta) => {
+            resolve(respuesta)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
+    },
+    calificarRespuesta({ respuestaId, calificacion }) {
+      return new Promise((resolve, reject) => {
+        Respuesta.calificar({ respuestaId, calificacion })
+          .then((respuesta) => {
+            resolve(respuesta)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
     }
   }
   return Object.assign(Object.create(proto), {})

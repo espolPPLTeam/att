@@ -93,7 +93,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           // TODO: si paraleloId no existe
           let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
           if (pregunta) {
-            let PREGUNTA_LIMPIADA = _.pick(pregunta, ['texto', 'paralelo', '_id', 'creador', 'destacada'])
+            let PREGUNTA_LIMPIADA = _.pick(pregunta, ['texto', , 'calificacion', 'paralelo', '_id', 'creador', 'destacada'])
             return responses.OK({ datos: PREGUNTA_LIMPIADA })
           } else {
             return responses.OK_ERROR({ mensaje: messages.ERROR_AL_CREAR })
@@ -220,6 +220,32 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         profesorDatos['preguntaProfesor'] = pregunta
         return responses.OK({ datos: profesorDatos })
       } catch (err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async CalificarPregunta({ preguntaId, calificacion }) {
+      try {
+        let fueCalificada = await model.calificarPregunta({ preguntaId, calificacion })
+        if (fueCalificada) {
+          return responses.OK({ datos: messages.PREGUNTA_CALIFICADA })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.PREGUNTAID_NO_EXISTE })
+        }
+      } catch(err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async CalificarRespuesta({ respuestaId, calificacion }) {
+      try {
+        let fueCalificada = await model.calificarRespuesta({ respuestaId, calificacion })
+        if (fueCalificada) {
+          return responses.OK({ datos: messages.RESPUESTA_CALIFICADA })
+        } else {
+          return responses.OK_ERROR({ mensaje: messages.RESPUESTAID_NO_EXISTE })
+        }
+      } catch(err) {
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }

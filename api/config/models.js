@@ -106,6 +106,10 @@ const PreguntaEstudianteSchema = mongoose.Schema({
   destacada: {
     type: Boolean,
     'default': false
+  },
+  calificacion: {
+    type: Number,
+    'default': 0
   }
 },{timestamps: true, versionKey: false, collection: 'preguntasEstudiante'})
 
@@ -173,6 +177,10 @@ const RespuestaSchema = mongoose.Schema({
   preguntaId: {
     type: String,
     ref: 'PreguntaProfesor'
+  },
+  calificacion: {
+    type: Number,
+    'default': 0
   }
 },{timestamps: true, versionKey: false, collection: 'respuestas'})
 
@@ -455,6 +463,15 @@ PreguntaEstudianteSchema.statics = {
     return new Promise(function(resolve) {
       resolve(self.find({$and: [{ 'creador.correo': correo }, {createdAt: {$gte: start, $lt: end } }]}, { _id: 0 }).select(' texto createdAt'))
     })
+  },
+  calificar({ preguntaId, calificacion }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: preguntaId }, {$set: { calificacion }})
+      .then((accionEstado) => {
+          resolve(accionEstado.nModified ? true : false)
+      })
+    })
   }
 }
 
@@ -523,6 +540,15 @@ RespuestaSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.findOne({$and: [{ 'creador.correo': correo }, { preguntaId }]}))
+    })
+  },
+  calificar({ respuestaId, calificacion }) {
+    const self = this
+    return new Promise(function(resolve) {
+      self.update({ _id: respuestaId }, {$set: { calificacion }})
+      .then((accionEstado) => {
+          resolve(accionEstado.nModified ? true : false)
+      })
     })
   }
 }

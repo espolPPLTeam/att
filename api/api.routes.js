@@ -1,26 +1,13 @@
 const _ = require('lodash')
 const validator = require('validator')
 module.exports = ({ app, controller, logger }) => {
+
+  // PROFESORES
   app
   .route('/profesor/datosProfesor/:profesorCorreo')
     .get((req, res) => {
       let { profesorCorreo } = req.params
       controller.ObtenerParalelosProfesor({ profesorCorreo })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
-  .route('/estudiante/preguntar')
-    .post((req, res) => {
-      let { texto, paraleloId } = req.body
-      let { correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
-      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
         .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })
@@ -49,51 +36,6 @@ module.exports = ({ app, controller, logger }) => {
     .get((req, res) => {
       let { paraleloId } = req.params
       controller.ObtenerPreguntasEstudiante({ paraleloId })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
-  .route('/estudiante/misPreguntasHoy/:correo')
-    .get((req, res) => {
-      let { correo } = req.params
-      controller.PreguntasEstudiante({ correo })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  // RESPONDER ESTUDIANTE Y PREGUNTAR PROFESOR
-  app
-  .route('/profesor/preguntar')
-    .post((req, res) => {
-      let { texto, paraleloId } = req.body
-      let creador = req.body['creador'] ? req.body['creador'] : {}
-      controller.CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador })
-        .then((resp) => {
-          res.status(resp.codigoEstado).json(resp)
-        })
-        .catch((err, resp) => {
-          logger.error(err)
-          res.status(resp.codigoEstado).json(resp)
-        })
-    })
-
-  app
-  .route('/estudiante/responder')
-    .post((req, res) => {
-      let { texto, paraleloId, preguntaId } = req.body
-      let creador = req.body['creador'] ? req.body['creador'] : {}
-      controller.CrearRespuestaEstudiante({texto, paraleloId, preguntaId, creador })
         .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })
@@ -172,6 +114,94 @@ module.exports = ({ app, controller, logger }) => {
         logger.error(err)
         res.status(resp.codigoEstado).json(resp)
       })
+    })
+
+  app
+  .route('/profesor/preguntar')
+    .post((req, res) => {
+      let { texto, paraleloId } = req.body
+      let creador = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/profesor/calificarPreguntaEstudiante')
+    .put((req, res) => {
+      let { preguntaId, calificacion } = req.body
+      controller.CalificarPregunta({ preguntaId, calificacion })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/profesor/calificarRespuestaEstudiante')
+    .put((req, res) => {
+      let { respuestaId, calificacion } = req.body
+      controller.CalificarRespuesta({ respuestaId, calificacion })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  // ESTUDIANTES
+  app
+  .route('/estudiante/misPreguntasHoy/:correo')
+    .get((req, res) => {
+      let { correo } = req.params
+      controller.PreguntasEstudiante({ correo })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/estudiante/preguntar')
+    .post((req, res) => {
+      let { texto, paraleloId } = req.body
+      let { correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+    })
+
+  app
+  .route('/estudiante/responder')
+    .post((req, res) => {
+      let { texto, paraleloId, preguntaId } = req.body
+      let creador = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearRespuestaEstudiante({texto, paraleloId, preguntaId, creador })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   // sera usada por profesores y estudiantes

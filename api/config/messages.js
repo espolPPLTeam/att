@@ -9,6 +9,7 @@ module.exports = {
   PREGUNTA_CREADA: 'La pregunta fue creada correctamente',
   PARALELOID_VACIO: 'El campo paraleloId no debe ser vacío',
   PREGUNTAID_NO_EXISTE: 'La pregunta con ese id no existe',
+  RESPUESTAID_NO_EXISTE: 'La respuesta con ese id no existe',
   PARAMETROS_UNDEFINED: 'Parametros Undefined',
   ERROR_AL_CREAR: 'Error al crear',
   ERROR_AL_OBTENER: 'Error al obtener los datos',
@@ -18,5 +19,7 @@ module.exports = {
   PREGUNTA_TERMINADA: 'La pregunta fue terminada existosamente',
   PARALELO_NO_EXISTE: 'El paralelo con ese id no existe',
   ERROR_ACTUALIZACION: 'No se pudo actualizar',
-  ERROR_AL_BUSCAR: 'Ocurri un error al buscar'
+  ERROR_AL_BUSCAR: 'Ocurrio un error al buscar',
+  PREGUNTA_CALIFICADA: 'La pregunta fue calificada correctamente',
+  RESPUESTA_CALIFICADA: 'La respuesta fue calificada correctamente'
 }

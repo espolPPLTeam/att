@@ -916,7 +916,7 @@ describe('Routes - Integration', () => {
 			})
 	  })
 	})
-  describe('@t14 PROFESOR PREFIL', ()=> {
+  describe('@t14 PROFESOR PERFIL', ()=> {
     let doc = {
       nombre: 'Obtener datos del perfil profesor',
       metodo: 'GET',
@@ -983,5 +983,102 @@ describe('Routes - Integration', () => {
           })
       })
     }).timeout(10000)
+  })
+
+  describe('@t15 PROFESOR CALIFICAR PREGUNTA ESTUDIANTE', ()=> {
+    let doc = {
+      nombre: 'Profesor calificar pregunta estudiante',
+      metodo: 'PUT',
+      url: '/api/att/profesor/calificarPreguntaEstudiante',
+      descripcion: '',
+      body: [
+        {
+          nombre: 'preguntaId',
+          tipo: 'string',
+          descripcion: ''
+        },
+        {
+          nombre: 'calificacion',
+          tipo: 'numero',
+          descripcion: ''
+        }
+      ],
+      errors: []
+    }
+    it('@t15.1 OK', async () => {
+      let pregunta = new db.PreguntaEstudiante({
+        texto: 'Mi pregunta',
+        paralelo: 'idid'
+      })
+      let preguntaCreada = await pregunta.crear()
+      let preguntaId = preguntaCreada['_id']
+      let calificacion = 1
+      let res = await request(app)
+                .put(`/api/att/profesor/calificarPreguntaEstudiante`)
+                .send({ preguntaId, calificacion })
+      expect(res.body.estado).to.equal(true)
+      expect(res.body.codigoEstado).to.equal(200)
+      expect(res.body.datos).to.equal(messages.PREGUNTA_CALIFICADA)
+      generatorDocs.OK({ docs, doc, res })
+    })
+    it('@t15.2 PREGUNTA CON ESE ID NO EXISTE', async () => {
+      let preguntaId = 'aaa'
+      let calificacion = 1
+      let res = await request(app)
+                .put(`/api/att/profesor/calificarPreguntaEstudiante`)
+                .send({ preguntaId, calificacion })
+      expect(res.body.estado).to.equal(false)
+      expect(res.body.codigoEstado).to.equal(200)
+      expect(res.body.datos).to.equal(messages.PREGUNTAID_NO_EXISTE)
+      generatorDocs.ERROR({ nombre: 'NO EXISTE PREGUNTA CON ESE ID', docs, doc, res })
+    })
+  })
+  describe('@t16 PROFESOR CALIFICAR RESPUESTA ESTUDIANTE', ()=> {
+    let doc = {
+      nombre: 'Profesor calificar respuesta estudiante',
+      metodo: 'PUT',
+      url: '/api/att/profesor/calificarRespuestaEstudiante',
+      descripcion: '',
+      body: [
+        {
+          nombre: 'respuestaId',
+          tipo: 'string',
+          descripcion: ''
+        },
+        {
+          nombre: 'calificacion',
+          tipo: 'numero',
+          descripcion: ''
+        }
+      ],
+      errors: []
+    }
+    it('@t16.1 OK', async () => {
+      let respuesta = new db.Respuesta({
+        texto: 'Mi pregunta',
+        paralelo: 'idid'
+      })
+      let respuestaCreada = await respuesta.crear()
+      let respuestaId = respuestaCreada['_id']
+      let calificacion = 1
+      let res = await request(app)
+                .put(`/api/att/profesor/calificarRespuestaEstudiante`)
+                .send({ respuestaId, calificacion })
+      expect(res.body.estado).to.equal(true)
+      expect(res.body.codigoEstado).to.equal(200)
+      expect(res.body.datos).to.equal(messages.RESPUESTA_CALIFICADA)
+      generatorDocs.OK({ docs, doc, res })
+    })
+    it('@t16.2 RESPUESTA CON ESE ID NO EXISTE', async () => {
+      let respuestaId = 'aaa'
+      let calificacion = 1
+      let res = await request(app)
+                .put(`/api/att/profesor/calificarRespuestaEstudiante`)
+                .send({ respuestaId, calificacion })
+      expect(res.body.estado).to.equal(false)
+      expect(res.body.codigoEstado).to.equal(200)
+      expect(res.body.datos).to.equal(messages.RESPUESTAID_NO_EXISTE)
+      generatorDocs.ERROR({ nombre: 'NO EXISTE RESPUESTA CON ESE ID', docs, doc, res })
+    })
   })
 })

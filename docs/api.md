@@ -21,7 +21,7 @@ Da los paralelos para que se pueda escribir en la pagina principal los paralelos
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "SJHI1Zthz",
+        "_id": "HkVHASa3G",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -86,7 +86,7 @@ El estudiante crea una pregunta
 ```json
 {
   "texto": "Mi primera pregunta",
-  "paraleloId": "rylUIk-Y3f",
+  "paraleloId": "SyeBHASp3f",
   "creador": {
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
@@ -103,8 +103,9 @@ El estudiante crea una pregunta
   "estado": true,
   "datos": {
     "texto": "Mi primera pregunta",
-    "paralelo": "rylUIk-Y3f",
-    "_id": "BJ-8U1-Yhf",
+    "calificacion": 0,
+    "paralelo": "SyeBHASp3f",
+    "_id": "BybSBAHanM",
     "creador": {
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
@@ -164,7 +165,7 @@ El profesor coloca como destacada una pregunta que escoja
 
 ```json
 {
-  "preguntaId": "H1_8kWF3z",
+  "preguntaId": "BkZUSCB6nf",
   "destacadaEstado": true
 }
 ```
@@ -231,11 +232,12 @@ Obtiene las preguntas que se hicieron el dia actual en el paralelo enviado
         "apellidos": "ALEJANDRO SOLORZANO"
       },
       "destacada": false,
-      "_id": "HyetIyZthz",
+      "calificacion": 0,
+      "_id": "BkOSRH6hM",
       "texto": "Mi primera pregunta estudiante 1",
-      "paralelo": "S1Y8ybYhz",
-      "createdAt": "2018-04-21T18:13:36.874Z",
-      "updatedAt": "2018-04-21T18:13:36.874Z"
+      "paralelo": "HJvH0Hp2G",
+      "createdAt": "2018-04-25T00:39:27.586Z",
+      "updatedAt": "2018-04-25T00:39:27.586Z"
     },
     {
       "creador": {
@@ -245,11 +247,12 @@ Obtiene las preguntas que se hicieron el dia actual en el paralelo enviado
         "apellidos": "SARMIENTO TAPIA"
       },
       "destacada": false,
-      "_id": "S1bKIybKhz",
+      "calificacion": 0,
+      "_id": "rygOBAHa3G",
       "texto": "Mi primera pregunta estudiante 2",
-      "paralelo": "S1Y8ybYhz",
-      "createdAt": "2018-04-21T18:13:37.063Z",
-      "updatedAt": "2018-04-21T18:13:37.063Z"
+      "paralelo": "HJvH0Hp2G",
+      "createdAt": "2018-04-25T00:39:27.799Z",
+      "updatedAt": "2018-04-25T00:39:27.799Z"
     }
   ],
   "codigoEstado": 200
@@ -275,11 +278,11 @@ Obtiene las preguntas que ha hecho el estudiante el dia de hoy
   "datos": [
     {
       "texto": "Mi pregunta",
-      "createdAt": "2018-04-21T18:13:37.848Z"
+      "createdAt": "2018-04-25T00:39:28.440Z"
     },
     {
       "texto": "Mi pregunta dos",
-      "createdAt": "2018-04-21T18:13:38.049Z"
+      "createdAt": "2018-04-25T00:39:28.622Z"
     }
   ],
   "codigoEstado": 200
@@ -318,7 +321,7 @@ Valido para profesor o estudiante
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "H1i8JZY2M",
+        "_id": "SJzYSCSa3z",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -371,7 +374,7 @@ Obtiene los datos del profesor que esta conectado, usa cookies para saber quien 
     "paralelos": [
       {
         "codigo": "FISG1002",
-        "_id": "H1i8JZY2M",
+        "_id": "SJzYSCSa3z",
         "curso": "2",
         "nombre": "FÍSICA II"
       }
@@ -396,18 +399,18 @@ Obtiene los datos del estudiante. Si no hay Pregunta Profesor activa devuelve qu
     "matricula": "201602281",
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
-    "paraleloId": "Hk3LJWYhM",
+    "paraleloId": "HkZqrRrahz",
     "misPreguntasHoy": [
       {
         "texto": "Mi primera pregunta",
-        "createdAt": "2018-04-21T18:13:39.798Z"
+        "createdAt": "2018-04-25T00:39:30.178Z"
       }
     ],
     "preguntaProfesor": {
       "texto": "Pregunta Profesor",
-      "preguntaId": "B1ZnIJbthf",
-      "fechaCreadaPregunta": "2018-04-21T18:13:40.333Z",
-      "fechaCreadaRespuesta": "2018-04-21T18:13:40.738Z",
+      "preguntaId": "H1Q9SCH63z",
+      "fechaCreadaPregunta": "2018-04-25T00:39:30.325Z",
+      "fechaCreadaRespuesta": "2018-04-25T00:39:30.770Z",
       "respuesta": "Mi respuesta"
     }
   },
@@ -450,14 +453,14 @@ El profesor crea la pregunta y ademas queda habilitada para que los estudiantes 
 ```json
 {
   "texto": "Mi pregunta a estudiante",
-  "paraleloId": "HylePy-F2z",
+  "paraleloId": "ryeRSCrphf",
   "creador": {
     "preguntas": [],
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "HJxPkZt3z"
+    "_id": "HyABRST3M"
   }
 }
 ```
@@ -468,10 +471,10 @@ El profesor crea la pregunta y ademas queda habilitada para que los estudiantes 
 {
   "estado": true,
   "datos": {
-    "_id": "SkWlDJWFhG",
+    "_id": "Hy-Cr0Ba2f",
     "texto": "Mi pregunta a estudiante",
     "creador": {
-      "_id": "HJxPkZt3z",
+      "_id": "HyABRST3M",
       "correo": "mheredia@espol.edu.ec",
       "tipo": "titular",
       "nombres": "TAMARA",
@@ -504,8 +507,8 @@ El profesor crea la pregunta y ademas queda habilitada para que los estudiantes 
 
 ```json
 {
-  "paraleloId": "BJZv1-K2G",
-  "preguntaId": "HJbzvJbF3G",
+  "paraleloId": "HyyURHphz",
+  "preguntaId": "BJf1LAS62M",
   "texto": "Esta pregunta no tiene sentido",
   "creador": {
     "preguntas": [],
@@ -514,7 +517,7 @@ El profesor crea la pregunta y ademas queda habilitada para que los estudiantes 
     "matricula": "201602281",
     "nombres": "KENNETH JOSUE",
     "apellidos": "ALEJANDRO SOLORZANO",
-    "_id": "HkfvkbYnG"
+    "_id": "rylJUAHThM"
   }
 }
 ```
@@ -526,18 +529,19 @@ El profesor crea la pregunta y ademas queda habilitada para que los estudiantes 
   "estado": true,
   "datos": {
     "creador": {
-      "_id": "HkfvkbYnG",
+      "_id": "rylJUAHThM",
       "correo": "kenjoale@espol.edu.ec",
       "nombres": "KENNETH JOSUE",
       "apellidos": "ALEJANDRO SOLORZANO"
     },
     "destacada": false,
-    "paraleloId": "BJZv1-K2G",
-    "preguntaId": "HJbzvJbF3G",
+    "calificacion": 0,
+    "paraleloId": "HyyURHphz",
+    "preguntaId": "BJf1LAS62M",
     "texto": "Esta pregunta no tiene sentido",
-    "_id": "r1GfwyWK3M",
-    "createdAt": "2018-04-21T18:13:46.177Z",
-    "updatedAt": "2018-04-21T18:13:46.177Z"
+    "_id": "rkxIAH6hM",
+    "createdAt": "2018-04-25T00:39:35.621Z",
+    "updatedAt": "2018-04-25T00:39:35.621Z"
   },
   "codigoEstado": 200
 }
@@ -558,7 +562,7 @@ Profesor escoge una pregunta para destacarla
 
 ```json
 {
-  "respuestaId": "BJmvkbt3G",
+  "respuestaId": "SJlgU0HahM",
   "destacadaEstado": true
 }
 ```
@@ -612,15 +616,15 @@ La pregunta es desabilitada a que los estudiantes puedan responder
 
 ```json
 {
-  "preguntaId": "SybEvyWK2G",
-  "paraleloId": "ByNPJ-Yhf",
+  "preguntaId": "BJZWIAH62M",
+  "paraleloId": "B1-U0H62z",
   "terminadoPor": {
     "preguntas": [],
     "correo": "mheredia@espol.edu.ec",
     "tipo": "titular",
     "nombres": "TAMARA",
     "apellidos": "HEREDIA",
-    "_id": "rJlVDyZtnf"
+    "_id": "rJe-UAHp3G"
   }
 }
 ```
@@ -631,10 +635,10 @@ La pregunta es desabilitada a que los estudiantes puedan responder
 {
   "estado": true,
   "datos": {
-    "paraleloId": "ByNPJ-Yhf",
-    "preguntaId": "SybEvyWK2G",
+    "paraleloId": "B1-U0H62z",
+    "preguntaId": "BJZWIAH62M",
     "terminadoPor": {
-      "_id": "rJlVDyZtnf",
+      "_id": "rJe-UAHp3G",
       "correo": "mheredia@espol.edu.ec",
       "nombres": "TAMARA",
       "apellidos": "HEREDIA",
@@ -687,12 +691,13 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "HJBD1ZYhf",
+      "calificacion": 0,
+      "_id": "B1zUAS6hM",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 1",
-      "createdAt": "2018-04-21T18:13:48.846Z",
-      "updatedAt": "2018-04-21T18:13:48.846Z"
+      "createdAt": "2018-04-25T00:39:37.929Z",
+      "updatedAt": "2018-04-25T00:39:37.929Z"
     },
     {
       "creador": {
@@ -701,12 +706,13 @@ _response_
         "correo": "kenjoale@espol.edu.ec"
       },
       "destacada": false,
-      "_id": "rJeHDk-F2M",
+      "calificacion": 0,
+      "_id": "r1xzIAHa2G",
       "paraleloId": "aqb",
       "preguntaId": "preguntaIdentificador",
       "texto": "Mi respuesta 2",
-      "createdAt": "2018-04-21T18:13:49.049Z",
-      "updatedAt": "2018-04-21T18:13:49.049Z"
+      "createdAt": "2018-04-25T00:39:38.137Z",
+      "updatedAt": "2018-04-25T00:39:38.137Z"
     }
   ],
   "codigoEstado": 200
@@ -738,11 +744,11 @@ _response_
       },
       "habilitada": true,
       "respuestas": [],
-      "_id": "HJfSPkZKnM",
+      "_id": "rkGf80H62M",
       "texto": "Mi primera pregunta",
       "paraleloId": "abc",
-      "createdAt": "2018-04-21T18:13:49.332Z",
-      "updatedAt": "2018-04-21T18:13:49.332Z"
+      "createdAt": "2018-04-25T00:39:38.394Z",
+      "updatedAt": "2018-04-25T00:39:38.394Z"
     },
     {
       "creador": {
@@ -753,11 +759,11 @@ _response_
       },
       "habilitada": true,
       "respuestas": [],
-      "_id": "rk7rvkWKnG",
+      "_id": "Hk7f80rTnz",
       "texto": "Mi primera pregunta dos",
       "paraleloId": "abc",
-      "createdAt": "2018-04-21T18:13:49.542Z",
-      "updatedAt": "2018-04-21T18:13:49.542Z"
+      "createdAt": "2018-04-25T00:39:38.607Z",
+      "updatedAt": "2018-04-25T00:39:38.607Z"
     }
   ],
   "codigoEstado": 200
@@ -796,46 +802,126 @@ _response_
           "apellidos": "ALEJANDRO SOLORZANO"
         },
         "destacada": false,
-        "_id": "BywvkWK2f",
+        "calificacion": 0,
+        "_id": "BkfQL0BahM",
         "texto": "Mi primera pregunta",
-        "paralelo": "rkeLDy-K3f",
-        "createdAt": "2018-04-21T18:13:50.596Z",
-        "updatedAt": "2018-04-21T18:13:50.596Z"
+        "paralelo": "r1xQURHpnf",
+        "createdAt": "2018-04-25T00:39:39.471Z",
+        "updatedAt": "2018-04-25T00:39:39.471Z"
       }
     ],
     "preguntaProfesor": {
       "creador": {
-        "_id": "HJLwkWt2G",
+        "_id": "ryX8AHpnM",
         "correo": "mheredia@espol.edu.ec",
         "tipo": "titular",
         "nombres": "TAMARA",
         "apellidos": "HEREDIA"
       },
-      "createdAt": "2018-04-21T18:13:50.818Z",
+      "createdAt": "2018-04-25T00:39:39.703Z",
       "texto": "Pregunta Profesor",
       "respuestas": [
         {
           "creador": {
-            "_id": "B1-IPJ-F2f",
+            "_id": "H1WXUAHanG",
             "correo": "kenjoale@espol.edu.ec",
             "nombres": "KENNETH JOSUE",
             "apellidos": "ALEJANDRO SOLORZANO"
           },
           "destacada": false,
-          "_id": "SyWPD1WY2z",
-          "paraleloId": "rkeLDy-K3f",
-          "preguntaId": "r1xwvkWY3f",
+          "calificacion": 0,
+          "_id": "H1x4LCr62f",
+          "paraleloId": "r1xQURHpnf",
+          "preguntaId": "B14U0Sa2G",
           "texto": "Mi respuesta",
-          "createdAt": "2018-04-21T18:13:51.018Z",
-          "updatedAt": "2018-04-21T18:13:51.018Z"
+          "createdAt": "2018-04-25T00:39:39.936Z",
+          "updatedAt": "2018-04-25T00:39:39.936Z"
         }
       ],
-      "_id": "r1xwvkWY3f"
+      "_id": "B14U0Sa2G"
     }
   },
   "codigoEstado": 200
 }
 ```
+{% endapi%}
+
+
+{% api "Profesor calificar pregunta estudiante", method="PUT", url="/api/att/profesor/calificarPreguntaEstudiante"  %}
+
+
+### Body:
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------| 
+|  preguntaId  | string  |    | 
+|  calificacion  | numero  |    | 
+
+### Response:
+
+```json
+{
+  "estado": true,
+  "datos": "La pregunta fue calificada correctamente",
+  "codigoEstado": 200
+}
+```
+
+### ERRORS:
+__NO EXISTE PREGUNTA CON ESE ID__
+
+
+
+
+_response_
+
+```js
+{
+  "estado": false,
+  "datos": "La pregunta con ese id no existe",
+  "codigoEstado": 200
+}
+```
+	
+	
+{% endapi%}
+
+
+{% api "Profesor calificar respuesta estudiante", method="PUT", url="/api/att/profesor/calificarRespuestaEstudiante"  %}
+
+
+### Body:
+| Name       | Type    | Desc |
+| :--------- | :------ | :-------| 
+|  respuestaId  | string  |    | 
+|  calificacion  | numero  |    | 
+
+### Response:
+
+```json
+{
+  "estado": true,
+  "datos": "La respuesta fue calificada correctamente",
+  "codigoEstado": 200
+}
+```
+
+### ERRORS:
+__NO EXISTE RESPUESTA CON ESE ID__
+
+
+
+
+_response_
+
+```js
+{
+  "estado": false,
+  "datos": "La respuesta con ese id no existe",
+  "codigoEstado": 200
+}
+```
+	
+	
 {% endapi%}
 
 

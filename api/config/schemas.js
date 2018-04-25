@@ -75,7 +75,7 @@ const ESTUDIANTE_CON_ID = {
 
 const PREGUNTA = {
   "type": "object",
-  "minProperties": 5,
+  "minProperties": 6,
   "additionalProperties": false,
   "properties": {
     "texto": { "type": "string" },
@@ -85,14 +85,15 @@ const PREGUNTA = {
       "items" : ESTUDIANTE
     },
     "_id": { "type": "string" },
-    "destacada": { "type": "boolean" }
+    "destacada": { "type": "boolean" },
+    "calificacion": { "type": "number"}
   },
   "additionalProperties": false
 }
 
 const PREGUNTAS_HOY_ESTUDIANTES = {
   "type": "object",
-  "minProperties": 7,
+  "minProperties": 8,
   "additionalProperties": false,
   "properties": {
     "creador": {
@@ -102,6 +103,7 @@ const PREGUNTAS_HOY_ESTUDIANTES = {
     "_id": { "type": "string" },
     "destacada": { "type": "boolean" },
     "texto": { "type": "string" },
+    "calificacion": { "type": "number" },
     "paralelo": { "type": "string" },
     "createdAt": { "type": "string" },
     "updatedAt": { "type": "string" }
@@ -154,7 +156,7 @@ const PROFESOR_CREAR_PREGUNTA = {
 
 const RESPUESTA_ESTUDIANTE = {
   "type": "object",
-  "minProperties": 8,
+  "minProperties": 9,
   "additionalProperties": false,
   "properties": {
     "_id": { "type": "string" },
@@ -162,6 +164,7 @@ const RESPUESTA_ESTUDIANTE = {
     "createdAt": { "type": "string" },
     "texto": { "type": "string" },
     "destacada": { "type": "boolean" },
+    "calificacion": { "type": "number"},
     "paraleloId": { "type": "string" },
     "preguntaId": { "type": "string" },
     "creador": {
