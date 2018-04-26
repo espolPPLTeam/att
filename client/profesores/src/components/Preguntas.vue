@@ -21,14 +21,23 @@
     <v-layout row wrap>
       <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
         <v-card hover>
-          <v-layout row wrap>
-            <v-flex xs2>
+          <v-layout row>
+            <v-flex xs3 v-show="pregunta.show">
               <v-card-actions>
-                <v-icon v-if="pregunta.destacada" class="mx-auto mt-3" color="yellow darken-2" @click="destacarPregunta(pregunta._id, !pregunta.destacada)">star</v-icon>
-                <v-icon v-else class="mx-auto mt-3" @click="destacarPregunta(pregunta._id, !pregunta.destacada)">star_border</v-icon>
+                <v-container fluid fill-height>
+                  <v-layout align-center justify-center row wrap>
+                    <v-flex xs12>
+                      <v-radio-group v-model="pregunta.calificacion" :mandatory="false">
+                        <v-radio label="Relevante" value="1" color="yellow"></v-radio>
+                        <v-radio label="Poco relevante" value="2" color="orange"></v-radio>
+                        <v-radio label="No enfocada" value="3" color="red"></v-radio>
+                      </v-radio-group>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
               </v-card-actions>
             </v-flex>
-            <v-flex xs10>
+            <v-flex xs12>
               <v-card-text class="text-xs-left pa-1 text-container">
                 <p v-html="pregunta.texto" class="pa-2 texto-pregunta"></p>
               </v-card-text>
@@ -89,7 +98,24 @@ export default {
     return {
       filtro: 'Todas',
       opciones: ['Todas', 'Destacadas'],
-      busqueda: ''
+      busqueda: '',
+      items: [
+        {
+          id: '1',
+          text: 'Relevante',
+          icon: 'star'
+        },
+        {
+          id: '2',
+          text: 'Poco relevante',
+          icon: 'star_half'
+        },
+        {
+          id: '3',
+          text: 'No enfocada',
+          icon: 'star_border'
+        }
+      ]
     }
   },
   mounted () {

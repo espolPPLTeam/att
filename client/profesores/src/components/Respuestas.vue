@@ -62,8 +62,17 @@
           <v-layout row wrap>
             <v-flex xs2>
               <v-card-actions>
-                <v-icon v-if="respuesta.destacada" class="mx-auto mt-3" color="yellow darken-2" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark</v-icon>
-                <v-icon v-else class="mx-auto mt-3" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark_border</v-icon>
+                <v-container fluid fill-height>
+                  <v-layout align-center justify-center row wrap>
+                    <v-flex xs12>
+                      <v-radio-group v-model="respuesta.calificacion" :mandatory="false">
+                        <v-radio label="Relevante" value="1" color="yellow"></v-radio>
+                        <v-radio label="Poco relevante" value="2" color="orange"></v-radio>
+                        <v-radio label="No enfocada" value="3" color="red"></v-radio>
+                      </v-radio-group>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
               </v-card-actions>
             </v-flex>
             <v-flex xs10>
