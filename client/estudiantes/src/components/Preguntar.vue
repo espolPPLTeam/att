@@ -39,6 +39,9 @@
 <script>
 export default {
   name: 'Preguntar',
+  mounted () {
+    this.$store.commit('setPagina', 'Preguntar')
+  },
   computed: {
     loggedIn () {
       return this.$store.getters.loggedIn

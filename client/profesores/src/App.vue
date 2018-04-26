@@ -15,7 +15,7 @@
               </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
-          <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo._id)">
+          <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo.id)">
             <v-list-tile-action>
               <v-icon></v-icon>
             </v-list-tile-action>
@@ -52,7 +52,7 @@
             <v-icon dark class="ml-2">arrow_drop_down</v-icon>
           </v-btn>
           <v-list dark>
-            <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo._id)">
+            <v-list-tile v-for="paralelo in paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo.id)">
               <v-list-tile-title>{{ paralelo.nombre }} - {{ paralelo.curso }}</v-list-tile-title>
             </v-list-tile>
           </v-list>
@@ -189,7 +189,7 @@ export default {
     },
     cambiarParalelo (idParalelo) {
       this.sideNav = false
-      this.$store.commit('SOCKET_cambiarParalelo', {paraleloAntiguo: this.paraleloActual._id, paraleloNuevo: idParalelo})
+      this.$store.commit('SOCKET_cambiarParalelo', {paraleloAntiguo: this.paraleloActual.id, paraleloNuevo: idParalelo})
     }
   }
 }
@@ -235,5 +235,11 @@ button:focus{
 }
 .bottom-nav .badge{
   width: 100%;
+}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .texto-pregunta, .texto-respuesta {
+    font-size: 2em;
+  }
 }
 </style>

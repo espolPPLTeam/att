@@ -68,7 +68,7 @@
             </v-flex>
             <v-flex xs10>
               <v-card-text class="text-xs-left pa-1 text-container">
-                <p v-html="respuesta.texto" class="pa-2"></p>
+                <p v-html="respuesta.texto" class="pa-2 texto-respuesta"></p>
               </v-card-text>
               <v-card-text class="caption text-xs-right pa-2">
                 {{ respuesta.createdAt | timeFromDate }}
@@ -132,7 +132,7 @@ export default {
   mounted () {
     this.pregunta = this.$store.getters.pregunta
     this.$store.commit('setPagina', 'Respuestas')
-    this.$store.commit('clearRespuestaNueva')
+    this.$store.commit('setPreguntaNueva', false)
   },
   computed: {
     sesionRespuestas () {

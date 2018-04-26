@@ -30,7 +30,7 @@
             </v-flex>
             <v-flex xs10>
               <v-card-text class="text-xs-left pa-1 text-container">
-                <p v-html="pregunta.texto" class="pa-2"></p>
+                <p v-html="pregunta.texto" class="pa-2 texto-pregunta"></p>
               </v-card-text>
               <v-card-text class="caption text-xs-right pa-2">
                 {{ pregunta.createdAt | timeFromDate }}
@@ -94,7 +94,7 @@ export default {
   },
   mounted () {
     this.$store.commit('setPagina', 'Preguntas')
-    this.$store.commit('clearPreguntaNueva')
+    this.$store.commit('setPreguntaNueva', false)
   },
   methods: {
     destacarPregunta (id, estado) {

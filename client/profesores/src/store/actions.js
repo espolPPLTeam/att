@@ -5,12 +5,15 @@ export default {
     commit('setError', null)
     Vue.http.get('/api/att/datosUsuario')
       .then((response) => {
-        commit('setLoading', false)
         if (response.body.estado) {
           commit('setUsuario', response.body.datos)
           // Por default se obtienen los datos del primer paralelo
-          dispatch('getDatosProfesor', {paralelo: state.usuario.paralelos[0]._id, correo: state.usuario.correo})
-          commit('SOCKET_unirseAParalelo', state.usuario.paralelos[0]._id)
+          const paraleloActual = response.body.datos.paralelos[0]
+          commit('setParaleloActual', paraleloActual)
+          dispatch('getDatosProfesor', {paralelo: paraleloActual.id, correo: state.usuario.correo})
+          commit('SOCKET_unirseAParalelo', paraleloActual.id)
+        } else {
+          commit('setLoading', false)
         }
       }, (err) => {
         commit('setError', err)
@@ -27,22 +30,24 @@ export default {
   */
   getDatosProfesor ({commit, state}, payload) {
     commit('setError', null)
-    commit('setLoading', true)
     const urlApi = '/api/att/profesor/perfil/' + payload.paralelo + '/' + payload.correo
     Vue.http.get(urlApi)
       .then((response) => {
         commit('setLoading', false)
         if (response.body.estado) {
           commit('setPreguntas', response.body.datos.preguntasEstudiantesHoy)
-          if (!isEmpty(response.body.datos.preguntaProfesor)) {
+          if (hayPreguntaActual(response.body.datos.preguntaProfesor)) {
             commit('setPreguntaProfesor', response.body.datos.preguntaProfesor)
             commit('setRespuestas', response.body.datos.preguntaProfesor.respuestas)
             commit('setSesionRespuestas', 'activo')
           } else {
             commit('setSesionRespuestas', 'inactivo')
           }
+        } else {
+          commit('setError', response.body)
         }
       }, (err) => {
+        commit('setError', err)
         commit('setLoading', false)
         console.log(err)
       })
@@ -74,10 +79,12 @@ export default {
           commit('disconnectSocket')
         } else {
           console.log('ERROR LOGOUT')
+          commit('setError', response.body)
         }
       })
       .catch((err) => {
         commit('setLoading', false)
+        commit('setError', err)
         console.log(err)
       })
   },
@@ -107,31 +114,33 @@ export default {
     commit('setError', null)
     commit('setLoading', true)
     const data = {
-      paraleloId: state.usuario.paralelos[0]._id,
-      preguntaId: '',
-      _id: '',
-      texto: payload,
-      creador: state.usuario
+      paraleloId: state.paraleloActual.id,
+      creador: state.usuario,
+      texto: payload
     }
     Vue.http.post('/api/att/profesor/preguntar', data)
       .then((response) => {
         commit('setLoading', false)
-        data.preguntaId = response.body.datos._id
-        data._id = response.body.datos._id
-        commit('SOCKET_preguntaProfesor', data)
-        commit('setSesionRespuestas', 'activo')
+        if (response.body.estado) {
+          data.id = response.body.datos.id
+          commit('SOCKET_preguntaProfesor', data)
+          commit('setPreguntaProfesor', data)
+          commit('setSesionRespuestas', 'activo')
+        } else {
+          commit('setError', response.body)
+        }
       }, (err) => {
         commit('setLoading', false)
-        console.log(err)
         commit('setError', err)
+        console.log(err)
       })
   },
   terminarSesionRespuestas ({commit, state}) {
     commit('setError', null)
     const urlApi = '/api/att/profesor/terminarPregunta'
     const data = {
-      preguntaId: state.pregunta._id,
-      paraleloId: state.usuario.paralelos[0]._id,
+      preguntaId: state.pregunta.id,
+      paraleloId: state.paraleloActual.id,
       terminadoPor: {
         nombres: state.usuario.nombres,
         apellidos: state.usuario.apellidos,
@@ -144,8 +153,11 @@ export default {
         if (response.body.estado) {
           commit('SOCKET_terminarPregunta', data)
         } else {
-          commit('setError', response)
+          commit('setError', response.body)
         }
+      }, (err) => {
+        commit('setError', err)
+        console.log(err)
       })
   },
   destacarRespuesta ({commit}, payload) {
@@ -169,6 +181,6 @@ export default {
   }
 }
 
-function isEmpty (obj) {
-  return Object.keys(obj).length === 0
+function hayPreguntaActual (obj) {
+  return obj.hasOwnProperty('id')
 }

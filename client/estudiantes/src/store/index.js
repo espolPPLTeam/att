@@ -16,8 +16,11 @@ export const store = new Vuex.Store({
     usuario: null,
     preguntas: [],
     preguntaProfesor: null,
+    preguntaProfesorNueva: false,
     respuesta: null,
-    error: null
+    error: null,
+    loading: null,
+    pagina: ''
   },
   mutations,
   actions,

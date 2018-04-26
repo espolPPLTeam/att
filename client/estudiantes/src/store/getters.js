@@ -18,5 +18,14 @@ export default {
   },
   respuesta (state) {
     return state.respuesta
+  },
+  loading (state) {
+    return state.loading
+  },
+  preguntaProfesorNueva (state) {
+    return state.preguntaProfesorNueva
+  },
+  pagina (state) {
+    return state.pagina
   }
 }
