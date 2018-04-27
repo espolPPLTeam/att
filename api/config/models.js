@@ -150,7 +150,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
   	type: String,
 	  ref: 'Respuesta',
   }]
-},{timestamps: true, versionKey: false, collection: 'preguntasProfesores'})
+},{timestamps: true, versionKey: false, collection: 'preguntasProfesores', toJSON: { virtuals: true }})
 
 const RespuestaSchema = mongoose.Schema({
   _id: {
@@ -319,11 +319,41 @@ ProfesorSchema.statics = {
   },
 }
 
+ParaleloSchema.virtual('id').get(function(){
+    return this._id
+})
+
+// ParaleloSchema.options.toJSON = {
+//   transform: function(doc, ret) {
+//     ret.id = ret._id
+//     delete ret._id
+//     delete ret.__v
+//   }
+// }
+
 ParaleloSchema.statics = {
   obtenerPorId({ paraleloId }) {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.findOne({ _id: paraleloId }))
+    })
+  },
+  obtenerPorIdPopulate({ paraleloId }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id: paraleloId })
+      .populate(
+        {
+          path: 'preguntasProfesor',
+          select: 'texto createdAt id'
+        }
+      )
+      .populate(
+        {
+          path: 'preguntasEstudiante'
+        }
+      )
+      .select('preguntasProfesor preguntasEstudiante -_id'))
     })
   },
   obtenerTodosPopulateEstudiantes() {
@@ -429,6 +459,18 @@ ParaleloSchema.statics = {
 }
 const Paralelo = db.model('Paralelo', ParaleloSchema)
 
+PreguntaEstudianteSchema.virtual('id').get(function(){
+    return this._id
+})
+
+PreguntaEstudianteSchema.options.toJSON = {
+  transform: function(doc, ret) {
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
+  }
+}
+
 PreguntaEstudianteSchema.statics = {
   obtenerPorId({ preguntaId }) {
     const self = this
@@ -469,6 +511,18 @@ PreguntaEstudianteSchema.statics = {
           resolve(accionEstado.nModified ? true : false)
       })
     })
+  }
+}
+
+PreguntaProfesorSchema.virtual('id').get(function(){
+    return this._id
+})
+
+PreguntaProfesorSchema.options.toJSON = {
+  transform: function(doc, ret) {
+    ret.id = ret._id
+    delete ret._id
+    delete ret.__v
   }
 }
 

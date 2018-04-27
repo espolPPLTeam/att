@@ -330,6 +330,28 @@ module.exports = ({ db, logger, messages }) => {
             reject(messages.ERROR_AL_BUSCAR)
           })
       })
+    },
+    historialParalelo({ paraleloId }) {
+      return new Promise((resolve, reject) => {
+        Paralelo.obtenerPorIdPopulate({ paraleloId})
+          .then((paraleloDatos) => {
+            // para
+            // console.log(paraleloDatos['preguntasProfesor'][0]['createdAt'])
+            // let datosOrdenadorPorFecha = { }
+            let fecha = paraleloDatos['preguntasProfesor'][0]['createdAt']
+            let datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((resp, i) => {
+              // let datos = {}
+              // console.log(i)
+              let fecha = moment(i['createdAt']).format('DD-MM-YYYY')
+              return resp[fecha] = '1'
+            }, {})
+            // console.log(moment(fecha).format('DD-MM-YYYY'))
+            resolve(datosOrdenadorPorFecha)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
     }
   }
   return Object.assign(Object.create(proto), {})

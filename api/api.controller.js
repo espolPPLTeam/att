@@ -241,6 +241,16 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         logger.error(err)
         return responses.ERROR_SERVIDOR
       }
+    },
+    async HistorialParalelo({ paraleloId }) {
+      // datos: [ { fecha, preguntas// cantidad  preguntas, preguntasProfesor:  [{ nombre, id }] } ]
+      try {
+        let paralelo = await model.historialParalelo({ paraleloId })
+        return responses.OK({ datos: paralelo })
+      } catch(err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
     }
   }
   return Object.assign(Object.create(proto), {})

@@ -816,4 +816,28 @@ describe('Routes - Integration', () => {
       generatorDocs.ERROR({ nombre: 'NO EXISTE RESPUESTA CON ESE ID', docs, doc, res })
     })
   })
+  describe('@t12 HISTORIAL PARALELO', ()=> {
+    let estudiante = data.estudiantes[0]
+    let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
+    it('@t11.2 OK', async () => {
+      let profesorCreado = await model.crearProfesor(profesor)
+      let paraleloCreado = await model.crearParalelo(paralelo)
+      let estudianteCreado = await model.crearEstudiante(estudiante)
+      const paraleloId = paraleloCreado['_id']
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: estudiante
+      })
+      await model.crearPreguntaProfesorYHabilitarla({
+        texto: 'Pregunta Profesor',
+        paraleloId,
+        creador: profesor
+      })
+      let res = await request(app)
+                .get(`/api/att/profesor/historialParalelo/${paraleloId}`)
+      console.log(res.body.datos)
+    })
+  })
 })
