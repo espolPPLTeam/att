@@ -176,5 +176,13 @@ export default {
     state.respuestasMostrar = state.respuestasMostrar.filter((respuesta) => {
       return respuesta.texto.indexOf(payload.busqueda) >= 0
     })
+  },
+  calificarPregunta (state, payload) {
+    const pregunta = state.preguntas.find((pregunta) => {
+      return pregunta.id === payload.id
+    })
+    if (pregunta && pregunta !== undefined) {
+      pregunta.calificacion = payload.calificacion
+    }
   }
 }

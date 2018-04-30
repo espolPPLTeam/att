@@ -9,6 +9,8 @@ import App from './App'
 import router from './router'
 import { store } from './store'
 
+import Star from './components/Shared/Stars'
+
 let url
 if (process.env.NODE_ENV === 'production') {
   url = '/att'
@@ -31,6 +33,9 @@ Vue.filter('timeFromDate', (value) => {
     return moment(value).locale('es').fromNow()
   }
 })
+
+// COMPONENTS
+Vue.component('star', Star)
 
 /* eslint-disable no-new */
 new Vue({

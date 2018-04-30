@@ -27,11 +27,7 @@
                 <v-container fluid fill-height>
                   <v-layout align-center justify-center row wrap>
                     <v-flex xs12>
-                      <v-radio-group v-model="pregunta.calificacion" :mandatory="false">
-                        <v-radio label="Relevante" value="1" color="yellow"></v-radio>
-                        <v-radio label="Poco relevante" value="2" color="orange"></v-radio>
-                        <v-radio label="No enfocada" value="3" color="red"></v-radio>
-                      </v-radio-group>
+                      <star :value="pregunta.calificacion" :id="pregunta.id"></star>
                     </v-flex>
                   </v-layout>
                 </v-container>
