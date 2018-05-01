@@ -10,6 +10,7 @@ import router from './router'
 import { store } from './store'
 
 import Star from './components/Shared/Stars'
+import Pregunta from './components/Shared/Pregunta'
 
 let url
 if (process.env.NODE_ENV === 'production') {
@@ -36,6 +37,7 @@ Vue.filter('timeFromDate', (value) => {
 
 // COMPONENTS
 Vue.component('star', Star)
+Vue.component('card-pregunta', Pregunta)
 
 /* eslint-disable no-new */
 new Vue({

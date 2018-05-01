@@ -5,22 +5,19 @@
       class="star-rating__star"
       v-for="(rating, i) in ratings"
       :key="i"
-      :class="{'is-selected': ((temp_value >= rating) && temp_value != null), 'is-disabled' : disabled}"
+      :class="{'is-selected': ((temp_value >= rating) && temp_value != null)}"
       v-on:click="set(rating)"
       v-on:mouseover="star_over(rating)"
       v-on:mouseout="star_out">
-        <input class="star-rating star-rating__checkbox" type="radio" :value="rating" :disabled="disabled">
+        <input class="star-rating star-rating__checkbox" type="radio" :value="rating">
         ★
-      </label>
+    </label>
   </section>
 </template>
 <script>
 export default {
   mounted () {
     this.temp_value = this.value
-    if (this.value !== 0) {
-      this.disabled = true
-    }
   },
   props: {
     'value': null,
@@ -28,7 +25,6 @@ export default {
   },
   data () {
     return {
-      disabled: false,
       temp_value: null,
       ratings: [1, 2, 3]
     }

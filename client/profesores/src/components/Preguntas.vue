@@ -20,54 +20,7 @@
     <!-- Preguntas -->
     <v-layout row wrap>
       <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
-        <v-card hover>
-          <v-layout row>
-            <v-flex xs3 v-show="pregunta.show">
-              <v-card-actions>
-                <v-container fluid fill-height>
-                  <v-layout align-center justify-center row wrap>
-                    <v-flex xs12>
-                      <star :value="pregunta.calificacion" :id="pregunta.id"></star>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-card-actions>
-            </v-flex>
-            <v-flex xs12>
-              <v-card-text class="text-xs-left pa-1 text-container">
-                <p v-html="pregunta.texto" class="pa-2 texto-pregunta"></p>
-              </v-card-text>
-              <v-card-text class="caption text-xs-right pa-2">
-                {{ pregunta.createdAt | timeFromDate }}
-              </v-card-text>
-            </v-flex>
-          </v-layout>
-          <v-card-actions row>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="pregunta.show = !pregunta.show">
-              <v-icon v-if="!pregunta.show">arrow_drop_down</v-icon>
-              <v-icon v-else>arrow_drop_up</v-icon>
-            </v-btn>
-          </v-card-actions>
-          <v-slide-y-transition>
-            <v-card-text v-show="pregunta.show" class="hidden-info">
-              <v-layout row wrap>
-                <v-flex xs12 sm6>
-                  <p class="text-xs-center text-sm-left">
-                    <v-icon class="mr-2">person</v-icon>
-                    {{ pregunta.creador.nombres }} {{ pregunta.creador.apellidos }}
-                  </p>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <p class="text-xs-center text-sm-right">
-                    <v-icon class="mr-2">email</v-icon>
-                    {{ pregunta.creador.correo }}
-                  </p>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
-          </v-slide-y-transition>
-        </v-card>
+        <card-pregunta :pregunta="pregunta"></card-pregunta>
       </v-flex>
     </v-layout>
   </v-container>
@@ -94,24 +47,7 @@ export default {
     return {
       filtro: 'Todas',
       opciones: ['Todas', 'Destacadas'],
-      busqueda: '',
-      items: [
-        {
-          id: '1',
-          text: 'Relevante',
-          icon: 'star'
-        },
-        {
-          id: '2',
-          text: 'Poco relevante',
-          icon: 'star_half'
-        },
-        {
-          id: '3',
-          text: 'No enfocada',
-          icon: 'star_border'
-        }
-      ]
+      busqueda: ''
     }
   },
   mounted () {
@@ -119,9 +55,6 @@ export default {
     this.$store.commit('setPreguntaNueva', false)
   },
   methods: {
-    destacarPregunta (id, estado) {
-      this.$store.dispatch('destacarPregunta', {id: id, estado: estado})
-    },
     buscar () {
       this.$store.commit('buscar', {busqueda: this.busqueda, filtro: this.filtro})
     },
