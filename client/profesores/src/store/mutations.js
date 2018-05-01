@@ -1,4 +1,5 @@
 import router from '../router'
+import Vue from 'vue'
 
 export default {
   // SOCKETS ENVIAOS
@@ -71,7 +72,7 @@ export default {
   },
   setPreguntas (state, payload) {
     for (let i = payload.length - 1; i >= 0; i--) {
-      payload[i].show = false
+      Vue.set(payload[i], 'show', false)
     }
     payload.sort(function (a, b) {
       a = new Date(a.createdAt)
@@ -88,8 +89,8 @@ export default {
     state.pregunta = payload
   },
   setRespuestas (state, payload) {
-    for (let i = 0; i < payload.length; i++) {
-      payload[i].show = false
+    for (let i = payload.length - 1; i >= 0; i--) {
+      Vue.set(payload[i], 'show', false)
     }
     payload.sort(function (a, b) {
       a = new Date(a.createdAt)
@@ -183,6 +184,14 @@ export default {
     })
     if (pregunta && pregunta !== undefined) {
       pregunta.calificacion = payload.calificacion
+    }
+  },
+  calificarRespuesta (state, payload) {
+    const respuesta = state.respuestas.find((respuesta) => {
+      return respuesta.id === payload.id
+    })
+    if (respuesta && respuesta !== undefined) {
+      respuesta.calificacion = payload.calificacion
     }
   }
 }

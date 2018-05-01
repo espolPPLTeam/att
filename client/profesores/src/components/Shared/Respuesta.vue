@@ -2,12 +2,12 @@
   <v-card hover>
     <v-layout row>
       <!-- Calificar -->
-      <v-flex xs2 sm3 lg2 v-show="pregunta.show">
+      <v-flex xs2 sm3 lg2 v-show="respuesta.show">
         <v-card-actions>
           <v-container fluid fill-height>
             <v-layout align-center justify-center row wrap>
               <v-flex xs12>
-                <star :value="pregunta.calificacion" :id="pregunta.id" :tipo="'pregunta'"></star>
+                <star :value="respuesta.calificacion" :id="respuesta.id" :tipo="'respuesta'"></star>
               </v-flex>
             </v-layout>
           </v-container>
@@ -16,10 +16,10 @@
       <!-- Texto && Fecha -->
       <v-flex xs12>
         <v-card-text class="text-xs-left pa-1 text-container">
-          <p v-html="pregunta.texto" class="pa-2 texto-pregunta"></p>
+          <p v-html="respuesta.texto" class="pa-2 texto-respuesta"></p>
         </v-card-text>
         <v-card-text class="caption text-xs-right pa-2">
-          {{ pregunta.createdAt | timeFromDate }}
+          {{ respuesta.createdAt | timeFromDate }}
         </v-card-text>
       </v-flex>
     </v-layout>
@@ -28,24 +28,23 @@
       <v-flex xs12>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn icon @click.native="pregunta.show = !pregunta.show">
-            <v-icon v-if="!pregunta.show">arrow_drop_down</v-icon>
-            <v-icon v-else>arrow_drop_up</v-icon>
+          <v-btn icon @click.native="respuesta.show = !respuesta.show">
+            <v-icon>{{ respuesta.show ? 'arrow_drop_up' : 'arrow_drop_down' }}</v-icon>
           </v-btn>
         </v-card-actions>
         <v-slide-y-transition>
-          <v-card-text v-show="pregunta.show" class="hidden-info">
+          <v-card-text v-show="respuesta.show" class="hidden-info">
             <v-layout row wrap>
               <v-flex xs12 sm6>
                 <p class="text-xs-center text-sm-left">
                   <v-icon class="mr-2">person</v-icon>
-                  {{ pregunta.creador.nombres }} {{ pregunta.creador.apellidos }}
+                  {{ respuesta.creador.nombres }} {{ respuesta.creador.apellidos }}
                 </p>
               </v-flex>
               <v-flex xs12 sm6>
                 <p class="text-xs-center text-sm-right">
                   <v-icon class="mr-2">email</v-icon>
-                  {{ pregunta.creador.correo }}
+                  {{ respuesta.creador.correo }}
                 </p>
               </v-flex>
             </v-layout>
@@ -58,7 +57,7 @@
 <script>
 export default {
   props: {
-    pregunta: Object
+    respuesta: Object
   }
 }
 </script>

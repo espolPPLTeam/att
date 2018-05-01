@@ -21,7 +21,8 @@ export default {
   },
   props: {
     'value': null,
-    'id': String
+    'id': String,
+    'tipo': String
   },
   data () {
     return {
@@ -50,10 +51,13 @@ export default {
      * Set the rating of the score
      */
     set (value) {
-      if (!this.disabled) {
+      if (this.tipo === 'pregunta') {
         this.$store.commit('calificarPregunta', {id: this.id, calificacion: value})
         this.$store.dispatch('calificarPregunta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
         this.temp_value = value
+      } else if (this.tipo === 'respuesta') {
+        this.$store.commit('calificarRespuesta', {id: this.id, calificacion: value})
+        this.$store.dispatch('calificarRespuesta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
       }
     }
   }

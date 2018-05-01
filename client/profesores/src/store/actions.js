@@ -157,22 +157,22 @@ export default {
         console.log(err)
       })
   },
-  destacarRespuesta ({commit}, payload) {
+  calificarRespuesta ({commit}, payload) {
     commit('setError', null)
-    const urlApi = '/api/att/profesor/destacarRespuesta'
+    const urlApi = '/api/att/profesor/calificarRespuestaEstudiante'
     const data = {
       respuestaId: payload.id,
-      destacadaEstado: payload.estado
+      calificacion: payload.calificacion
     }
     Vue.http.put(urlApi, data)
       .then((response) => {
-        if (response.body.estado) {
-          commit('setEstadoRespuesta', payload)
-        } else {
+        if (!response.body.estado) {
           commit('setError', response.body)
+          commit('calificarRespuesta', {id: payload.id, calificacion: payload.calificacionAntigua})
         }
       }, (err) => {
         commit('setError', err)
+        commit('calificarRespuesta', {id: payload.id, calificacion: payload.calificacionAntigua})
         console.log('err', err)
       })
   }
