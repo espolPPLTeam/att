@@ -137,19 +137,19 @@ export default {
   filtrar (state, payload) {
     state.filtro = payload.filtro
     if (payload.pagina === 'Preguntas') {
-      if (payload.filtro === 'Todas') {
+      if (payload.filtro.texto === 'Todas') {
         state.preguntasMostrar = state.preguntas
-      } else if (payload.filtro === 'Destacadas') {
+      } else {
         state.preguntasMostrar = state.preguntas.filter((pregunta) => {
-          return pregunta.destacada === true
+          return pregunta.calificacion === payload.filtro.valor
         })
       }
     } else if (payload.pagina === 'Respuestas') {
-      if (payload.filtro === 'Todas') {
+      if (payload.filtro.texto === 'Todas') {
         state.respuestasMostrar = state.respuestas
-      } else if (payload.filtro === 'Destacadas') {
+      } else {
         state.respuestasMostrar = state.respuestas.filter((respuesta) => {
-          return respuesta.destacada === true
+          return respuesta.calificacion === payload.filtro.valor
         })
       }
     }

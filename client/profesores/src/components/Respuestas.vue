@@ -49,7 +49,7 @@
             <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscarRespuestas" v-model="busqueda" @keypress="keypressedBusqueda($event)"></v-text-field>
           </v-flex>
           <v-flex xs5 sm2 md2>
-            <v-select :items="opciones" v-model="filtro" label="Filtro"></v-select>
+            <v-select :items="opciones" item-text="texto" item-value="value" v-model="filtro" label="Filtro" dense></v-select>
           </v-flex>
           <v-flex sm2 md2 class="hidden-xs-only mt-1">
             <v-btn class="red white--text"  @click.native="dialog = !dialog">Terminar</v-btn>
@@ -90,7 +90,7 @@ export default {
   mounted () {
     this.pregunta = this.$store.getters.pregunta
     this.$store.commit('setPagina', 'Respuestas')
-    this.$store.commit('setPreguntaNueva', false)
+    this.$store.commit('setRespuestaNueva', false)
   },
   computed: {
     sesionRespuestas () {
@@ -126,7 +126,24 @@ export default {
       },
       busqueda: '',
       filtro: 'Todas',
-      opciones: ['Todas', 'Destacadas']
+      opciones: [
+        {
+          valor: 0,
+          texto: 'Todas'
+        },
+        {
+          valor: 1,
+          texto: 'No enfocadas'
+        },
+        {
+          valor: 2,
+          texto: 'Buenas'
+        },
+        {
+          valor: 3,
+          texto: 'Muy buenas'
+        }
+      ]
     }
   },
   methods: {
