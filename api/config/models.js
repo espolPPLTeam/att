@@ -111,7 +111,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
     type: Number,
     'default': 0
   }
-},{timestamps: true, versionKey: false, collection: 'preguntasEstudiante'})
+},{timestamps: true, versionKey: false, collection: 'preguntasEstudiante', toJSON: { virtuals: true }})
 
 const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de createdAt y updateAt podemos sacar el timepo que se habilito la pregunta
   _id: {
@@ -138,7 +138,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     apellidos: { type: String },
     tipo: {
       type: String,
-      enum: ['titular', 'peer']
+      enum: ['titular', 'peer', 'admin']
     }
   },
   paraleloId: {
@@ -447,6 +447,14 @@ ParaleloSchema.statics = {
       })
     })
   },
+  PreguntaActualLimpiar() {
+    const self = this
+    return new Promise(function(resolve) {
+      self.updateMany({ }, {$set: { 'preguntaActual': null }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
   obtenerPreguntaHabilitada({ paraleloId }) {
     const self = this
     return new Promise(function(resolve) {
@@ -503,6 +511,14 @@ PreguntaEstudianteSchema.statics = {
       resolve(self.find({$and: [{ 'creador.correo': correo }, {createdAt: {$gte: start, $lt: end } }]}, { _id: 0 }).select(' texto createdAt'))
     })
   },
+  obtenerPreguntasPorDia({ dia }) {
+    let start = moment(`${dia}`, 'YYYY-MM-DD', true).startOf('day')
+    let end = moment(`${dia}`, 'YYYY-MM-DD', true).endOf('day')
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({createdAt: {$gte: start, $lt: end }}).select(' creador calificacion texto createdAt'))
+    })
+  },
   calificar({ preguntaId, calificacion }) {
     const self = this
     return new Promise(function(resolve) {
@@ -513,6 +529,8 @@ PreguntaEstudianteSchema.statics = {
     })
   }
 }
+
+const PreguntaEstudiante = db.model('PreguntaEstudiante', PreguntaEstudianteSchema)
 
 PreguntaProfesorSchema.virtual('id').get(function(){
     return this._id
@@ -533,6 +551,12 @@ PreguntaProfesorSchema.statics = {
       resolve(self.findOne({ _id }))
     })
   },
+  obtenerPorIdPopulate({ id }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.findOne({ _id: id }).populate(' respuestas '))
+    })
+  },
   obtenerTodos() {
     const self = this
     return new Promise(function(resolve) {
@@ -547,11 +571,20 @@ PreguntaProfesorSchema.statics = {
       })
     })
   },
-  terminar({ preguntaId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
+  terminar({ preguntaId, terminadoPor: { correo, nombres, apellidos, tipo } }) {
     const self = this
-    let profesorQueLaTermino = { _id, correo, nombres, apellidos, tipo }
+    let profesorQueLaTermino = { correo, nombres, apellidos, tipo }
     return new Promise(function(resolve) {
       self.update({ _id: preguntaId }, {$set: { habilitada: false, terminadoPor: profesorQueLaTermino }}).then((accionEstado) => {
+        resolve(accionEstado.nModified ? true : false)
+      })
+    })
+  },
+  terminarTodas() {
+    const self = this
+    let profesorQueLaTermino = { correo: 'joelerll@gmail.com', nombres: 'Joel', apellidos: 'Rodriguez', tipo: 'admin' }
+    return new Promise(function(resolve) {
+      self.updateMany({ }, {$set: { habilitada: false, terminadoPor: profesorQueLaTermino }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
@@ -608,7 +641,7 @@ RespuestaSchema.statics = {
 
 module.exports = {
   Estudiante,
-  PreguntaEstudiante: db.model('PreguntaEstudiante', PreguntaEstudianteSchema),
+  PreguntaEstudiante,
   Profesor: db.model('Profesor', ProfesorSchema),
   PreguntaProfesor: db.model('PreguntaProfesor', PreguntaProfesorSchema),
   Respuesta: db.model('Respuesta', RespuestaSchema),

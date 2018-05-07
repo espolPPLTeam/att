@@ -121,14 +121,28 @@ module.exports = ({ app, controller, logger }) => {
   .route('/profesor/preguntasEstudiantes/:dia')
   .get((req, res) => {
       let { dia } = req.params
-      // datos: [ { } ]
+      controller.PreguntasEstudiantesPorDia({ dia })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   app
-  .route('/profesor/preguntaProfesor/:preguntaId')
+  .route('/profesor/preguntaProfesor/:id')
   .get((req, res) => {
-      let { respuestaId } = req.params
-      // datos: [ { nombre, creador, respuestas: [] } ]
+      let { id } = req.params
+      controller.PreguntaProfesor({ id })
+        .then((resp) => {
+          res.status(resp.codigoEstado).json(resp)
+        })
+        .catch((err, resp) => {
+          logger.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
     })
 
   // ESTUDIANTES

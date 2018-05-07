@@ -333,24 +333,100 @@ module.exports = ({ db, logger, messages }) => {
     },
     historialParalelo({ paraleloId }) {
       return new Promise((resolve, reject) => {
-        Paralelo.obtenerPorIdPopulate({ paraleloId})
+        Paralelo.obtenerPorIdPopulate({ paraleloId })
           .then((paraleloDatos) => {
-            // para
-            // console.log(paraleloDatos['preguntasProfesor'][0]['createdAt'])
-            // let datosOrdenadorPorFecha = { }
-            let fecha = paraleloDatos['preguntasProfesor'][0]['createdAt']
-            let datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((resp, i) => {
-              // let datos = {}
-              // console.log(i)
-              let fecha = moment(i['createdAt']).format('DD-MM-YYYY')
-              return resp[fecha] = '1'
+            let datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((acc, cur, i) => {
+              let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
+              if (acc[fecha]) {
+                acc[fecha]['preguntasProfesor'].push({
+                  texto: cur.texto,
+                  id: cur.id
+                })
+              } else {
+                acc[fecha] = {
+                  preguntasProfesor: [{
+                    texto: cur.texto,
+                    id: cur.id
+                  }]
+                }
+              }
+              return acc
             }, {})
-            // console.log(moment(fecha).format('DD-MM-YYYY'))
-            resolve(datosOrdenadorPorFecha)
+
+            let datosOrdanadorTodos = paraleloDatos['preguntasEstudiante'].reduce((acc, cur, i) => {
+              let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
+              if (acc[fecha]) {
+                if (!_.has(acc[fecha], 'preguntasEstudiante.calificadas')) {
+                  acc[fecha]['preguntasEstudiante'] = {}
+                  acc[fecha]['preguntasEstudiante']['calificadas'] = 0
+                  acc[fecha]['preguntasEstudiante']['total'] = 0
+                }
+                acc[fecha]['preguntasEstudiante']['total']++
+                if (cur['calificacion'] !== 0) {
+                  acc[fecha]['preguntasEstudiante']['calificadas']++
+                }
+              } else {
+                acc[fecha] = {}
+                acc[fecha]['preguntasEstudiante'] = { total: 1, calificadas: 0 }
+                if (cur['calificacion'] !== 0) {
+                  acc[fecha]['preguntasEstudiante']['calificadas']++
+                }
+              }
+              return acc
+            }, datosOrdenadorPorFecha)
+            let todos = []
+            for ( let fecha in datosOrdanadorTodos) {
+              let dato = datosOrdanadorTodos[fecha]
+              todos.push({ ...dato, fecha })
+            }
+            todos = _.sortBy(todos, function (o) {
+              return moment(o.fecha, 'YYYY-MM-DD', true)
+            }).reverse()
+            resolve(todos)
           }).catch((err) => {
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
+      })
+    },
+    preguntasEstudiantesPorDia ({ dia }) {
+      return new Promise((resolve, reject) => {
+        PreguntaEstudiante.obtenerPreguntasPorDia({ dia })
+          .then((preguntas) => {
+            resolve(preguntas)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
+    },
+    preguntaProfesorPorId ({ id }) {
+      return new Promise((resolve, reject) => {
+        PreguntaProfesor.obtenerPorIdPopulate({ id })
+        .then((pregunta) => {
+            resolve(pregunta)
+          }).catch((err) => {
+            logger.error(err)
+            reject(messages.ERROR_AL_BUSCAR)
+          })
+      })
+    },
+    limpiarTodosTerminadas() {
+      return new Promise((resolve, reject) => {
+        Promise.all([
+          Paralelo.PreguntaActualLimpiar(),
+          PreguntaProfesor.terminarTodas()
+        ])
+        .then((values) => {
+          if (_.every(values)) {
+            resolve(true)
+          } else {
+            resolve(null)
+          }
+        }).catch((err) => {
+          logger.error(err)
+          reject(messages.ERROR_AL_CREAR)
+        })
       })
     }
   }

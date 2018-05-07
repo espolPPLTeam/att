@@ -136,9 +136,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async CrearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    async CrearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { correo, matricula, nombres, apellidos } }) {
       try {
-        let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } })
+        let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { correo, matricula, nombres, apellidos } })
         if (respuesta) {
           let respuestaLimpiada = JSON.parse(JSON.stringify(respuesta))
           respuestaLimpiada['id'] = respuestaLimpiada['_id']
@@ -188,7 +188,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         if (preguntasEstudiantesHoy)
           preguntasEstudiantesHoy = preguntasEstudiantesHoy.map((preg) => {
             let pregunta = JSON.parse(JSON.stringify(preg))
-            pregunta['id'] = pregunta['_id']
+            // pregunta['id'] = pregunta['_id']
             delete pregunta['_id']
             return pregunta
           })
@@ -243,10 +243,40 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
       }
     },
     async HistorialParalelo({ paraleloId }) {
-      // datos: [ { fecha, preguntas// cantidad  preguntas, preguntasProfesor:  [{ nombre, id }] } ]
       try {
         let paralelo = await model.historialParalelo({ paraleloId })
         return responses.OK({ datos: paralelo })
+      } catch(err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async PreguntasEstudiantesPorDia({ dia }) {
+      try {
+        let preguntas = await model.preguntasEstudiantesPorDia({ dia })
+        return responses.OK({ datos: preguntas })
+      } catch(err) {
+        logger.error(err)
+        return responses.ERROR_SERVIDOR
+      }
+    },
+    async PreguntaProfesor ({ id }) {
+      try {
+        let pregunta = await model.preguntaProfesorPorId({ id })
+        let preguntaLimpiada = _.pick(pregunta, ['creador', 'respuestas', 'texto', 'createdAt', 'id'])
+        // let preguntaLimpiada = JSON.parse(JSON.stringify(pregunta))
+        // if (pregunta) {
+        //   preguntaLimpiada['id'] = preguntaLimpiada['_id']
+        //   delete preguntaLimpiada['_id']
+        // }
+        let respuestas = preguntaLimpiada['respuestas'].map((resp) => {
+            let respuesta = JSON.parse(JSON.stringify(resp))
+            respuesta['id'] = respuesta['_id']
+            delete respuesta['_id']
+            return _.pick(respuesta, ['creador', 'id', 'calificacion', 'texto', 'createdAt'])
+          })
+        preguntaLimpiada['respuestas'] = respuestas
+        return responses.OK({ datos: preguntaLimpiada })
       } catch(err) {
         logger.error(err)
         return responses.ERROR_SERVIDOR
