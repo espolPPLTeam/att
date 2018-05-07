@@ -9,6 +9,10 @@ import App from './App'
 import router from './router'
 import { store } from './store'
 
+import Star from './components/Shared/Stars'
+import Pregunta from './components/Shared/Pregunta'
+import Respuesta from './components/Shared/Respuesta'
+
 let url
 if (process.env.NODE_ENV === 'production') {
   url = '/att'
@@ -31,6 +35,11 @@ Vue.filter('timeFromDate', (value) => {
     return moment(value).locale('es').fromNow()
   }
 })
+
+// COMPONENTS
+Vue.component('star', Star)
+Vue.component('card-pregunta', Pregunta)
+Vue.component('card-respuesta', Respuesta)
 
 /* eslint-disable no-new */
 new Vue({

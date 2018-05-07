@@ -6,7 +6,6 @@ export default {
     // Puede ser el usuario o null si no está loggeado
     Vue.http.get('/api/att/datosUsuario')
       .then((response) => {
-        console.log(response)
         if (response.body.estado) {
           commit('setUsuario', response.body.datos)
           commit('setPreguntas', response.body.datos.misPreguntasHoy)
@@ -14,23 +13,26 @@ export default {
             commit('setPreguntaProfesor', response.body.datos.preguntaProfesor)
           }
           if (response.body.datos.preguntaProfesor && response.body.datos.preguntaProfesor.respuesta) {
-            const respuesta = {
+            commit('setRespuesta', {
               texto: response.body.datos.preguntaProfesor.respuesta,
               createdAt: response.body.datos.preguntaProfesor.fechaCreadaRespuesta,
               estado: 'enviada'
-            }
-            commit('setRespuesta', respuesta)
+            })
           }
           commit('SOCKET_unirseAParalelo')
+        } else {
+          commit('setLoading', false)
         }
       })
       .catch((err) => {
-        commit('setError', err)
         console.log(err)
+        commit('setError', err)
+        commit('setLoading', false)
       })
   },
   login ({commit, dispatch}, payload) {
     commit('setError', null)
+    commit('setLoading', true)
     const correo = payload.usuario
     // Autenticación
     Vue.http.post('/api/att/login', {correo})
@@ -39,10 +41,12 @@ export default {
           dispatch('getLoggedUser')
         } else {
           commit('setError', response.body)
+          commit('setLoading', false)
         }
       }, (err) => {
         console.log('err', err)
         commit('setError', err)
+        commit('setLoading', false)
       })
   },
   logout ({commit}) {
@@ -70,10 +74,17 @@ export default {
     }
     Vue.http.post('/api/att/estudiante/preguntar', data)
       .then((response) => {
-        commit('preguntaEnviada', payload)
-        commit('SOCKET_preguntaEstudiante', data)
+        if (response.body.estado) {
+          commit('preguntaEnviada', payload)
+          data.preguntaId = response.body.datos.id
+          commit('SOCKET_preguntaEstudiante', data)
+        } else {
+          commit('preguntaNoEnviada', payload)
+          commit('setError', response.body)
+        }
       }, (err) => {
         console.log('err:', err)
+        commit('setError', err)
         commit('preguntaNoEnviada', payload)
       })
   },
@@ -81,7 +92,7 @@ export default {
     commit('setError', null)
     const data = {
       paraleloId: state.usuario.paraleloId,
-      preguntaId: state.preguntaProfesor._id,
+      preguntaId: state.preguntaProfesor.preguntaId,
       texto: payload,
       creador: {
         correo: state.usuario.correo,
@@ -100,7 +111,7 @@ export default {
           commit('setEstadoRespuesta', 'enviada')
           commit('SOCKET_responder', data)
         } else {
-          commit('setError', response)
+          commit('setError', response.body)
           commit('setEstadoRespuesta', 'no enviada')
         }
       }, (err) => {

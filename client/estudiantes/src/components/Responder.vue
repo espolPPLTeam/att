@@ -56,6 +56,10 @@
 <script>
 export default {
   name: 'Responder',
+  mounted () {
+    this.$store.commit('setPreguntaProfesorNueva', false)
+    this.$store.commit('setPagina', 'Responder')
+  },
   computed: {
     loggedIn () {
       return this.$store.getters.loggedIn

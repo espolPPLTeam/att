@@ -12,7 +12,6 @@ Vue.use(VueResource)
 export const store = new Vuex.Store({
   state: {
     io: null,
-    loggedIn: false,
     preguntas: [], // Preguntas de los estudiantes
     preguntasMostrar: [], // Preguntas filtradas
     sesionRespuestas: 'inactivo',
@@ -22,10 +21,12 @@ export const store = new Vuex.Store({
     respuestas: [],
     respuestasMostrar: [],
     usuario: null,
+    paraleloActual: null,
+    // Variables de control
+    loggedIn: false,
     error: null,
     filtro: 'Todas',
     pagina: '',
-    paraleloActual: null,
     loading: null,
     preguntaNueva: false,
     respuestaNueva: false

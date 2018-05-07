@@ -1,10 +1,8 @@
 import router from '../router'
+import Vue from 'vue'
 
 export default {
   // SOCKETS ENVIAOS
-  setSocket (state, socket) {
-    state.io = socket
-  },
   disconnectSocket (state) {
     state.io.emit('disconnect')
     router.push('/')
@@ -13,8 +11,8 @@ export default {
     state.io.emit('unirseAParalelo', { paraleloId: payload })
   },
   SOCKET_preguntaProfesor (state, payload) {
+    payload.preguntaId = payload.id
     state.io.emit('preguntaProfesor', payload)
-    state.pregunta = payload
   },
   SOCKET_terminarPregunta (state, payload) {
     state.io.emit('terminarPregunta', payload)
@@ -30,46 +28,38 @@ export default {
   },
   SOCKET_PREGUNTA_ESTUDIANTE (state, data) {
     const pregunta = {
-      _id: data[0].preguntaId,
+      id: data[0].preguntaId,
       texto: data[0].texto,
-      destacada: false,
       createdAt: data[0].createdAt,
       creador: data[0].creador,
       paralelo: data[0].paraleloId,
-      show: false
+      show: false,
+      calificacion: 0
     }
-    state.preguntas.push(pregunta)
+    state.preguntas.unshift(pregunta)
     if (state.pagina !== 'Preguntas') {
       state.preguntaNueva = true
     }
-    state.preguntas.sort(function (a, b) {
-      a = new Date(a.createdAt)
-      b = new Date(b.createdAt)
-      return a > b ? -1 : a < b ? 1 : 0
-    })
   },
   SOCKET_RESPUESTA_ESTUDIANTE (state, data) {
     data[0].show = false
-    state.respuestas.push(data[0])
-    state.respuestasMostrar = state.respuestas
+    state.respuestas.unshift(data[0])
     if (state.pagina !== 'Respuestas') {
       state.respuestaNueva = true
     }
-    state.respuestas.sort(function (a, b) {
-      a = new Date(a.createdAt)
-      b = new Date(b.createdAt)
-      return a > b ? -1 : a < b ? 1 : 0
-    })
+    if (state.filtro === 'Todas') {
+      state.respuestasMostrar = state.respuestas
+    }
   },
   SOCKET_TERMINAR_PREGUNTA (state, payload) {
     state.respuestas = []
     state.respuestasMostrar = []
-    state.pregunta = ''
+    state.pregunta = {texto: ''}
     state.sesionRespuestas = 'inactivo'
   },
   SOCKET_CAMBIO_PARALELO (state, payload) {
     state.paraleloActual = state.usuario.paralelos.find((paralelo) => {
-      return paralelo._id === payload[0]
+      return paralelo.id === payload[0]
     })
   },
   logout (state) {
@@ -77,13 +67,12 @@ export default {
     state.usuario = null
   },
   // SETTERS
-  setUsuario (state, payload) {
-    state.usuario = payload
-    state.paraleloActual = payload.paralelos[0]
+  setSocket (state, socket) {
+    state.io = socket
   },
   setPreguntas (state, payload) {
     for (let i = payload.length - 1; i >= 0; i--) {
-      payload[i].show = false
+      Vue.set(payload[i], 'show', false)
     }
     payload.sort(function (a, b) {
       a = new Date(a.createdAt)
@@ -93,21 +82,15 @@ export default {
     state.preguntas = payload
     state.preguntasMostrar = payload
   },
-  setEstadoPregunta (state, payload) {
-    const pregunta = state.preguntas.find((pregunta) => {
-      return pregunta._id === payload.id
-    })
-    pregunta.destacada = payload.estado
-  },
-  setError (state, payload) {
-    state.error = payload
-  },
   setSesionRespuestas (state, payload) {
     state.sesionRespuestas = payload
   },
+  setPreguntaProfesor (state, payload) {
+    state.pregunta = payload
+  },
   setRespuestas (state, payload) {
-    for (var i = 0; i < payload.length; i++) {
-      payload[i].show = false
+    for (let i = payload.length - 1; i >= 0; i--) {
+      Vue.set(payload[i], 'show', false)
     }
     payload.sort(function (a, b) {
       a = new Date(a.createdAt)
@@ -117,14 +100,14 @@ export default {
     state.respuestas = payload
     state.respuestasMostrar = payload
   },
-  setEstadoRespuesta (state, payload) {
-    const respuesta = state.respuestas.find((respuesta) => {
-      return respuesta._id === payload.id
-    })
-    respuesta.destacada = payload.estado
+  setUsuario (state, payload) {
+    state.usuario = payload
   },
-  setPreguntaProfesor (state, payload) {
-    state.pregunta = payload
+  setParaleloActual (state, payload) {
+    state.paraleloActual = payload
+  },
+  setError (state, payload) {
+    state.error = payload
   },
   setPagina (state, payload) {
     state.pagina = payload
@@ -132,23 +115,41 @@ export default {
   setLoading (state, payload) {
     state.loading = payload
   },
+  setEstadoPregunta (state, payload) {
+    const pregunta = state.preguntas.find((pregunta) => {
+      return pregunta._id === payload.id
+    })
+    pregunta.destacada = payload.estado
+  },
+  setEstadoRespuesta (state, payload) {
+    const respuesta = state.respuestas.find((respuesta) => {
+      return respuesta._id === payload.id
+    })
+    respuesta.destacada = payload.estado
+  },
+  setPreguntaNueva (state, payload) {
+    state.preguntaNueva = payload
+  },
+  setRespuestaNueva (state, payload) {
+    state.respuestaNueva = payload
+  },
   // OTROS
   filtrar (state, payload) {
     state.filtro = payload.filtro
     if (payload.pagina === 'Preguntas') {
-      if (payload.filtro === 'Todas') {
+      if (payload.filtro.texto === 'Todas') {
         state.preguntasMostrar = state.preguntas
-      } else if (payload.filtro === 'Destacadas') {
+      } else {
         state.preguntasMostrar = state.preguntas.filter((pregunta) => {
-          return pregunta.destacada === true
+          return pregunta.calificacion === payload.filtro.valor
         })
       }
     } else if (payload.pagina === 'Respuestas') {
-      if (payload.filtro === 'Todas') {
+      if (payload.filtro.texto === 'Todas') {
         state.respuestasMostrar = state.respuestas
-      } else if (payload.filtro === 'Destacadas') {
+      } else {
         state.respuestasMostrar = state.respuestas.filter((respuesta) => {
-          return respuesta.destacada === true
+          return respuesta.calificacion === payload.filtro.valor
         })
       }
     }
@@ -177,13 +178,20 @@ export default {
       return respuesta.texto.indexOf(payload.busqueda) >= 0
     })
   },
-  clearError (state) {
-    state.error = null
+  calificarPregunta (state, payload) {
+    const pregunta = state.preguntas.find((pregunta) => {
+      return pregunta.id === payload.id
+    })
+    if (pregunta && pregunta !== undefined) {
+      pregunta.calificacion = payload.calificacion
+    }
   },
-  clearPreguntaNueva (state) {
-    state.preguntaNueva = false
-  },
-  clearRespuestaNueva (state) {
-    state.respuestaNueva = false
+  calificarRespuesta (state, payload) {
+    const respuesta = state.respuestas.find((respuesta) => {
+      return respuesta.id === payload.id
+    })
+    if (respuesta && respuesta !== undefined) {
+      respuesta.calificacion = payload.calificacion
+    }
   }
 }

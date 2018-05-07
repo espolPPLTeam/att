@@ -11,7 +11,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-toolbar app dark class="hidden-xs-only">
-      <v-toolbar-side-icon @click="sideNav = !sideNav"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click="sideNav = !sideNav" v-if="loggedIn"></v-toolbar-side-icon>
       <v-toolbar-title class="white--text">Ask The Teacher</v-toolbar-title>
     </v-toolbar>
     <v-toolbar app dark scroll-off-screen class="hidden-sm-and-up">
@@ -20,8 +20,15 @@
     </v-toolbar>
     <v-content>
       <v-tabs centered grow v-if="loggedIn">
-        <v-tab :to="{name:'Preguntar'}">Preguntar</v-tab>
-        <v-tab :to="{name:'Responder'}">Responder</v-tab>
+        <v-tab :to="{name:'Preguntar'}">
+          Preguntar
+        </v-tab>
+        <v-tab :to="{name:'Responder'}">
+          <v-badge v-model="preguntaProfesorNueva" color="red darken-1" overlap>
+            <v-icon color="white" slot="badge">!</v-icon>
+            Responder
+          </v-badge>
+        </v-tab>
       </v-tabs>
       <v-container class="px-2 pt-2">
         <router-view/>
@@ -42,6 +49,9 @@ export default {
   computed: {
     loggedIn () {
       return this.$store.getters.loggedIn
+    },
+    preguntaProfesorNueva () {
+      return this.$store.getters.preguntaProfesorNueva
     }
   },
   data () {
@@ -67,5 +77,8 @@ export default {
 }
 .text-container{
   word-wrap: break-word !important;
+}
+.badge .badge__badge{
+  margin-right: -20%;
 }
 </style>

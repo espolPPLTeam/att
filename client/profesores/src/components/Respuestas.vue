@@ -49,7 +49,7 @@
             <v-text-field label="Búsqueda" append-icon="search" :append-icon-cb="buscarRespuestas" v-model="busqueda" @keypress="keypressedBusqueda($event)"></v-text-field>
           </v-flex>
           <v-flex xs5 sm2 md2>
-            <v-select :items="opciones" v-model="filtro" label="Filtro"></v-select>
+            <v-select :items="opciones" item-text="texto" item-value="value" v-model="filtro" label="Filtro" dense></v-select>
           </v-flex>
           <v-flex sm2 md2 class="hidden-xs-only mt-1">
             <v-btn class="red white--text"  @click.native="dialog = !dialog">Terminar</v-btn>
@@ -58,49 +58,7 @@
       </v-flex>
       <!-- Respuestas estudiantes -->
       <v-flex xs12 v-for="(respuesta, i) in respuestas" :key="i" class="mb-1">
-        <v-card hover>
-          <v-layout row wrap>
-            <v-flex xs2>
-              <v-card-actions>
-                <v-icon v-if="respuesta.destacada" class="mx-auto mt-3" color="yellow darken-2" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark</v-icon>
-                <v-icon v-else class="mx-auto mt-3" @click="destacarRespuesta(respuesta._id, !respuesta.destacada)">bookmark_border</v-icon>
-              </v-card-actions>
-            </v-flex>
-            <v-flex xs10>
-              <v-card-text class="text-xs-left pa-1 text-container">
-                <p v-html="respuesta.texto" class="pa-2"></p>
-              </v-card-text>
-              <v-card-text class="caption text-xs-right pa-2">
-                {{ respuesta.createdAt | timeFromDate }}
-              </v-card-text>
-            </v-flex>
-          </v-layout>
-          <v-card-actions row>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="respuesta.show = !respuesta.show">
-              <v-icon v-if="!respuesta.show">arrow_drop_down</v-icon>
-              <v-icon v-else>arrow_drop_up</v-icon>
-            </v-btn>
-          </v-card-actions>
-          <v-slide-y-transition>
-            <v-card-text v-show="respuesta.show" class="hidden-info">
-              <v-layout row wrap>
-                <v-flex xs12 sm6>
-                  <p class="text-xs-center text-sm-left">
-                    <v-icon class="mr-2">person</v-icon>
-                    {{ respuesta.creador.nombres }} {{ respuesta.creador.apellidos }}
-                  </p>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <p class="text-xs-center text-sm-right">
-                    <v-icon class="mr-2">email</v-icon>
-                    {{ respuesta.creador.correo }}
-                  </p>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
-          </v-slide-y-transition>
-        </v-card>
+        <card-respuesta :respuesta="respuesta"></card-respuesta>
       </v-flex>
       <!-- Btn terminar -->
       <div id="footer" class="hidden-sm-and-up">
@@ -132,7 +90,7 @@ export default {
   mounted () {
     this.pregunta = this.$store.getters.pregunta
     this.$store.commit('setPagina', 'Respuestas')
-    this.$store.commit('clearRespuestaNueva')
+    this.$store.commit('setRespuestaNueva', false)
   },
   computed: {
     sesionRespuestas () {
@@ -168,7 +126,24 @@ export default {
       },
       busqueda: '',
       filtro: 'Todas',
-      opciones: ['Todas', 'Destacadas']
+      opciones: [
+        {
+          valor: 0,
+          texto: 'Todas'
+        },
+        {
+          valor: 1,
+          texto: 'No enfocadas'
+        },
+        {
+          valor: 2,
+          texto: 'Buenas'
+        },
+        {
+          valor: 3,
+          texto: 'Muy buenas'
+        }
+      ]
     }
   },
   methods: {
@@ -191,9 +166,6 @@ export default {
       } else {
         this.snackbar.estado = true
       }
-    },
-    destacarRespuesta (id, estado) {
-      this.$store.dispatch('destacarRespuesta', {id, estado})
     },
     buscarRespuestas () {
       this.$store.commit('buscarRespuestas', {busqueda: this.busqueda, filtro: this.filtro})
