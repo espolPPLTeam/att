@@ -2,10 +2,10 @@
   <v-app id="app">
     <v-navigation-drawer temporary v-model="sideNav" app>
       <v-list>
+        <v-list-tile v-if="loggedIn" @click="ppl">
+          <v-list-tile-content>PPL</v-list-tile-content>
+        </v-list-tile>
         <v-list-tile @click="logout">
-          <v-list-tile-action>
-            <v-icon>exit_to_app</v-icon>
-          </v-list-tile-action>
           <v-list-tile-content>Logout</v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -62,6 +62,9 @@ export default {
   methods: {
     logout () {
       this.$store.dispatch('logout')
+    },
+    ppl () {
+      window.location.href = '/'
     }
   }
 }
