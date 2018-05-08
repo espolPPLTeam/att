@@ -816,4 +816,174 @@ describe('Routes - Integration', () => {
       generatorDocs.ERROR({ nombre: 'NO EXISTE RESPUESTA CON ESE ID', docs, doc, res })
     })
   })
+
+  describe('@t12 HISTORIAL PARALELO', ()=> {
+    let doc = {
+      nombre: 'Historial de un paralelo',
+      metodo: 'GET',
+      url: '/api/att/profesor/historialParalelo/:paraleloId',
+      descripcion: 'Devuelve en orden de fechas, el mas reciente primero',
+      params: [
+        {
+          nombre: 'paraleloId',
+          tipo: 'string',
+          descripcion: ''
+        }
+      ],
+      errors: []
+    }
+    let estudiante = data.estudiantes[0]
+    let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
+    it('@t12.1 OK', async () => {
+      let clock = sinon.useFakeTimers()
+      const d1 = moment.duration({ days: 1 })
+      let profesorCreado = await model.crearProfesor(profesor)
+      let paraleloCreado = await model.crearParalelo(paralelo)
+      let estudianteCreado = await model.crearEstudiante(estudiante)
+      const paraleloId = paraleloCreado['_id']
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta',
+        paraleloId,
+        creador: estudiante
+      })
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta 2',
+        paraleloId,
+        creador: estudiante
+      })
+      await model.crearPreguntaProfesorYHabilitarla({
+        texto: 'Pregunta Profesor',
+        paraleloId,
+        creador: profesor
+      })
+      await model.crearPreguntaProfesorYHabilitarla({
+        texto: 'Pregunta Profesor 2',
+        paraleloId,
+        creador: profesor
+      })
+
+      clock.tick(d1.asMilliseconds())
+
+      let preguntaCreada3 = await model.crearPreguntaProfesorYHabilitarla({
+        texto: 'Pregunta Profesor 3',
+        paraleloId,
+        creador: profesor
+      })
+      await model.crearRespuestaEstudiante({
+        paraleloId,
+        preguntaId: preguntaCreada3['_id'],
+        texto: 'Mi respuesstas de pregunta 3',
+        creador: estudiante
+      })
+
+      clock.tick(d1.asMilliseconds())
+
+      let preguntaCreada2 = await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta 2',
+        paraleloId,
+        creador: estudiante
+      })
+      await db.PreguntaEstudiante.calificar({ preguntaId: preguntaCreada2['_id'], calificacion: 1 })
+
+      clock.restore()
+
+      let res = await request(app)
+                .get(`/api/att/profesor/historialParalelo/${paraleloId}`)
+      expect(ajv.validate(schema.HISTORIAL, res.body.datos)).to.equal(true)
+      generatorDocs.OK({ docs, doc, res })
+    })
+  })
+
+  describe('@t13 PREGUNTAS ESTUDIANTES POR DIA', ()=> {
+    let doc = {
+      nombre: 'Preguntas estudiantes por dia',
+      metodo: 'GET',
+      url: '/api/att/profesor/preguntasEstudiantes/:dia',
+      descripcion: 'Pregunta estudiante dado un dia',
+      params: [
+        {
+          nombre: 'dia',
+          tipo: 'string',
+          descripcion: 'Ej: 2018-01-31, es con formato YYYY-MM-DD'
+        }
+      ],
+      errors: []
+    }
+    let estudiante = data.estudiantes[0]
+    let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
+    it('@t13.1 OK', async () => {
+      let date = new Date(2018, 1, 1)
+      let clock = sinon.useFakeTimers(date.getTime())
+      const d1 = moment.duration({ days: 1 })
+      let profesorCreado = await model.crearProfesor(profesor)
+      let paraleloCreado = await model.crearParalelo(paralelo)
+      let estudianteCreado = await model.crearEstudiante(estudiante)
+      let dia = moment().format('YYYY-MM-DD')
+      const paraleloId = paraleloCreado['_id']
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta 2',
+        paraleloId,
+        creador: estudiante
+      })
+      clock.tick(d1.asMilliseconds())
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta 3',
+        paraleloId,
+        creador: estudiante
+      })
+      let res = await request(app)
+                .get(`/api/att/profesor/preguntasEstudiantes/${dia}`)
+      expect(ajv.validate(schema.HISTORIAL_PREGUNTAS_HOY, res.body.datos)).to.equal(true)
+      generatorDocs.OK({ docs, doc, res })
+    })
+  })
+
+  describe('@t14 PREGUNTA PROFESOR POR ID', ()=> {
+    let doc = {
+      nombre: 'Pregunta profesor por id',
+      metodo: 'GET',
+      url: '/api/att/profesor/preguntaProfesor/:id',
+      descripcion: '',
+      params: [
+        {
+          nombre: 'id',
+          tipo: 'string',
+          descripcion: ''
+        }
+      ],
+      errors: []
+    }
+    let estudiante = data.estudiantes[0]
+    let profesor = data.profesores[0]
+    let paralelo = data.paralelos[0]
+    it('@t14.1 OK', async () => {
+      let date = new Date(2018, 1, 1)
+      let clock = sinon.useFakeTimers(date.getTime())
+      const d1 = moment.duration({ days: 1 })
+      let profesorCreado = await model.crearProfesor(profesor)
+      let paraleloCreado = await model.crearParalelo(paralelo)
+      let estudianteCreado = await model.crearEstudiante(estudiante)
+      const paraleloId = paraleloCreado['_id']
+      let preguntaCreada = await model.crearPreguntaProfesorYHabilitarla({
+        texto: 'Pregunta Profesor',
+        paraleloId,
+        creador: profesor
+      })
+      await model.crearRespuestaEstudiante({
+        paraleloId,
+        preguntaId: preguntaCreada['_id'],
+        texto: 'Mi respuesstas de pregunta 3',
+        creador: estudiante
+      })
+      let res = await request(app)
+                .get(`/api/att/profesor/preguntaProfesor/${preguntaCreada['_id']}`)
+      expect(ajv.validate(schema.HISTORIAL_PREGUNTAS_PROFESOR_COMPLETO, res.body.datos)).to.equal(true)
+      generatorDocs.OK({ docs, doc, res })
+    })
+  })
 })
+
+
+// console.log(JSON.stringify(res.body.datos, null, 2))

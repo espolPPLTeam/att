@@ -65,10 +65,10 @@ const ESTUDIANTE = {
 
 const ESTUDIANTE_CON_ID = {
   "type": "object",
-  "minProperties": 4,
-  "additionalProperties": false,
+  "minProperties": 3,
+  // "additionalProperties": false,
   "properties": {
-    "id": { "type": "string" },
+    "matricula": { "type": "string" },
     "correo": { "type": "string" },
     "nombres": { "type": "string" },
     "apellidos": { "type": "string" }
@@ -260,9 +260,9 @@ const PREGUNTA_PROFESOR_FORMATO_PROFESOR = {
 }
 
 const PROFESOR_PERFIL = {
- "type": "object",
-  "minProperties": 6,
-  "additionalProperties": false,
+  "type": "object",
+  "minProperties": 5,
+  // "additionalProperties": false,
   "properties": {
     "correo": {
       "type": "string",
@@ -285,6 +285,113 @@ const PROFESOR_PERFIL = {
   }
 }
 
+const HISTORIAL_PREGUNTAS_ESTUDIANTE = {
+  "type": "object",
+  "minProperties": 2,
+  "additionalProperties": false,
+  "properties": {
+    "total": { "type": "number" },
+    "calficadas": { "type": "number" }
+  }
+}
+
+const HISTORIAL_PREGUNTAS_PROFESOR = {
+  "type": "object",
+  "minProperties": 2,
+  "additionalProperties": false,
+  "properties": {
+    "texto": { "type": "string" },
+    "id": { "type": "string" }
+  }
+}
+
+const HISTORIAL = {
+  "type": "array",
+  "minProperties": 2,
+  "properties": {
+    "preguntasProfesor": {
+      "type": "array",
+      "items": HISTORIAL_PREGUNTAS_PROFESOR
+    },
+    "preguntasEstudiante": {
+      "type": "array",
+      "items": HISTORIAL_PREGUNTAS_ESTUDIANTE
+    },
+    "fecha": { "type": "string" }
+  }
+}
+
+
+const HISTORIAL_PREGUNTAS_HOY = {
+  "type": "array",
+  "minProperties": 5,
+  "additionalProperties": false,
+  "properties": {
+    "creador": {
+      "type": "object",
+      "items": ESTUDIANTE_CON_ID
+    },
+    "calificacion": {
+      "type": "number"
+    },
+    "texto": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "id": { "type": "string" }
+  }
+}
+
+
+const PROFESOR = {
+  "minProperties": 5,
+  "additionalProperties": false,
+  "properties": {
+    "correo": {
+      "type": "string",
+      "format": "email"
+    },
+    "tipo": {
+      "type": "string" ,
+      "enum": ["peer", "titular"]
+    },
+    "nombres": { "type": "string" },
+    "apellidos": { "type": "string" }
+  }
+}
+
+const HISTORIAL_PREGUNTAS_ESTUDIANTE_DE_PROFESOR = {
+  "type": "object",
+  "minProperties": 5,
+  "additionalProperties": false,
+  "properties": {
+    "creador": {
+      "type": "object",
+      "items": ESTUDIANTE_CON_ID
+    },
+    "id":  { "type": "string" },
+    "calificacion": { "type": "number" },
+    "texto":  { "type": "string" },
+    "createdAt":  { "type": "string" }
+  }
+}
+
+const HISTORIAL_PREGUNTAS_PROFESOR_COMPLETO = {
+  "type": "object",
+  "minProperties": 5,
+  "additionalProperties": false,
+  "properties": {
+    "creador": {
+      "type": "object",
+      "items": PROFESOR
+    },
+    "respuestas": {
+      "type": "array",
+      "items": HISTORIAL_PREGUNTAS_ESTUDIANTE_DE_PROFESOR
+    },
+    "texto": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "id": { "type": "string" }
+  }
+}
 
 module.exports = {
   PROFESOR_DATOS,
@@ -298,7 +405,10 @@ module.exports = {
   PREGUNTA_TERMINADA,
   RESPUESTAS_PROFESOR,
   ESTUDIANTE_PERFIL,
-  PROFESOR_PERFIL
+  PROFESOR_PERFIL,
+  HISTORIAL,
+  HISTORIAL_PREGUNTAS_HOY,
+  HISTORIAL_PREGUNTAS_PROFESOR_COMPLETO
 }
 
 // const ERROR_SERVIDOR = { datos: 'Error en el servidor', codigoEstado: 500, estado: false }

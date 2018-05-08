@@ -28,6 +28,12 @@ function app (ioPPL) {
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
 
+  if (process.env.NODE_ENV === 'production') {
+    new CronJob('00 23 55 * * *', function() {
+
+    })
+  }
+
   if (process.env.NODE_ENV !== 'testing') {
     db.Conectar(urlServidor).then(() => {
       if (process.env.NODE_ENV === 'production') {
