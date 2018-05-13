@@ -380,45 +380,52 @@ module.exports = ({ db, logger, messages }) => {
             if (!paraleloDatos) {
               resolve(messages.PARALELO_NO_EXISTE)
             }
-            let datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((acc, cur, i) => {
-              let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
-              if (acc[fecha]) {
-                acc[fecha]['preguntasProfesor'].push({
-                  texto: cur.texto,
-                  id: cur.id
-                })
-              } else {
-                acc[fecha] = {
-                  preguntasProfesor: [{
+            let datosOrdenadorPorFecha = {}
+            if (paraleloDatos['preguntasProfesor'])
+              datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((acc, cur, i) => {
+                let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
+                if (acc[fecha]) {
+                  acc[fecha]['preguntasProfesor'].push({
                     texto: cur.texto,
                     id: cur.id
-                  }]
+                  })
+                } else {
+                  acc[fecha] = {
+                    preguntasProfesor: [{
+                      texto: cur.texto,
+                      id: cur.id
+                    }]
+                  }
                 }
-              }
-              return acc
-            }, {})
+                return acc
+              }, {})
 
-            let datosOrdanadorTodos = paraleloDatos['preguntasEstudiante'].reduce((acc, cur, i) => {
-              let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
-              if (acc[fecha]) {
-                if (!_.has(acc[fecha], 'preguntasEstudiante.calificadas')) {
-                  acc[fecha]['preguntasEstudiante'] = {}
-                  acc[fecha]['preguntasEstudiante']['calificadas'] = 0
-                  acc[fecha]['preguntasEstudiante']['total'] = 0
+            let datosOrdanadorTodos = {}
+            if (paraleloDatos['preguntasEstudiante']) {
+              datosOrdanadorTodos = paraleloDatos['preguntasEstudiante'].reduce((acc, cur, i) => {
+                let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
+                if (acc[fecha]) {
+                  if (!_.has(acc[fecha], 'preguntasEstudiante.calificadas')) {
+                    acc[fecha]['preguntasEstudiante'] = {}
+                    acc[fecha]['preguntasEstudiante']['calificadas'] = 0
+                    acc[fecha]['preguntasEstudiante']['total'] = 0
+                  }
+                  acc[fecha]['preguntasEstudiante']['total']++
+                  if (cur['calificacion'] !== 0) {
+                    acc[fecha]['preguntasEstudiante']['calificadas']++
+                  }
+                } else {
+                  acc[fecha] = {}
+                  acc[fecha]['preguntasEstudiante'] = { total: 1, calificadas: 0 }
+                  if (cur['calificacion'] !== 0) {
+                    acc[fecha]['preguntasEstudiante']['calificadas']++
+                  }
                 }
-                acc[fecha]['preguntasEstudiante']['total']++
-                if (cur['calificacion'] !== 0) {
-                  acc[fecha]['preguntasEstudiante']['calificadas']++
-                }
-              } else {
-                acc[fecha] = {}
-                acc[fecha]['preguntasEstudiante'] = { total: 1, calificadas: 0 }
-                if (cur['calificacion'] !== 0) {
-                  acc[fecha]['preguntasEstudiante']['calificadas']++
-                }
-              }
-              return acc
-            }, datosOrdenadorPorFecha)
+                return acc
+              }, datosOrdenadorPorFecha)
+            } else {
+              datosOrdanadorTodos = datosOrdenadorPorFecha
+            }
             let todos = []
             for ( let fecha in datosOrdanadorTodos) {
               let dato = datosOrdanadorTodos[fecha]
