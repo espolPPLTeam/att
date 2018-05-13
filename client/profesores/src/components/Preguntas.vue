@@ -57,11 +57,11 @@ export default {
         },
         {
           valor: 2,
-          texto: 'Buenas'
+          texto: 'Poco relevantes'
         },
         {
           valor: 3,
-          texto: 'Muy buenas'
+          texto: 'Relevantes'
         }
       ],
       busqueda: ''
