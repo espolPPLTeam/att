@@ -13,6 +13,8 @@ module.exports = ({ db, logger, messages }) => {
         .then((pregunta) => {
           resolve(pregunta)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -25,6 +27,8 @@ module.exports = ({ db, logger, messages }) => {
           .then(() => {
             resolve(estudiante)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_CREAR)
         })
@@ -37,6 +41,8 @@ module.exports = ({ db, logger, messages }) => {
             .then(() => {
               resolve(profesor)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_CREAR)
           })
@@ -49,6 +55,8 @@ module.exports = ({ db, logger, messages }) => {
             .then(() => {
               resolve(paraleloCreado)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_CREAR)
           })
@@ -71,6 +79,8 @@ module.exports = ({ db, logger, messages }) => {
                 }
                 resolve(estudiante)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_OBTENER)
           })
@@ -95,6 +105,8 @@ module.exports = ({ db, logger, messages }) => {
                 resolve(profesor)
               }
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -110,6 +122,8 @@ module.exports = ({ db, logger, messages }) => {
           ]).then((resp) => {
             resolve(true)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -126,6 +140,8 @@ module.exports = ({ db, logger, messages }) => {
           ]).then((values) => {
             resolve(values[0])
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_OBTENER)
           })
@@ -139,6 +155,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((resp) => {
             resolve(resp)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_OBTENER)
           })
@@ -154,6 +172,8 @@ module.exports = ({ db, logger, messages }) => {
             .then((values) => {
               resolve(_.every(values))
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -175,6 +195,8 @@ module.exports = ({ db, logger, messages }) => {
                     resolve(null)
                   }
             }).catch((err) => {
+              if (process.env.NODE_ENV === 'development')
+                console.error(err)
               logger.error(err)
               reject(messages.ERROR_AL_OBTENER)
             })
@@ -187,6 +209,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((resp) => {
             resolve(resp)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -198,6 +222,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((preguntas) => {
             resolve(preguntas)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -209,6 +235,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((preguntas) => {
             resolve(preguntas)
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_OBTENER)
         })
@@ -232,6 +260,8 @@ module.exports = ({ db, logger, messages }) => {
                   resolve(null)
                 }
             }).catch((err) => {
+              if (process.env.NODE_ENV === 'development')
+                console.error(err)
               logger.error(err)
               reject(messages.ERROR_AL_CREAR)
             })
@@ -261,6 +291,8 @@ module.exports = ({ db, logger, messages }) => {
                 resolve(null)
               }
             }).catch((err) => {
+              if (process.env.NODE_ENV === 'development')
+                console.error(err)
               logger.error(err)
               reject(messages.ERROR_AL_CREAR)
             })
@@ -273,6 +305,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((resp) => {
             resolve(resp)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_CREAR)
           })
@@ -293,6 +327,8 @@ module.exports = ({ db, logger, messages }) => {
             resolve(null)
           }
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_CREAR)
         })
@@ -304,6 +340,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((respuesta) => {
             resolve(respuesta)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -315,6 +353,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((respuesta) => {
             resolve(respuesta)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -326,6 +366,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((respuesta) => {
             resolve(respuesta)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -335,6 +377,9 @@ module.exports = ({ db, logger, messages }) => {
       return new Promise((resolve, reject) => {
         Paralelo.obtenerPorIdPopulate({ paraleloId })
           .then((paraleloDatos) => {
+            if (!paraleloDatos) {
+              resolve(messages.PARALELO_NO_EXISTE)
+            }
             let datosOrdenadorPorFecha = paraleloDatos['preguntasProfesor'].reduce((acc, cur, i) => {
               let fecha = moment(cur['createdAt']).format('YYYY-MM-DD')
               if (acc[fecha]) {
@@ -384,6 +429,8 @@ module.exports = ({ db, logger, messages }) => {
             }).reverse()
             resolve(todos)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -395,6 +442,8 @@ module.exports = ({ db, logger, messages }) => {
           .then((preguntas) => {
             resolve(preguntas)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -406,6 +455,8 @@ module.exports = ({ db, logger, messages }) => {
         .then((pregunta) => {
             resolve(pregunta)
           }).catch((err) => {
+            if (process.env.NODE_ENV === 'development')
+              console.error(err)
             logger.error(err)
             reject(messages.ERROR_AL_BUSCAR)
           })
@@ -424,6 +475,8 @@ module.exports = ({ db, logger, messages }) => {
             resolve(null)
           }
         }).catch((err) => {
+          if (process.env.NODE_ENV === 'development')
+            console.error(err)
           logger.error(err)
           reject(messages.ERROR_AL_CREAR)
         })
