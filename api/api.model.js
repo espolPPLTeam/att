@@ -443,9 +443,9 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    preguntasEstudiantesPorDia ({ dia }) {
+    preguntasEstudiantesPorDia ({ dia, paraleloId }) {
       return new Promise((resolve, reject) => {
-        PreguntaEstudiante.obtenerPreguntasPorDia({ dia })
+        PreguntaEstudiante.obtenerPreguntasPorDia({ dia, paraleloId })
           .then((preguntas) => {
             resolve(preguntas)
           }).catch((err) => {

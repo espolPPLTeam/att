@@ -22,6 +22,7 @@ const EstudianteSchema = mongoose.Schema({
   apellidos: { type: String, required: true },
   correo: { type: String, required: true },
   matricula: { type: String, required: true },
+  ingresadoManualmente: { type: Boolean, 'default': false },
   preguntas:  [{
   	type: String,
 	  ref: 'Pregunta'
@@ -511,12 +512,12 @@ PreguntaEstudianteSchema.statics = {
       resolve(self.find({$and: [{ 'creador.correo': correo }, {createdAt: {$gte: start, $lt: end } }]}, { _id: 0 }).select(' texto createdAt'))
     })
   },
-  obtenerPreguntasPorDia({ dia }) {
+  obtenerPreguntasPorDia({ dia, paraleloId }) {
     let start = moment(`${dia}`, 'YYYY-MM-DD', true).startOf('day')
     let end = moment(`${dia}`, 'YYYY-MM-DD', true).endOf('day')
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.find({createdAt: {$gte: start, $lt: end }}).select(' creador calificacion texto createdAt'))
+      resolve(self.find({$and: [{createdAt: {$gte: start, $lt: end }}, { paralelo: paraleloId }]}).select(' creador calificacion texto createdAt'))
     })
   },
   calificar({ preguntaId, calificacion }) {

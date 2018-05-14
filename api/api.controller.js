@@ -251,9 +251,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async PreguntasEstudiantesPorDia({ dia }) {
+    async PreguntasEstudiantesPorDia({ dia, paraleloId }) {
       try {
-        let preguntas = await model.preguntasEstudiantesPorDia({ dia })
+        let preguntas = await model.preguntasEstudiantesPorDia({ dia, paraleloId })
         return responses.OK({ datos: preguntas })
       } catch(err) {
         logger.error(err)

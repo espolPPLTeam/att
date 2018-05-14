@@ -9,8 +9,11 @@ module.exports = {
   crearEstudiante({ nombres, apellidos, correo, matricula, paralelo,  codigoMateria }) {
     return new Promise(function(resolve, reject) {
       co(function* () {
-        yield Model.crearEstudiante({ correo, matricula, nombres, apellidos })
-        yield Model.anadirEstudianteAParalelo({ paralelo: { curso: paralelo, codigo: codigoMateria }, estudianteCorreo: correo })
+        let estudiante = yield db.Estudiante.obtenerPorCorreo({ correo })
+        if (!estudiante) {
+          yield Model.crearEstudiante({ correo, matricula, nombres, apellidos })
+          yield Model.anadirEstudianteAParalelo({ paralelo: { curso: paralelo, codigo: codigoMateria }, estudianteCorreo: correo })
+        }
         resolve(true)
       })
 
@@ -104,14 +107,16 @@ module.exports = {
         let estudiantesDatos = []
         for (paralelo of paralelos) {
           for (estudiante of paralelo.members) {
-            estudiantesDatos.push({
-              nombres: estudiante['nombres'],
-              apellidos: estudiante['apellidos'],
-              matricula: estudiante['matricula'],
-              correo: estudiante['correo'],
-              paralelo: paralelo['curso'],
-              codigoMateria: paralelo['codigo']
-            })
+            if (estudiante['ingresadoManualmente'] != true) {
+              estudiantesDatos.push({
+                nombres: estudiante['nombres'],
+                apellidos: estudiante['apellidos'],
+                matricula: estudiante['matricula'],
+                correo: estudiante['correo'],
+                paralelo: paralelo['curso'],
+                codigoMateria: paralelo['codigo']
+              })
+            }
           }
         }
         resolve(estudiantesDatos)

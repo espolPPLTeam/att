@@ -118,10 +118,10 @@ module.exports = ({ app, controller, logger }) => {
     })
 
   app
-  .route('/profesor/preguntasEstudiantes/:dia')
+  .route('/profesor/preguntasEstudiantes/:paraleloId/:dia')
   .get((req, res) => {
-      let { dia } = req.params
-      controller.PreguntasEstudiantesPorDia({ dia })
+      let { dia, paraleloId } = req.params
+      controller.PreguntasEstudiantesPorDia({ dia, paraleloId })
         .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })

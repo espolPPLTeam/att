@@ -899,13 +899,18 @@ describe('Routes - Integration', () => {
     let doc = {
       nombre: 'Preguntas estudiantes por dia',
       metodo: 'GET',
-      url: '/api/att/profesor/preguntasEstudiantes/:dia',
+      url: '/api/att/profesor/preguntasEstudiantes/:paraleloId/:dia',
       descripcion: 'Pregunta estudiante dado un dia',
       params: [
         {
           nombre: 'dia',
           tipo: 'string',
           descripcion: 'Ej: 2018-01-31, es con formato YYYY-MM-DD'
+        },
+        {
+          nombre: 'paraleloId',
+          tipo: 'string',
+          descripcion: ''
         }
       ],
       errors: []
@@ -913,18 +918,26 @@ describe('Routes - Integration', () => {
     let estudiante = data.estudiantes[0]
     let profesor = data.profesores[0]
     let paralelo = data.paralelos[0]
+    let paralelo2 = data.paralelos[1]
     it('@t13.1 OK', async () => {
       let date = new Date(2018, 1, 1)
       let clock = sinon.useFakeTimers(date.getTime())
       const d1 = moment.duration({ days: 1 })
       let profesorCreado = await model.crearProfesor(profesor)
       let paraleloCreado = await model.crearParalelo(paralelo)
+      let paraleloCreado2 = await model.crearParalelo(paralelo2)
       let estudianteCreado = await model.crearEstudiante(estudiante)
       let dia = moment().format('YYYY-MM-DD')
       const paraleloId = paraleloCreado['_id']
+      const paraleloId2 = paraleloCreado2['_id']
       await model.crearPreguntaEstudiante({
         texto: 'Mi primera pregunta 2',
         paraleloId,
+        creador: estudiante
+      })
+      await model.crearPreguntaEstudiante({
+        texto: 'Mi primera pregunta 2 paraello 2',
+        paraleloId2,
         creador: estudiante
       })
       clock.tick(d1.asMilliseconds())
@@ -934,7 +947,8 @@ describe('Routes - Integration', () => {
         creador: estudiante
       })
       let res = await request(app)
-                .get(`/api/att/profesor/preguntasEstudiantes/${dia}`)
+                .get(`/api/att/profesor/preguntasEstudiantes/${paraleloId}/${dia}`)
+      expect(res.body.datos.length).to.equal(1)
       expect(ajv.validate(schema.HISTORIAL_PREGUNTAS_HOY, res.body.datos)).to.equal(true)
       generatorDocs.OK({ docs, doc, res })
     })
