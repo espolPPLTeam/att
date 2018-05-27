@@ -1,5 +1,6 @@
 module.exports = ({ db, logger, messages }) => {
   const _ = require('lodash')
+  const moment = require('moment')
   let PreguntaEstudiante = db.PreguntaEstudiante
   let Estudiante = db.Estudiante
   let Profesor = db.Profesor

@@ -41,7 +41,7 @@
           <v-card>
             <v-layout row justify-center>
               <v-flex xs10 lg11 id="div-respuesta">
-                <v-text-field name="respuesta" label="Respuesta" id="respuesta" v-model="inputRespuesta" @keypress="keypressed($event)"></v-text-field>
+                <v-text-field name="respuesta" label="Respuesta" id="respuesta" v-model="inputRespuesta" @keypress="keypressed($event)" auto-grow multi-line rows="1"></v-text-field>
               </v-flex>
               <v-flex xs2 lg1 id="div-icon">
                 <v-btn icon class="mt-3" @click="responder" :disabled="!habilitado"><v-icon>send</v-icon></v-btn>
