@@ -1,7 +1,7 @@
 <template id="AppPreguntar">
   <main id="main">
     <section id="section-preguntas">
-      <v-layout row wrap>
+      <v-layout row wrap v-if="preguntas.length > 0">
         <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
           <v-card hover>
             <v-card-text class="text-xs-left px-3 pb-1 text-container">
@@ -16,6 +16,16 @@
           </v-card>
         </v-flex>
       </v-layout>
+      <v-jumbotron color="grey lighten-2" v-else>
+        <v-container fill-height>
+          <v-layout align-center>
+            <v-flex>
+              <h3 class="display-3">No has hecho ninguna pregunta hoy</h3>
+              <span class="subheading">Recuerda que le puedes hacer una pregunta al profesor, de manera anónima, en cualquier momento de la clase</span>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-jumbotron>
     </section>
     <v-footer id="footer" class="py-3 px-2" app>
       <v-layout row>
@@ -26,7 +36,7 @@
                 <v-text-field name="pregunta" label="Pregunta" id="pregunta" v-model="pregunta" @keypress="keypressed($event)" auto-grow multi-line rows="1"></v-text-field>
               </v-flex>
               <v-flex xs2 lg1 id="div-icon">
-                <v-btn icon class="mt-3" @click="preguntar" :disabled="!habilitado"><v-icon>send</v-icon></v-btn>
+                <v-btn icon class="mt-3" @click="preguntar" :disabled="!habilitado"><v-icon color="green">send</v-icon></v-btn>
               </v-flex>
             </v-layout>
           </v-card>
@@ -73,7 +83,7 @@ export default {
     keypressed (e) {
       const code = (e.keyCode ? e.keyCode : e.which)
       if (code === 13) {
-        this.preguntar()
+        this.pregunta = this.pregunta + '\n'
       }
     }
   }
