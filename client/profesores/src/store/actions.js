@@ -175,6 +175,24 @@ export default {
         commit('calificarRespuesta', {id: payload.id, calificacion: payload.calificacionAntigua})
         console.log('err', err)
       })
+  },
+  getPreguntasEstudiantesDia ({commit}, payload) {
+    commit('setError', null)
+    commit('setLoading', true)
+    const urlApi = '/api/att/profesor/preguntasEstudiantes/' + payload.dia
+    Vue.http.get(urlApi)
+      .then((response) => {
+        console.log(response)
+        commit('setLoading', false)
+        if (response.body.estado) {
+          commit('setPreguntasEstudiantesHistorial', response.body.datos)
+        } else {
+          commit('setError', response.body)
+        }
+      }, (err) => {
+        commit('setError', err)
+        commit('setLoading', false)
+      })
   }
 }
 

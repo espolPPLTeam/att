@@ -133,6 +133,17 @@ export default {
   setRespuestaNueva (state, payload) {
     state.respuestaNueva = payload
   },
+  setPreguntasEstudiantesHistorial (state, payload) {
+    for (let i = payload.length - 1; i >= 0; i--) {
+      Vue.set(payload[i], 'show', false)
+    }
+    payload.sort(function (a, b) {
+      a = new Date(a.createdAt)
+      b = new Date(b.createdAt)
+      return a > b ? -1 : a < b ? 1 : 0
+    })
+    state.preguntasEstudiantesHistorial = payload
+  },
   // OTROS
   filtrar (state, payload) {
     state.filtro = payload.filtro

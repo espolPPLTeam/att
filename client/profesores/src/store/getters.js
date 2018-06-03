@@ -48,5 +48,8 @@ export default {
   },
   respuestaNueva (state) {
     return state.respuestaNueva
+  },
+  preguntasEstudiantesHistorial (state) {
+    return state.preguntasEstudiantesHistorial
   }
 }

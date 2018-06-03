@@ -22,6 +22,7 @@ export const store = new Vuex.Store({
     respuestasMostrar: [],
     usuario: null,
     paraleloActual: null,
+    preguntasEstudiantesHistorial: [],
     // Variables de control
     loggedIn: false,
     error: null,

@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Login from '@/components/Login'
 import Preguntas from '@/components/Preguntas'
 import Respuestas from '@/components/Respuestas'
+import Historial from '@/components/Historial'
 
 import AuthGuard from './auth-guard'
 
@@ -25,6 +27,12 @@ export default new Router({
       path: '/respuestas',
       name: 'Respuestas',
       component: Respuestas,
+      beforeEnter: AuthGuard
+    },
+    {
+      path: '/historial',
+      name: 'Historial',
+      component: Historial,
       beforeEnter: AuthGuard
     }
   ]
