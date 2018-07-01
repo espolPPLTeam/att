@@ -6,31 +6,32 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 
+import preguntas from './modules/preguntas'
+import sockets from './modules/sockets'
+import respuestas from './modules/respuestas'
+
 Vue.use(Vuex)
 Vue.use(VueResource)
 
 export const store = new Vuex.Store({
+  modules: {
+    preguntas,
+    sockets,
+    respuestas
+  },
   state: {
-    io: null,
-    preguntas: [], // Preguntas de los estudiantes
-    preguntasMostrar: [], // Preguntas filtradas
-    sesionRespuestas: 'inactivo',
-    pregunta: {
-      texto: ''
-    }, // Pregunta que el profesor envía a los estudiantes
-    respuestas: [],
-    respuestasMostrar: [],
     usuario: null,
     paraleloActual: null,
-    preguntasEstudiantesHistorial: [],
-    // Variables de control
     loggedIn: false,
     error: null,
     filtro: 'Todas',
     pagina: '',
     loading: null,
     preguntaNueva: false,
-    respuestaNueva: false
+    respuestaNueva: false,
+    sesionRespuestas: 'inactivo',
+    // Rstado de historial.js
+    preguntasEstudiantesHistorial: []
   },
   mutations,
   actions,

@@ -3,7 +3,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import moment from 'moment'
-import VueSocketio from 'vue-socket.io'
+import VueSocketio from 'vue-socket.io-extended'
+import io from 'socket.io-client'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import App from './App'
 import router from './router'
@@ -22,7 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(Vuetify)
-Vue.use(VueSocketio, url, store)
+Vue.use(VueSocketio, io(url), { store })
 
 Vue.config.productionTip = false
 

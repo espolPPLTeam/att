@@ -33,7 +33,7 @@
 <script>
 export default {
   created () {
-    this.$store.commit('setSocket', this.$socket)
+    this.$store.commit('sockets/setSocket', this.$socket)
   },
   mounted () {
     this.$store.dispatch('getLoggedUser')

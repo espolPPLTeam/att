@@ -5,15 +5,14 @@ export default {
     commit('setError', null)
     Vue.http.get('/api/att/datosUsuario')
       .then((response) => {
+        commit('setLoading', false)
         if (response.body.estado) {
           commit('setUsuario', response.body.datos)
           // Por default se obtienen los datos del primer paralelo
           const paraleloActual = response.body.datos.paralelos[0]
           commit('setParaleloActual', paraleloActual)
+          commit('sockets/unirAParalelo', paraleloActual.id)
           dispatch('getDatosProfesor', {paralelo: paraleloActual.id, correo: state.usuario.correo})
-          commit('SOCKET_unirseAParalelo', paraleloActual.id)
-        } else {
-          commit('setLoading', false)
         }
       }, (err) => {
         commit('setError', err)
@@ -35,10 +34,10 @@ export default {
       .then((response) => {
         commit('setLoading', false)
         if (response.body.estado) {
-          commit('setPreguntas', response.body.datos.preguntasEstudiantesHoy)
+          commit('preguntas/setPreguntas', response.body.datos.preguntasEstudiantesHoy)
           if (hayPreguntaActual(response.body.datos.preguntaProfesor)) {
-            commit('setPreguntaProfesor', response.body.datos.preguntaProfesor)
-            commit('setRespuestas', response.body.datos.preguntaProfesor.respuestas)
+            commit('respuestas/setPreguntaProfesor', response.body.datos.preguntaProfesor)
+            commit('respuestas/setRespuestas', response.body.datos.preguntaProfesor.respuestas)
             commit('setSesionRespuestas', 'activo')
           } else {
             commit('setSesionRespuestas', 'inactivo')
@@ -76,7 +75,7 @@ export default {
         commit('setLoading', false)
         if (response.body.estado) {
           commit('logout')
-          commit('disconnectSocket')
+          commit('sockets/disconnectSocket')
         } else {
           console.log('ERROR LOGOUT')
           commit('setError', response.body)
@@ -86,94 +85,6 @@ export default {
         commit('setLoading', false)
         commit('setError', err)
         console.log(err)
-      })
-  },
-  calificarPregunta ({commit}, payload) {
-    commit('setError', null)
-    const urlApi = '/api/att/profesor/calificarPreguntaEstudiante'
-    const data = {
-      preguntaId: payload.id,
-      calificacion: payload.calificacion
-    }
-    Vue.http.put(urlApi, data)
-      .then((response) => {
-        if (!response.body.estado) {
-          commit('setError', response.body)
-          commit('calificarPregunta', {id: payload.id, calificacion: payload.calificacionAntigua})
-        }
-      }, (err) => {
-        commit('setError', err)
-        console.log('err', err)
-        commit('calificarPregunta', {id: payload.id, calificacion: payload.calificacionAntigua})
-      })
-  },
-  enviarPregunta ({commit, state}, payload) {
-    commit('setError', null)
-    commit('setLoading', true)
-    const data = {
-      paraleloId: state.paraleloActual.id,
-      creador: state.usuario,
-      texto: payload
-    }
-    Vue.http.post('/api/att/profesor/preguntar', data)
-      .then((response) => {
-        commit('setLoading', false)
-        if (response.body.estado) {
-          data.id = response.body.datos.id
-          commit('SOCKET_preguntaProfesor', data)
-          commit('setPreguntaProfesor', data)
-          commit('setSesionRespuestas', 'activo')
-        } else {
-          commit('setError', response.body)
-        }
-      }, (err) => {
-        commit('setLoading', false)
-        commit('setError', err)
-        console.log(err)
-      })
-  },
-  terminarSesionRespuestas ({commit, state}) {
-    commit('setError', null)
-    const urlApi = '/api/att/profesor/terminarPregunta'
-    const data = {
-      preguntaId: state.pregunta.id,
-      paraleloId: state.paraleloActual.id,
-      terminadoPor: {
-        nombres: state.usuario.nombres,
-        apellidos: state.usuario.apellidos,
-        tipo: state.usuario.tipo,
-        correo: state.usuario.correo
-      }
-    }
-    Vue.http.put(urlApi, data)
-      .then((response) => {
-        if (response.body.estado) {
-          commit('SOCKET_terminarPregunta', data)
-        } else {
-          commit('setError', response.body)
-        }
-      }, (err) => {
-        commit('setError', err)
-        console.log(err)
-      })
-  },
-  calificarRespuesta ({commit}, payload) {
-    commit('setError', null)
-    const urlApi = '/api/att/profesor/calificarRespuestaEstudiante'
-    const data = {
-      respuestaId: payload.id,
-      calificacion: payload.calificacion
-    }
-    Vue.http.put(urlApi, data)
-      .then((response) => {
-        if (!response.body.estado) {
-          commit('setError', response.body)
-          commit('calificarRespuesta', {id: payload.id, calificacion: payload.calificacionAntigua})
-        }
-      }, (err) => {
-        commit('setError', err)
-        commit('calificarRespuesta', {id: payload.id, calificacion: payload.calificacionAntigua})
-        console.log('err', err)
       })
   },
   getPreguntasEstudiantesDia ({commit}, payload) {
@@ -193,6 +104,14 @@ export default {
         commit('setError', err)
         commit('setLoading', false)
       })
+  },
+  filtrar ({commit}, payload) {
+    commit('setFiltro', payload.filtro.texto)
+    if (payload.pagina === 'Preguntas') {
+      commit('preguntas/filtrar', payload)
+    } else if (payload.pagina === 'Respuestas') {
+      commit('respuestas/filtrar', payload)
+    }
   }
 }
 
