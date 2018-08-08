@@ -5,9 +5,12 @@ import Vuetify from 'vuetify'
 import moment from 'moment'
 import VueSocketio from 'vue-socket.io'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
+
 import App from './App'
 import router from './router'
 import { store } from './store'
+
+import Navbar from '@/components/Shared/Navbar'
 
 let url
 if (process.env.NODE_ENV === 'production') {
@@ -18,6 +21,8 @@ if (process.env.NODE_ENV === 'production') {
 
 Vue.use(Vuetify)
 Vue.use(VueSocketio, url, store)
+
+Vue.component('navbar', Navbar)
 
 Vue.config.productionTip = false
 

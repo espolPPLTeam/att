@@ -11,7 +11,7 @@
             <v-layout row>
               <v-flex xs12>
                 <v-btn
-                class="text-xs-right red white--text"
+                class="text-xs-right continue"
                 @click="preguntarEstudiantes"
                 :loading="loading" :disabled="!enviarPreguntaHabilitado">
                   Enviar

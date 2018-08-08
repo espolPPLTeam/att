@@ -12,6 +12,7 @@ import { store } from './store'
 import Star from './components/Shared/Stars'
 import Pregunta from './components/Shared/Pregunta'
 import Respuesta from './components/Shared/Respuesta'
+import Navbar from './components/Shared/Navbar'
 
 let url
 if (process.env.NODE_ENV === 'production') {
@@ -40,6 +41,7 @@ Vue.filter('timeFromDate', (value) => {
 Vue.component('star', Star)
 Vue.component('card-pregunta', Pregunta)
 Vue.component('card-respuesta', Respuesta)
+Vue.component('navbar', Navbar)
 
 /* eslint-disable no-new */
 new Vue({
