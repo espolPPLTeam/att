@@ -18,6 +18,6 @@ install:
   - "yarn install"
 
 # after_success: yarn coverage
-after_success: 
+after_success:
   - yarn coverage
   - yarn coverage:codecov

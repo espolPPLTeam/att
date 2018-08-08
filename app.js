@@ -36,29 +36,29 @@ function app (ioPPL) {
 
   if (process.env.NODE_ENV !== 'testing') {
     db.Conectar(urlServidor).then(() => {
-      if (process.env.NODE_ENV === 'production') {
-        try {
-          const WSPPL = require('../web_service/index.js')
-          const dbWebService = require('./scripts/webService.db')
-          const { exec } = require('child_process')
-          const rutaScriptBackup = path.join(__dirname, 'scripts', 'mongoBackup.sh')
-          const wsPPL = WSPPL({ db: dbWebService, local: false })
-          wsPPL.inicializar().then(() => {
-            new CronJob('00 00 00 * * *', function() {
-              exec(`sh ${rutaScriptBackup}`, function (error, stdout, stderr) {
-                if (error) {
-                  console.error(error)
-                } else {
-                  wsPPL.actualizar()
-                }
-              })
-            }, null, true, 'America/Guayaquil')
-          })
-        } catch(err) {
-          console.error('No esta integrado web_service libreria')
-          console.log(err)
-        }
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      //   try {
+      //     const WSPPL = require('../web_service/index.js')
+      //     const dbWebService = require('./scripts/webService.db')
+      //     const { exec } = require('child_process')
+      //     const rutaScriptBackup = path.join(__dirname, 'scripts', 'mongoBackup.sh')
+      //     const wsPPL = WSPPL({ db: dbWebService, local: false })
+      //     wsPPL.inicializar().then(() => {
+      //       new CronJob('00 00 00 * * *', function() {
+      //         exec(`sh ${rutaScriptBackup}`, function (error, stdout, stderr) {
+      //           if (error) {
+      //             console.error(error)
+      //           } else {
+      //             // wsPPL.actualizar()
+      //           }
+      //         })
+      //       }, null, true, 'America/Guayaquil')
+      //     })
+      //   } catch(err) {
+      //     console.error('No esta integrado web_service libreria')
+      //     console.log(err)
+      //   }
+      // }
     }).catch((err) => console.log(err))
   }
 

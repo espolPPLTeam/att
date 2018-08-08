@@ -10,8 +10,11 @@ let Conectar = function(url) {
       options = { autoIndex: false }
       db = mongoose.createConnection(url, options)
     } else {
+      // db = mongoose.createConnection(url, options)
       conn = mongoose.connect(url, options)
       db = mongoose.connection
+      // conn = mongoose.connect(url, options)
+      // db = mongoose.connection
     }
     // db = mongoose.connection
     db.on('error', function(err) {
@@ -20,7 +23,7 @@ let Conectar = function(url) {
 
     db.on('connected', function() {
       if (process.env.NODE_ENV !== 'testing' && process.env.NODE_ENV !== 'production')
-        console.log(`base de datos conectada ATT`)
+        console.log(`app de ATT conectada con ${url}`)
     })
 
     db.on('disconnected', function() {
