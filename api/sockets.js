@@ -24,7 +24,7 @@ module.exports = function({ io, shortid, logger }) {
       Socket.in(`${paraleloId}`).emit('RESPUESTA_ESTUDIANTE', { paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } })
     })
     socket.on('terminarPregunta', function({ paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) {
-     Socket.in(`${paraleloId}`).emit('TERMINAR_PREGUNTA', { paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) 
+     Socket.in(`${paraleloId}`).emit('TERMINAR_PREGUNTA', { paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } })
     })
     socket.on('cambiarParalelo', function({paraleloAntiguo, paraleloNuevo}) {
       socket.leave(`${paraleloAntiguo}`)

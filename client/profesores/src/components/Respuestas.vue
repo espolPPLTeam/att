@@ -57,7 +57,7 @@
         </v-layout>
       </v-flex>
       <!-- Respuestas estudiantes -->
-      <v-flex xs12 v-for="(respuesta, i) in respuestas" :key="i" class="mb-1">
+      <v-flex xs12 v-for="(respuesta, i) in respuestasMostrar" :key="i" class="mb-1">
         <card-respuesta :respuesta="respuesta"></card-respuesta>
       </v-flex>
       <!-- Btn terminar -->
@@ -88,16 +88,17 @@
 <script>
 export default {
   mounted () {
-    this.pregunta = this.$store.getters.pregunta
+    this.pregunta = this.$store.getters['respuestas/pregunta']
     this.$store.commit('setPagina', 'Respuestas')
     this.$store.commit('setRespuestaNueva', false)
+    this.$store.commit('setFiltro', 'Todas')
   },
   computed: {
     sesionRespuestas () {
       return this.$store.getters.sesionRespuestas
     },
-    respuestas () {
-      return this.$store.getters.respuestasMostrar
+    respuestasMostrar () {
+      return this.$store.getters['respuestas/respuestasMostrar']
     },
     loading () {
       return this.$store.getters.loading
@@ -111,7 +112,7 @@ export default {
   },
   watch: {
     filtro () {
-      this.$store.commit('filtrar', {filtro: this.filtro, pagina: this.pagina})
+      this.$store.commit('respuestas/filtrar', { filtro: this.filtro })
     }
   },
   data () {
@@ -162,18 +163,18 @@ export default {
     preguntarEstudiantes () {
       if (this.pregunta !== undefined && this.pregunta !== '') {
         this.snackbar.estado = false
-        this.$store.dispatch('enviarPregunta', this.pregunta.texto)
+        this.$store.dispatch('respuestas/enviarPregunta', this.pregunta.texto)
       } else {
         this.snackbar.estado = true
       }
     },
     buscarRespuestas () {
-      this.$store.commit('buscarRespuestas', {busqueda: this.busqueda, filtro: this.filtro})
+      this.$store.commit('respuestas/buscar', {busqueda: this.busqueda, filtro: this.filtro})
     },
     terminarSesionRespuestas () {
       this.dialog = false
-      this.pregunta = {texto: ''}
-      this.$store.dispatch('terminarSesionRespuestas')
+      this.pregunta = { texto: '' }
+      this.$store.dispatch('respuestas/terminarSesionRespuestas')
     }
   }
 }

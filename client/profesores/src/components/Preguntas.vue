@@ -15,8 +15,8 @@
       </v-card-text>
     </v-card>
     <!-- Preguntas -->
-    <v-layout row wrap v-if="preguntas.length > 0">
-      <v-flex xs12 v-for="(pregunta, i) in preguntas" :key="i" class="mb-1">
+    <v-layout row wrap v-if="preguntasMostrar.length > 0">
+      <v-flex xs12 v-for="(pregunta, i) in preguntasMostrar" :key="i" class="mb-1">
         <card-pregunta :pregunta="pregunta"></card-pregunta>
       </v-flex>
     </v-layout>
@@ -35,19 +35,19 @@
 <script>
 export default {
   computed: {
-    preguntas () {
-      return this.$store.getters.preguntasMostrar
-    },
     loading () {
       return this.$store.getters.loading
     },
     pagina () {
       return this.$store.getters.pagina
+    },
+    preguntasMostrar () {
+      return this.$store.getters['preguntas/preguntasMostrar']
     }
   },
   watch: {
     filtro () {
-      this.$store.commit('filtrar', {filtro: this.filtro, pagina: this.pagina})
+      this.$store.commit('preguntas/filtrar', { filtro: this.filtro })
     }
   },
   data () {
@@ -77,10 +77,11 @@ export default {
   mounted () {
     this.$store.commit('setPagina', 'Preguntas')
     this.$store.commit('setPreguntaNueva', false)
+    this.$store.commit('setFiltro', 'Todas')
   },
   methods: {
     buscar () {
-      this.$store.commit('buscar', {busqueda: this.busqueda, filtro: this.filtro})
+      this.$store.commit('preguntas/buscar', { filtro: this.filtro, busqueda: this.busqueda })
     },
     keypressed (e) {
       const code = (e.keyCode ? e.keyCode : e.which)

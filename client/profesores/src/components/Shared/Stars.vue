@@ -52,12 +52,12 @@ export default {
      */
     set (value) {
       if (this.tipo === 'pregunta') {
-        this.$store.commit('calificarPregunta', {id: this.id, calificacion: value})
-        this.$store.dispatch('calificarPregunta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
+        this.$store.commit('preguntas/calificarPregunta', {id: this.id, calificacion: value})
+        this.$store.dispatch('preguntas/calificarPregunta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
         this.temp_value = value
       } else if (this.tipo === 'respuesta') {
-        this.$store.commit('calificarRespuesta', {id: this.id, calificacion: value})
-        this.$store.dispatch('calificarRespuesta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
+        this.$store.commit('respuestas/calificarRespuesta', {id: this.id, calificacion: value})
+        this.$store.dispatch('respuestas/calificarRespuesta', {id: this.id, calificacion: value, calificacionAntigua: this.value})
       }
     }
   }

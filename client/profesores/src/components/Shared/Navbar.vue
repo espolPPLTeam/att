@@ -81,7 +81,7 @@
       </v-toolbar-side-icon>
       <v-toolbar-title class="white--text" style="font-size:initial;" v-if="loggedIn && paraleloActual">
         <h3 class="titulo-toolbar">{{ paraleloActual.nombre }}</h3>
-        <span class="subtitulo-toolbar">P{{ paraleloActual.curso }} - {{ filtro.texto  }}</span>
+        <span class="subtitulo-toolbar">P{{ paraleloActual.curso }} - {{ filtro }}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="mr-2" v-if="loggedIn">
@@ -179,11 +179,12 @@ export default {
       this.$store.dispatch('logout')
     },
     filtrar (filtro) {
-      this.$store.commit('filtrar', {filtro: filtro, pagina: this.pagina})
+      this.$store.dispatch('filtrar', {filtro: filtro, pagina: this.pagina})
     },
     cambiarParalelo (idParalelo) {
       this.sideNav = false
-      this.$store.commit('SOCKET_cambiarParalelo', {paraleloAntiguo: this.paraleloActual.id, paraleloNuevo: idParalelo})
+      this.$store.commit('setLoading', true)
+      this.$store.commit('sockets/cambiarParalelo', {paraleloAntiguo: this.paraleloActual.id, paraleloNuevo: idParalelo})
     }
   }
 }
