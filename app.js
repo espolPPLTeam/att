@@ -91,7 +91,7 @@ const att = () => {
   if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') {
     urlServidor = process.env.MONGO_URL_HEROKU
   } else if (process.env.NODE_ENV) {
-    urlServidor = `mongodb://localhost/att_${process.env.NODE_ENV}`
+    urlServidor = `mongodb://localhost/ppl_${process.env.NODE_ENV}_v2`
   } else {
     process.exit(1)
   }

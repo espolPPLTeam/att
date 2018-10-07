@@ -150,8 +150,8 @@ module.exports = ({ app, controller, logger }) => {
   .route('/estudiante/preguntar')
     .post((req, res) => {
       let { texto, paraleloId } = req.body
-      let { correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
-      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
+      let { email, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { email, matricula, nombres, apellidos } })
         .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })
@@ -210,11 +210,11 @@ module.exports = ({ app, controller, logger }) => {
       if (!validator.isEmail(correo)) {
         correo = `${correo}@espol.edu.ec`
       }
-      controller.Login({ correo })
+      controller.Login({ email: correo })
         .then((resp) => {
           if (resp) {
             let datos = resp.datos
-            req.session.correo = datos['correo']
+            req.session.email = datos['email']
             res.send(resp)
           } else {
             res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })

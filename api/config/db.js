@@ -20,7 +20,7 @@ let Conectar = function(url) {
 
     db.on('connected', function() {
       if (process.env.NODE_ENV !== 'testing' && process.env.NODE_ENV !== 'production')
-        console.log(`base de datos conectada ATT`)
+        console.log(`Base de datos conectada a: ${url}`)
     })
 
     db.on('disconnected', function() {
