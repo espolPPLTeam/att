@@ -56,7 +56,7 @@ export default {
       return this.$store.getters.loggedIn
     },
     preguntas () {
-      return this.$store.getters.preguntas
+      return this.$store.getters['preguntasEstudiante/preguntas']
     },
     habilitado () {
       return this.pregunta !== '' && this.pregunta !== undefined && this.loggedIn
@@ -77,7 +77,7 @@ export default {
         texto: this.pregunta,
         estado: 'enviando'
       }
-      this.$store.dispatch('anadirPregunta', pregunta)
+      this.$store.dispatch('preguntasEstudiante/anadirPregunta', pregunta)
       this.pregunta = ''
     },
     keypressed (e) {

@@ -12,6 +12,14 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-divider class="mt-1"></v-divider>
+        <v-list-tile v-for="paralelo in estudiante.paralelos" :key="paralelo._id" @click="cambiarParalelo(paralelo._id)">
+          <v-list-tile-action>
+            <v-icon></v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>
+            {{ paralelo.nombreMateria }} - P{{ paralelo.nombre }}
+          </v-list-tile-title>
+        </v-list-tile>
         <v-list-tile v-if="loggedIn" router :to="{name:'Preguntar'}">
           <v-list-tile-action>
             <v-icon>help</v-icon>
@@ -67,6 +75,13 @@ export default {
     },
     ppl () {
       window.location.href = '/'
+    },
+    cambiarParalelo (idParalelo) {
+      this.sideNav = false
+      this.$store.commit('setLoading', true)
+      let paraleloActual = this.estudiante.paralelos.find((paralelo) => paralelo._id === idParalelo)
+      this.$store.commit('setParaleloActual', paraleloActual)
+      // this.$store.commit('sockets/cambiarParalelo', {paraleloAntiguo: this.paraleloActual.id, paraleloNuevo: idParalelo})
     }
   }
 }

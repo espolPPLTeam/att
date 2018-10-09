@@ -80,10 +80,10 @@ export default {
       return this.preguntaProfesor !== '' && this.preguntaProfesor !== undefined && this.preguntaProfesor !== null && this.loggedIn && this.inputRespuesta !== '' && this.inputRespuesta !== undefined && this.respuesta === null
     },
     preguntaProfesor () {
-      return this.$store.getters.preguntaProfesor
+      return this.$store.getters['preguntaProfesor/preguntaProfesor']
     },
     respuesta () {
-      return this.$store.getters.respuesta
+      return this.$store.getters['preguntaProfesor/respuesta']
     }
   },
   data () {
@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     responder () {
-      this.$store.dispatch('responder', this.inputRespuesta)
+      this.$store.dispatch('preguntaProfesor/responder', this.inputRespuesta)
       this.inputRespuesta = ''
     },
     keypressed (e) {

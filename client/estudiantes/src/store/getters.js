@@ -1,9 +1,4 @@
 export default {
-  preguntas (state) {
-    return state.preguntas.sort((preguntaA, preguntaB) => {
-      return preguntaA.createdAt > preguntaB.createdAt
-    })
-  },
   estudiante (state) {
     return state.usuario
   },
@@ -12,12 +7,6 @@ export default {
   },
   error (state) {
     return state.error
-  },
-  preguntaProfesor (state) {
-    return state.preguntaProfesor
-  },
-  respuesta (state) {
-    return state.respuesta
   },
   loading (state) {
     return state.loading

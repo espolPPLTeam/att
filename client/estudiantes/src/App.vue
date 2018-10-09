@@ -13,10 +13,19 @@
 export default {
   name: 'App',
   created () {
-    this.$store.commit('setSocket', this.$socket)
-  },
-  mounted () {
-    this.$store.dispatch('getLoggedUser')
+    this.$store.commit('sockets/setSocket', this.$socket)
+    let token = localStorage.getItem('x-access-token')
+    if (token !== null && token !== undefined && token !== '') {
+      this.$store.commit('setHeaders', token)
+      this.$store.commit('setLoggedIn', true)
+      this.$store.dispatch('getLoggedUser')
+    } else {
+      console.log('No tiene token')
+      localStorage.removeItem('x-access-token')
+      this.$store.commit('setHeaders', null)
+      this.$store.commit('setLoggedIn', false)
+      // REDIRECT TO LOGIN
+    }
   },
   computed: {
     loggedIn () {
