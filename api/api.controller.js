@@ -52,7 +52,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo: profesorCorreo })
           if (profesorDatos) {
             let { paralelos }= profesorDatos
-            let profesor = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
+            let profesor = _.pick(profesorDatos, ['email', 'tipo', 'nombres', 'apellidos'])
             let paralelos_filtrados = []
             if (paralelos)
               paralelos_filtrados = paralelos.map(function(paralelo) {

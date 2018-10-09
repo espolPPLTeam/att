@@ -180,26 +180,27 @@ module.exports = ({ app, controller, logger }) => {
   // cada uno devolvera diferentes resultados
   // ver con la documentacion cuales son las salidas
   app
-  .route('/datosUsuario')
+  .route('/datosUsuario/:email')
     .get((req, res) => {
-      const sessionDatos = req.session
-      if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
-        let correo = req.session.correo
-        controller.Login({ correo })
-          .then((resp) => {
-            if (resp) {
-              res.status(resp.codigoEstado).json(resp)
-            } else {
-              res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
-            }
-          })
-          .catch((err, resp) => {
-            console.error(err)
+      let email = req.params.email
+      controller.Login({ email })
+        .then((resp) => {
+          if (resp) {
             res.status(resp.codigoEstado).json(resp)
-          })
-      } else {
-        res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
-      }
+          } else {
+            res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
+          }
+        })
+        .catch((err, resp) => {
+          console.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+      // const sessionDatos = req.session
+      // if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
+
+      // } else {
+      //   res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
+      // }
     })
 
   // ENDPOINTS DE PRUEBA PARA LOGIN

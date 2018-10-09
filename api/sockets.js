@@ -10,6 +10,7 @@ module.exports = function({ io, shortid, logger }) {
       socket.emit('UNIDO_PARALELO', true)
     })
     socket.on('preguntaEstudiante', function({ preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } }) {
+      console.log('asdsadad')
       Socket.in(`${paraleloId}`).emit('PREGUNTA_ESTUDIANTE', { preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } })
     })
     /*

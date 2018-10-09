@@ -88,14 +88,16 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    obtenerDatosProfesorPorCorreo({ correo }) {
+    async obtenerDatosProfesorPorCorreo({ correo }) {
       if (!correo)
         return Promise.reject(messages.NO_ESTA_ENVIANDO(['correo']))
+      let profesorId = await Profesor.obtenerPorCorreo({ correo })
       return new Promise((resolve, reject) => {
         Promise.all([
           Profesor.obtenerPorCorreo({ correo }),
-          Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo }) ])
+          Paralelo.obtenerParalelosProfesorPorId({ id: profesorId }) ])
             .then((values) => {
+              console.log(values)
               const paralelos = values[1]
               const profesorDatos = values[0]
               if (profesorDatos) {

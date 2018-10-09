@@ -361,7 +361,7 @@ ProfesorSchema.statics = {
   obtenerPorCorreo({ correo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOne({ correo }))
+      resolve(self.findOne({ email: correo }))
     })
   },
   anadirPregunta({ email, preguntaId }) {
@@ -452,6 +452,12 @@ ParaleloSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.find({ profesores: profesorCorreo }))
+    })
+  },
+  obtenerParalelosProfesorPorId({ id }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ profesores: id }))
     })
   },
   anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {
