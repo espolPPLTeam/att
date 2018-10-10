@@ -97,7 +97,7 @@ module.exports = ({ db, logger, messages }) => {
           Profesor.obtenerPorCorreo({ correo }),
           Paralelo.obtenerParalelosProfesorPorId({ id: profesorId }) ])
             .then((values) => {
-              console.log(values)
+              // console.log(values)
               const paralelos = values[1]
               const profesorDatos = values[0]
               if (profesorDatos) {

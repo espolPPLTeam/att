@@ -10,7 +10,6 @@ module.exports = function({ io, shortid, logger }) {
       socket.emit('UNIDO_PARALELO', true)
     })
     socket.on('preguntaEstudiante', function({ preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } }) {
-      console.log('asdsadad')
       Socket.in(`${paraleloId}`).emit('PREGUNTA_ESTUDIANTE', { preguntaId, texto, paraleloId, createdAt, creador: { _id, correo, matricula, nombres, apellidos } })
     })
     /*
@@ -21,7 +20,7 @@ module.exports = function({ io, shortid, logger }) {
       Socket.in(`${paraleloId}`).emit('PREGUNTA_PROFESOR', { paraleloId, preguntaId, texto, creador:{ nombres, apellidos, tipo, correo } })
     })
     // lo que el estudiante envia al profesor
-    socket.on('responder', function({ paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } }) {
+    socket.on('respuestaEstudiante', function({ paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } }) {
       Socket.in(`${paraleloId}`).emit('RESPUESTA_ESTUDIANTE', { paraleloId, texto, preguntaId, createdAt, creador: { nombres, apellidos, tipo, correo } })
     })
     socket.on('terminarPregunta', function({ paraleloId, preguntaId, terminadoPor: { nombres, apellidos, tipo, correo } }) {

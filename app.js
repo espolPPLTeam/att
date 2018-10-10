@@ -84,7 +84,7 @@ const att = () => {
   }
 
   // app.use('/', express.static(path.join(__dirname, 'client/login')))
-  let io = require('socket.io')(server, {'pingInterval': 60000, 'pingTimeout': 120000})
+  let io = require('socket.io')(server, {'pingInterval': 60000, 'pingTimeout': 120000, path: '/api/att/sockets' })
   const apiATT = express()
   require('./api/api.server')(apiATT)
   app.use('/api/att', apiATT)
