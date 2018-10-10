@@ -9,7 +9,7 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error
   }
-  const port = process.env.PORT
+  const port = process.env.ATT_PORT
   const bind = typeof port === 'string'
     ? `Pipe ${port}`
     : `Port ${port}`

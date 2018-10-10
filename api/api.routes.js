@@ -150,8 +150,8 @@ module.exports = ({ app, controller, logger }) => {
   .route('/estudiante/preguntar')
     .post((req, res) => {
       let { texto, paraleloId } = req.body
-      let { correo, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
-      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
+      let { email, matricula, nombres, apellidos } = req.body['creador'] ? req.body['creador'] : {}
+      controller.CrearPreguntaEstudiante({ texto, paraleloId, creador: { email, matricula, nombres, apellidos } })
         .then((resp) => {
           res.status(resp.codigoEstado).json(resp)
         })
@@ -180,26 +180,27 @@ module.exports = ({ app, controller, logger }) => {
   // cada uno devolvera diferentes resultados
   // ver con la documentacion cuales son las salidas
   app
-  .route('/datosUsuario')
+  .route('/datosUsuario/:email')
     .get((req, res) => {
-      const sessionDatos = req.session
-      if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
-        let correo = req.session.correo
-        controller.Login({ correo })
-          .then((resp) => {
-            if (resp) {
-              res.status(resp.codigoEstado).json(resp)
-            } else {
-              res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
-            }
-          })
-          .catch((err, resp) => {
-            console.error(err)
+      let email = req.params.email
+      controller.Login({ email })
+        .then((resp) => {
+          if (resp) {
             res.status(resp.codigoEstado).json(resp)
-          })
-      } else {
-        res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
-      }
+          } else {
+            res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })
+          }
+        })
+        .catch((err, resp) => {
+          console.error(err)
+          res.status(resp.codigoEstado).json(resp)
+        })
+      // const sessionDatos = req.session
+      // if (!_.isEmpty(sessionDatos) && sessionDatos && req.session.correo) {
+
+      // } else {
+      //   res.status(200).json({ estado: false, mensaje: 'No esta loggeado' })
+      // }
     })
 
   // ENDPOINTS DE PRUEBA PARA LOGIN
@@ -210,11 +211,11 @@ module.exports = ({ app, controller, logger }) => {
       if (!validator.isEmail(correo)) {
         correo = `${correo}@espol.edu.ec`
       }
-      controller.Login({ correo })
+      controller.Login({ email: correo })
         .then((resp) => {
           if (resp) {
             let datos = resp.datos
-            req.session.correo = datos['correo']
+            req.session.email = datos['email']
             res.send(resp)
           } else {
             res.status(200).json({ estado: false, mensaje: 'El usuario no existe' })

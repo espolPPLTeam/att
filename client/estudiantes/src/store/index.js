@@ -6,18 +6,24 @@ import mutations from './mutations'
 import actions from './actions'
 import getters from './getters'
 
+import preguntasEstudiante from './modules/preguntasEstudiante'
+import preguntaProfesor from './modules/preguntaProfesor'
+import sockets from './modules/sockets'
+
 Vue.use(Vuex)
 Vue.use(VueResource)
 
 export const store = new Vuex.Store({
+  modules: {
+    preguntasEstudiante,
+    preguntaProfesor,
+    sockets
+  },
   state: {
-    io: {},
     loggedIn: false,
     usuario: null,
-    preguntas: [],
-    preguntaProfesor: null,
+    paraleloActual: null,
     preguntaProfesorNueva: false,
-    respuesta: null,
     error: null,
     loading: null,
     pagina: ''

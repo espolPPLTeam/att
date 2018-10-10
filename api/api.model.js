@@ -63,14 +63,15 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    obtenerDatosEstudiantePorCorreo({ correo }) {
-      if (!correo)
-        return Promise.reject(messages.NO_ESTA_ENVIANDO(['correo']))
+    obtenerDatosEstudiantePorCorreo({ email }) {
+      if (!email)
+        return Promise.reject(messages.NO_ESTA_ENVIANDO(['email']))
       return new Promise((resolve, reject) => {
           Promise.all([
-            Estudiante.obtenerPorCorreo({ correo }),
-            Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: correo })])
+            Estudiante.obtenerPorCorreo({ email }),
+            Paralelo.obtenerParaleloEstudiante({ estudianteCorreo: email })])
               .then((values) => {
+                console.log(values)
                 let estudianteDatos = values[0]
                 let paraleloDatos = values[1]
                 let estudiante = null
@@ -87,14 +88,16 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    obtenerDatosProfesorPorCorreo({ correo }) {
+    async obtenerDatosProfesorPorCorreo({ correo }) {
       if (!correo)
         return Promise.reject(messages.NO_ESTA_ENVIANDO(['correo']))
+      let profesorId = await Profesor.obtenerPorCorreo({ correo })
       return new Promise((resolve, reject) => {
         Promise.all([
           Profesor.obtenerPorCorreo({ correo }),
-          Paralelo.obtenerParalelosProfesor({ profesorCorreo: correo }) ])
+          Paralelo.obtenerParalelosProfesorPorId({ id: profesorId }) ])
             .then((values) => {
+              // console.log(values)
               const paralelos = values[1]
               const profesorDatos = values[0]
               if (profesorDatos) {
@@ -181,13 +184,13 @@ module.exports = ({ db, logger, messages }) => {
       })
     },
     // Preguntas
-    crearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } }) {
+    crearPreguntaEstudiante({ texto, paraleloId, creador: { email, matricula, nombres, apellidos } }) {
       return new Promise((resolve, reject) => {
-        let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { correo, nombres, matricula, apellidos } })
+        let pregunta = new PreguntaEstudiante({ texto, paralelo: paraleloId, 'creador': { email, nombres, matricula, apellidos } })
         pregunta.crear()
           .then(preguntaCreda => {
             Promise.all([
-              Estudiante.anadirPregunta({ correo, preguntaId: pregunta['_id'] }),
+              Estudiante.anadirPregunta({ email, preguntaId: pregunta['_id'] }),
               Paralelo.anadirPreguntaEstudiante({ paraleloId, preguntaId: pregunta['_id'] })])
                 .then((values) => {
                   if (_.every(values)) {
@@ -243,15 +246,15 @@ module.exports = ({ db, logger, messages }) => {
         })
       })
     },
-    crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } }) {
+    crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, email, tipo, nombres, apellidos } }) {
       return new Promise((resolve, reject) => {
         // La pregunta se habilita por si sola porque esta como default true
-        let pregunta = new PreguntaProfesor({ texto, paralelo: paraleloId, 'creador': { _id, correo, tipo, nombres, apellidos } })
+        let pregunta = new PreguntaProfesor({ texto, paralelo: paraleloId, 'creador': { _id, email, tipo, nombres, apellidos } })
         pregunta.crear()
           .then(preguntaCreda => {
             Promise.all([
               Paralelo.anadirPreguntaActual({ paraleloId, preguntaId: pregunta['_id'] }),
-              Profesor.anadirPregunta({ correo, preguntaId: pregunta['_id'] }),
+              Profesor.anadirPregunta({ email, preguntaId: pregunta['_id'] }),
               Paralelo.anadirPreguntaProfesor({ paraleloId, preguntaId: pregunta['_id'] })
               ])
               .then((values) => {
@@ -269,9 +272,9 @@ module.exports = ({ db, logger, messages }) => {
         })
       })
     },
-    crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, correo, matricula, nombres, apellidos } }) {
+    crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { _id, email, matricula, nombres, apellidos } }) {
       return new Promise((resolve, reject) => {
-        let creadorTmp =  { _id, correo, matricula, nombres, apellidos }
+        let creadorTmp =  { _id, email, matricula, nombres, apellidos }
         let respuesta = new Respuesta({
           paraleloId,
           preguntaId,
@@ -313,10 +316,10 @@ module.exports = ({ db, logger, messages }) => {
           })
       })
     },
-    terminarPregunta({ paraleloId, preguntaId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
+    terminarPregunta({ paraleloId, preguntaId, terminadoPor: { _id, email, nombres, apellidos, tipo } }) {
       return new Promise((resolve, reject) => {
         let respuestaVacia = null
-        let profesor = { _id, correo, nombres, apellidos, tipo }
+        let profesor = { _id, email, nombres, apellidos, tipo }
         Promise.all([
           Paralelo.anadirPreguntaActual({ paraleloId, preguntaId: respuestaVacia }),
           PreguntaProfesor.terminar({ preguntaId, terminadoPor: profesor })

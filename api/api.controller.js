@@ -7,10 +7,10 @@ const LimpiarPropId = (obj) => {
 module.exports = ({ responses, messages, model, logger, validator }) => {
   const proto = {
     URL_NO_VALIDO: responses.URL_NO_VALIDO,
-    async Login({ correo }) {
+    async Login({ email }) {
       try {
-        let profesor = await this.ObtenerParalelosProfesor({ profesorCorreo: correo })
-        let estudiante = await this.ObtenerDatosEstudiante({ correo })
+        let profesor = await this.ObtenerParalelosProfesor({ profesorCorreo: email })
+        let estudiante = await this.ObtenerDatosEstudiante({ email })
         let esProfesor = profesor ? profesor['estado'] : false
         let esEstudiante = estudiante ? estudiante['estado'] : false
         if (esProfesor) {
@@ -18,7 +18,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         } else if (esEstudiante) {
           let estudianteDatos = estudiante['datos']
           let paraleloId = estudianteDatos['paraleloId']
-          let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ correo })
+          let preguntas = await model.obtenerPreguntasEstudiantePorCorreo({ email })
           let paralelo = await model.PreguntaHabilitadaParalelo({ paraleloId })
           let pregunta = paralelo ? paralelo['preguntaActual'] : null
           estudianteDatos['misPreguntasHoy'] = preguntas
@@ -29,7 +29,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
             let preguntaId = pregunta['_id']
             delete pregunta.createdAt
             delete pregunta._id
-            let respuesta = await model.obtenerRespuestaCreador({ correo: estudianteDatos['correo'], preguntaId })
+            let respuesta = await model.obtenerRespuestaCreador({ email: estudianteDatos['email'], preguntaId })
             if (respuesta) {
               pregunta['fechaCreadaRespuesta'] = respuesta['createdAt']
               pregunta['respuesta'] = respuesta['texto']
@@ -52,7 +52,7 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
           let profesorDatos = await model.obtenerDatosProfesorPorCorreo({ correo: profesorCorreo })
           if (profesorDatos) {
             let { paralelos }= profesorDatos
-            let profesor = _.pick(profesorDatos, ['correo', 'tipo', 'nombres', 'apellidos'])
+            let profesor = _.pick(profesorDatos, ['email', 'tipo', 'nombres', 'apellidos'])
             let paralelos_filtrados = []
             if (paralelos)
               paralelos_filtrados = paralelos.map(function(paralelo) {
@@ -72,11 +72,11 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
     	  return responses.OK_ERROR({ mensaje: messages.CORREO_INVALIDO })
       }
     },
-    async ObtenerDatosEstudiante({ correo }) {
+    async ObtenerDatosEstudiante({ email }) {
       try {
-        let estudiante = await model.obtenerDatosEstudiantePorCorreo({ correo })
+        let estudiante = await model.obtenerDatosEstudiantePorCorreo({ email })
         if (estudiante) {
-          let estudiante_filtrado = _.pick(estudiante, ['correo', 'matricula', 'nombres', 'apellidos', 'paraleloId'])
+          let estudiante_filtrado = _.pick(estudiante, ['email', 'matricula', 'nombres', 'apellidos', 'paraleloId'])
           return responses.OK({ datos: estudiante_filtrado })
         } else {
           return responses.OK_ERROR({ mensaje: messages.ESTUDIANTE_NO_EXISTE })
@@ -86,11 +86,11 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async CrearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } }) {
+    async CrearPreguntaEstudiante({ texto, paraleloId, creador: { email, matricula, nombres, apellidos } }) {
       try {
         if (paraleloId) {
           // TODO: si paraleloId no existe
-          let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { correo, matricula, nombres, apellidos } })
+          let pregunta = await model.crearPreguntaEstudiante({ texto, paraleloId, creador: { email, matricula, nombres, apellidos } })
           if (pregunta) {
             let PREGUNTA_LIMPIADA = _.pick(pregunta, ['texto', , 'calificacion', 'paralelo', '_id', 'creador', 'destacada'])
             PREGUNTA_LIMPIADA = LimpiarPropId(PREGUNTA_LIMPIADA)
@@ -119,9 +119,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } }) {
+    async CrearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, email, tipo, nombres, apellidos } }) {
       try {
-        let pregunta = await model.crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, correo, tipo, nombres, apellidos } })
+        let pregunta = await model.crearPreguntaProfesorYHabilitarla({ texto, paraleloId, creador: { _id, email, tipo, nombres, apellidos } })
         if (pregunta) {
           let preguntaLimpiada = _.pick(pregunta, ['_id', 'texto', 'creador'])
           preguntaLimpiada['id'] = preguntaLimpiada['_id']
@@ -136,9 +136,9 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async CrearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { correo, matricula, nombres, apellidos } }) {
+    async CrearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { email, matricula, nombres, apellidos } }) {
       try {
-        let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { correo, matricula, nombres, apellidos } })
+        let respuesta = await model.crearRespuestaEstudiante({ paraleloId, preguntaId, texto, creador: { email, matricula, nombres, apellidos } })
         if (respuesta) {
           let respuestaLimpiada = JSON.parse(JSON.stringify(respuesta))
           respuestaLimpiada['id'] = respuestaLimpiada['_id']
@@ -165,8 +165,8 @@ module.exports = ({ responses, messages, model, logger, validator }) => {
         return responses.ERROR_SERVIDOR
       }
     },
-    async TerminarPregunta({ preguntaId, paraleloId, terminadoPor: { _id, correo, nombres, apellidos, tipo } }) {
-      let profesor = { _id, correo, nombres, apellidos, tipo }
+    async TerminarPregunta({ preguntaId, paraleloId, terminadoPor: { _id, email, nombres, apellidos, tipo } }) {
+      let profesor = { _id, email, nombres, apellidos, tipo }
       try {
         let fueTerminada = await model.terminarPregunta({ preguntaId, paraleloId, terminadoPor: profesor })
         if (fueTerminada) {

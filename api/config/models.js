@@ -10,19 +10,73 @@ if (process.env.NODE_ENV === 'production' && process.env.SERVIDOR === 'heroku') 
 
 const shortid = require('shortid')
 const moment = require('moment')
+const validators = require('./validators')
 mongoose.Promise = global.Promise
 
 const EstudianteSchema = mongoose.Schema({
   _id: {
     type: String,
-	  'default': shortid.generate
+    'default': shortid.generate
   },
-  token: { type: String },
-  nombres: { type: String, required: true },
-  apellidos: { type: String, required: true },
-  correo: { type: String, required: true },
-  matricula: { type: String, required: true },
-  ingresadoManualmente: { type: Boolean, 'default': false },
+  nombres: {
+    type: String,
+    required: [true, 'El campo "Nombres" es obligatorio'],
+    validate: [
+      { validator: validators.noSpecialChars, msg: 'El campo "Nombres" no acepta caracteres especiales' },
+      { validator: validators.notEmpty, msg: 'El campo "Nombres" no puede estar vacío' }
+    ]
+  },
+  apellidos: {
+    type: String,
+    required: [true, 'El campo "Apellidos" es obligatorio'],
+    validate: [
+      { validator: validators.noSpecialChars, msg: 'El campo "Apellidos" no acepta caracteres especiales' },
+      { validator: validators.notEmpty, msg: 'El campo "Apellidos" no puede estar vacío' }
+    ]
+  },
+  carrera: {
+    type: String,
+    validate: [
+      { validator: validators.noSpecialChars, msg: 'El campo "Carrera" no acepta caracteres especiales' },
+      { validator: validators.notEmpty, msg: 'El campo "Carrera" no puede estar vacío' }
+    ]
+  },
+  matricula: {
+    type: String,
+    validate: [
+      { validator: validators.noSpecialChars, msg: 'El campo "Matrícula" no acepta caracteres especiales' },
+      { validator: validators.notEmpty, msg: 'El campo "Matrícula" no puede estar vacío' }
+    ]
+  },
+  email: {
+    type: String,
+    required: [true, 'El campo "Email" es obligatorio'],
+    unique: true,
+     validate: [
+      { validator: validators.notEmpty, msg: 'El campo "Email" no puede estar vacío' },
+      { validator: validators.validEmail, msg: 'Email inválido' }
+    ]
+  },
+  clave: {
+    type: String,
+    required: [true, 'El campo "Clave" es obligatorio']
+  },
+  lecciones: [],
+  paralelos: [
+    {
+      type: String,
+      ref: 'Paralelos'
+    }
+  ],
+  grupos: [],
+  estado: {
+    type: String,
+    'default': 'activo',
+    enum: {
+      values: ['activo', 'inactivo'],
+      message: 'El campo "Estado" solo puede ser "activo" o "inactivo"'
+    }
+  },
   preguntas:  [{
   	type: String,
 	  ref: 'Pregunta'
@@ -39,7 +93,7 @@ const ProfesorSchema = mongoose.Schema({
 	  'default': shortid.generate
   },
   token: { type: String },
-  correo: { type: String, required: true },
+  email: { type: String, required: true },
   nombres: { type: String, required: true },
   apellidos: { type: String, required: true },
   tipo: {
@@ -95,7 +149,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
   },
   creador: {
     matricula: { type: String },
-    correo: { type: String },
+    email: { type: String },
     nombres: { type: String },
     apellidos: { type: String }
   },
@@ -112,7 +166,7 @@ const PreguntaEstudianteSchema = mongoose.Schema({
     type: Number,
     'default': 0
   }
-},{timestamps: true, versionKey: false, collection: 'preguntasEstudiante', toJSON: { virtuals: true }})
+},{timestamps: true, versionKey: false, collection: 'preguntasEstudianteATT', toJSON: { virtuals: true }})
 
 const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de createdAt y updateAt podemos sacar el timepo que se habilito la pregunta
   _id: {
@@ -125,7 +179,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     'default': true
   },
   creador: {
-    correo: { type: String },
+    email: { type: String },
     nombres: { type: String },
     apellidos: { type: String },
     tipo: {
@@ -134,7 +188,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
     }
   },
   terminadoPor: {
-    correo: { type: String },
+    email: { type: String },
     nombres: { type: String },
     apellidos: { type: String },
     tipo: {
@@ -151,7 +205,7 @@ const PreguntaProfesorSchema = mongoose.Schema({ // con la diferencia de created
   	type: String,
 	  ref: 'Respuesta',
   }]
-},{timestamps: true, versionKey: false, collection: 'preguntasProfesores', toJSON: { virtuals: true }})
+},{timestamps: true, versionKey: false, collection: 'preguntasProfesoresATT', toJSON: { virtuals: true }})
 
 const RespuestaSchema = mongoose.Schema({
   _id: {
@@ -160,7 +214,7 @@ const RespuestaSchema = mongoose.Schema({
   },
   texto: { type: String },
   creador: {
-    correo: { type: String },
+    email: { type: String },
     nombres: { type: String },
     apellidos: { type: String }
   },
@@ -180,7 +234,7 @@ const RespuestaSchema = mongoose.Schema({
     type: Number,
     'default': 0
   }
-},{timestamps: true, versionKey: false, collection: 'respuestas'})
+},{timestamps: true, versionKey: false, collection: 'respuestasATT'})
 
 EstudianteSchema.methods = {
   crear() {
@@ -253,18 +307,18 @@ EstudianteSchema.statics = {
       })
     })
   },
-  anadirPregunta({ correo, preguntaId }) {
+  anadirPregunta({ email, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      self.update({ correo }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
+      self.update({ email }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
   },
-  obtenerPorCorreo({ correo }) {
+  obtenerPorCorreo({ email }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOne({ correo }))
+      resolve(self.findOne({ email }))
     })
   },
   anadirRespuesta({ matricula, respuestaId }) {
@@ -307,13 +361,13 @@ ProfesorSchema.statics = {
   obtenerPorCorreo({ correo }) {
     const self = this
     return new Promise(function(resolve) {
-      resolve(self.findOne({ correo }))
+      resolve(self.findOne({ email: correo }))
     })
   },
-  anadirPregunta({ correo, preguntaId }) {
+  anadirPregunta({ email, preguntaId }) {
     const self = this
     return new Promise(function(resolve) {
-      self.update({ correo }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
+      self.update({ email }, {$addToSet: {'preguntas': preguntaId }}).then((accionEstado) => {
         resolve(accionEstado.nModified ? true : false)
       })
     })
@@ -398,6 +452,12 @@ ParaleloSchema.statics = {
     const self = this
     return new Promise(function(resolve) {
       resolve(self.find({ profesores: profesorCorreo }))
+    })
+  },
+  obtenerParalelosProfesorPorId({ id }) {
+    const self = this
+    return new Promise(function(resolve) {
+      resolve(self.find({ profesores: id }))
     })
   },
   anadirEstudiante({ paralelo: { curso, codigo }, estudianteCorreo }) {

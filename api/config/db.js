@@ -23,7 +23,7 @@ let Conectar = function(url) {
 
     db.on('connected', function() {
       if (process.env.NODE_ENV !== 'testing' && process.env.NODE_ENV !== 'production')
-        console.log(`app de ATT conectada con ${url}`)
+        console.log(`Base de datos conectada a: ${url}`)
     })
 
     db.on('disconnected', function() {
